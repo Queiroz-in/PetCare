@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetCare - Painel Principal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #FFF9F1;
+            font-family: 'Inter', sans-serif;
+            color: #000000;
+            padding-bottom: 110px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 390px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 1. HEADER LARANJA */
+        .orange-header {
+            background-color: #FF7A00;
+            border-bottom-left-radius: 40px;
+            border-bottom-right-radius: 40px;
+            padding: 24px 20px 32px 20px;
+            width: 100%;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            color: #FFFFFF;
+            margin-bottom: 24px;
+        }
+
+        .header-top span {
+            font-size: 15px;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+
+        .header-top h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .sos-badge {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #FFFFFF;
+            font-weight: 700;
+            font-size: 12px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        /* Seleção Dinâmica de Pets */
+        .pets-select-row {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+        }
+        .pets-select-row::-webkit-scrollbar { display: none; }
+
+        .pet-selector-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            color: #FFFFFF;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .pet-img-box {
+            width: 62px;
+            height: 62px;
+            border-radius: 20px;
+            border: 2px solid #FFFFFF;
+            overflow: hidden;
+            background-color: rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pet-img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .pet-img-box.add-btn {
+            border: 2px dashed rgba(255, 255, 255, 0.8);
+            background: transparent;
+            font-size: 24px;
+        }
+
+        /* 2. CARD DO PET SELECIONADO (Agora respirando perfeitamente) */
+        .pet-info-card {
+            background-color: #FFFFFF;
+            border-radius: 28px;
+            padding: 24px 20px;
+            margin: 24px 20px; /* Margem ajustada para dar o respiro visual */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.02);
+        }
+
+        .card-pet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .card-pet-header h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .ver-perfil-link {
+            color: #FF7A00;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .pet-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .stat-box {
+            background-color: #FFF9F4;
+            border-radius: 16px;
+            padding: 14px 8px;
+            text-align: center;
+        }
+
+        .stat-box .stat-label {
+            font-size: 11px;
+            color: #8E8E93;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .stat-box .stat-val {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .alert-bar {
+            background-color: #FFF0F2;
+            border-radius: 14px;
+            padding: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #FF5874;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* 3. ACESSO RÁPIDO - CARROSSEL ARRASTÁVEL */
+        .section-title-container {
+            padding: 4px 20px 12px 20px;
+        }
+
+        .section-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .scroll-outer-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            padding: 4px 20px 24px 20px;
+            -webkit-overflow-scrolling: touch;
+            cursor: grab;
+        }
+        
+        .scroll-outer-wrapper:active {
+            cursor: grabbing;
+        }
+        
+        .scroll-outer-wrapper::-webkit-scrollbar { display: none; }
+
+        .grid-scroll-container {
+            display: grid;
+            grid-template-columns: repeat(5, 135px);
+            grid-template-rows: repeat(2, 125px);
+            gap: 14px;
+            width: max-content;
+        }
+
+        .quick-card {
+            border-radius: 20px;
+            padding: 16px;
+            color: #FFFFFF;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-start;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+            transition: transform 0.1s ease;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .quick-card:active { transform: scale(0.96); }
+        .quick-card svg { width: 24px; height: 24px; fill: #FFFFFF; pointer-events: none; }
+        .quick-card .title { font-size: 13px; font-weight: 700; line-height: 1.3; margin-top: auto; pointer-events: none; }
+        .quick-card .desc { font-size: 10px; opacity: 0.9; margin-top: 2px; font-weight: 500; pointer-events: none; }
+
+        /* Cores Originais */
+        .c-saude { background-color: #FF5874; }
+        .c-vacina { background-color: #00CBB0; }
+        .c-clinicas { background-color: #E292C5; }
+        .c-perdidos { background-color: #0076C4; }
+        .c-somos { background-color: #BD4315; }
+        .c-consultas { background-color: #9275FF; }
+        .c-lembretes { background-color: #FFAE00; }
+        .c-racas { background-color: #43B669; }
+        .c-resgate { background-color: #C6805D; }
+        .c-config { background-color: #8E9297; }
+
+        /* 4. LEMBRETES ATIVOS */
+        .reminders-section {
+            padding: 0 20px 24px 20px;
+        }
+        .reminders-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .reminders-header h3 { font-family: 'Poppins', sans-serif; font-size: 18px; font-weight: 700; }
+        .ver-todos-link { color: #FF7A00; font-size: 12px; font-weight: 700; cursor: pointer; }
+
+        .empty-reminders {
+            background-color: #FFFFFF;
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            color: #8E8E93;
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.01);
+        }
+
+        /* 5. BARRA INFERIOR FIXA */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 390px;
+            height: 76px;
+            background-color: #FFFFFF;
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+            box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.04);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: #8E8E93;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .nav-item.active { color: #FF7A00; }
+        .nav-item svg { width: 22px; height: 22px; fill: #8E8E93; }
+        .nav-item.active svg { fill: #FF7A00; }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <div class="orange-header">
+            <div class="header-top">
+                <div>
+                    <span>Olá!</span>
+                    <h1>Bem-vindo ao PetCare</h1>
+                </div>
+                <div class="sos-badge" onclick="abrirFuncao('sos')">SOS</div>
+            </div>
+
+            <div id="petsRow" class="pets-select-row">
+                <div class="pet-selector-item" onclick="solicitarNovoPet()">
+                    <div class="pet-img-box add-btn">+</div>
+                    <span>Adicionar</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="petInfoCard" class="pet-info-card">
+            <div class="card-pet-header">
+                <h2 id="placeholderNome">Seu Pet</h2>
+                <a href="#" class="ver-perfil-link" onclick="abrirPerfilAtual()">Ver perfil ❯</a>
+            </div>
+            
+            <div class="pet-stats-grid">
+                <div class="stat-box">
+                    <span class="stat-label">Idade</span>
+                    <span class="stat-val" id="valIdade">-</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Peso</span>
+                    <span class="stat-val" id="valPeso">-</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Raça</span>
+                    <span class="stat-val" id="valRaca">-</span>
+                </div>
+            </div>
+
+            <div class="alert-bar" id="alertBar" style="display: none;" onclick="abrirFuncao('vacina')">
+                <span id="txtAlerta">Tudo em dia!</span>
+                <span>Ver ❯</span>
+            </div>
+        </div>
+
+        <div class="section-title-container">
+            <h2 class="section-title">Acesso Rápido</h2>
+        </div>
+
+        <div class="scroll-outer-wrapper" id="scrollCarrossel">
+            <div class="grid-scroll-container">
+                
+                <div class="quick-card c-saude" data-action="saude">
+                    <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                    <div><div class="title">Verificar Saúde</div><div class="desc">Identificar sintomas</div></div>
+                </div>
+
+                <div class="quick-card c-consultas" data-action="consultas">
+                    <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
+                    <div><div class="title">Consultas</div><div class="desc">Agendar / Ver</div></div>
+                </div>
+
+                <div class="quick-card c-vacina" data-action="vacina">
+                    <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+                    <div><div class="title">Carteira de Vacina</div><div class="desc">Ver registros</div></div>
+                </div>
+
+                <div class="quick-card c-lembretes" data-action="lembretes">
+                    <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+                    <div><div class="title">Lembretes</div><div class="desc">Medicamentos e mais</div></div>
+                </div>
+
+                <div class="quick-card c-clinicas" data-action="clinicas">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                    <div><div class="title">Clínicas Próximas</div><div class="desc">Encontre veterinários</div></div>
+                </div>
+
+                <div class="quick-card c-racas" data-action="racas">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                    <div><div class="title">Info de Raças</div><div class="desc">Conheça seu Pet</div></div>
+                </div>
+
+                <div class="quick-card c-perdidos" data-action="perdidos">
+                    <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
+                    <div><div class="title">Animais Perdidos</div><div class="desc">Mural e contatos</div></div>
+                </div>
+
+                <div class="quick-card c-resgate" data-action="resgate">
+                    <svg viewBox="0 0 24 24"><path d="M12 2L1 21h22L12 2zm0 4l7.53 13H4.47L12 6zm-1 6v4h2v-4h-2zm0-3v2h2V9h-2z"/></svg>
+                    <div><div class="title">Guia de Resgate</div><div class="desc">Como ajudar</div></div>
+                </div>
+
+                <div class="quick-card c-somos" data-action="quem-somos">
+                    <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    <div><div class="title">Quem Somos?</div><div class="desc">Origem do PetCare</div></div>
+                </div>
+
+                <div class="quick-card c-config" data-action="config">
+                    <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                    <div><div class="title">Configurações</div><div class="desc">Personalize e modifique</div></div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="reminders-section">
+            <div class="reminders-header">
+                <h3>Lembretes Ativos</h3>
+                <span class="ver-todos-link" onclick="abrirFuncao('lembretes')">Ver todos ❯</span>
+            </div>
+            <div id="listaLembretes">
+                <div class="empty-reminders">
+                    Nenhum lembrete para hoje.
+                </div>
+            </div>
+        </div>
+
+        <nav class="bottom-nav">
+            <div class="nav-item active">
+                <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                <span>Início</span>
+            </div>
+            <div class="nav-item" onclick="navegarAbas('saude')">
+                <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                <span>Saúde</span>
+            </div>
+            <div class="nav-item" onclick="navegarAbas('vacinas')">
+                <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+                <span>Vacinas</span>
+            </div>
+            <div class="nav-item" onclick="navegarAbas('consultas')">
+                <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
+                <span>Consultas</span>
+            </div>
+        </nav>
+
+    </div>
+
+    <script>
+        let petAtivoId = null;
+
+        function atualizarDadosDosPets(dadosString) {
+            if (!dadosString || dadosString === "") { mostrarEstadoVazio(); return; }
+
+            const pets = dadosString.split("|");
+            const container = document.getElementById("petsRow");
+            
+            container.innerHTML = `
+                <div class="pet-selector-item" onclick="solicitarNovoPet()">
+                    <div class="pet-img-box add-btn">+</div>
+                    <span>Adicionar</span>
+                </div>
+            `;
+
+            pets.forEach((petRaw, index) => {
+                const info = petRaw.split(",");
+                const id = info[0];
+                const nome = info[1];
+                
+                const item = document.createElement("div");
+                item.className = "pet-selector-item";
+                item.onclick = () => carregarEstatisticasPet(info);
+                item.innerHTML = `
+                    <div class="pet-img-box">
+                        <img src="https://placehold.co/100x100/FF7A00/FFFFFF?text=${nome.charAt(0)}" alt="${nome}">
+                    </div>
+                    <span>${nome}</span>
+                `;
+                container.insertBefore(item, container.firstChild);
+
+                if (index === 0) carregarEstatisticasPet(info);
+            });
+        }
+
+        function carregarEstatisticasPet(info) {
+            petAtivoId = info[0];
+            document.getElementById("placeholderNome").innerText = info[1];
+            document.getElementById("valIdade").innerText = info[2];
+            document.getElementById("valPeso").innerText = info[3];
+            document.getElementById("valRaca").innerText = info[4];
+
+            const alerta = info[5];
+            const alertBar = document.getElementById("alertBar");
+            if (alerta && alerta !== "0" && alerta !== "") {
+                document.getElementById("txtAlerta").innerText = `⚠️ ${alerta}`;
+                alertBar.style.display = "flex";
+            } else {
+                alertBar.style.display = "none";
+            }
+        }
+
+        function mostrarEstadoVazio() {
+            document.getElementById("placeholderNome").innerText = "Cadastre um Pet";
+            document.getElementById("valIdade").innerText = "-";
+            document.getElementById("valPeso").innerText = "-";
+            document.getElementById("valRaca").innerText = "-";
+            document.getElementById("alertBar").style.display = "none";
+        }
+
+        function abrirFuncao(nomeFuncao) { window.AppInventor.setWebViewString("MENU|" + nomeFuncao + "|" + petAtivoId); }
+        function navegarAbas(aba) { window.AppInventor.setWebViewString("NAV|" + aba); }
+        function solicitarNovoPet() { window.AppInventor.setWebViewString("PET|ADICIONAR"); }
+        function abrirPerfilAtual() { if(petAtivoId) window.AppInventor.setWebViewString("PET|PERFIL|" + petAtivoId); }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if(!window.AppInventor) mostrarEstadoVazio();
+        });
+
+        // ----------------------------------------------------
+        // LÓGICA DE ARRASTAR PARA ROLAR (Drag to Scroll) NO PC
+        // ----------------------------------------------------
+        const slider = document.getElementById('scrollCarrossel');
+        let isDown = false;
+        let startX;
+        let scrollLeft;
+        let isDragging = false; 
+
+        slider.addEventListener('mousedown', (e) => {
+            isDown = true;
+            isDragging = false;
+            slider.style.cursor = 'grabbing';
+            startX = e.pageX - slider.offsetLeft;
+            scrollLeft = slider.scrollLeft;
+        });
+
+        slider.addEventListener('mouseleave', () => {
+            isDown = false;
+            slider.style.cursor = 'grab';
+        });
+
+        slider.addEventListener('mouseup', () => {
+            isDown = false;
+            slider.style.cursor = 'grab';
+        });
+
+        slider.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - slider.offsetLeft;
+            const walk = (x - startX) * 1.5; 
+            if (Math.abs(walk) > 5) isDragging = true; 
+            slider.scrollLeft = scrollLeft - walk;
+        });
+
+        document.querySelectorAll('.quick-card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                if (isDragging) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                } else {
+                    const action = this.getAttribute('data-action');
+                    abrirFuncao(action);
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
