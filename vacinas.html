@@ -212,6 +212,7 @@
 </div>
 
 <script src="navbar.js"></script>
+<script src="petsdb.js"></script>
 <script>
     let petAtivoId = null;
 
@@ -224,8 +225,8 @@
             // Avisa o AppInventor que a tela carregou e precisa que injete os pets via função
             window.AppInventor.setWebViewString("LOAD_PETS_VACINA");
         } else {
-            // Modo Web: Inicia vazio, aguardando dados reais do usuário
-            carregarPetsDaCarteira("");
+            // Fora do app (navegador): carrega os pets salvos localmente
+            carregarPetsDaCarteira(petcareFormatoSimples(petcareObterPets()));
         }
     });
 

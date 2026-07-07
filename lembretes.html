@@ -232,6 +232,7 @@
 </div>
 
 <script src="navbar.js"></script>
+<script src="petsdb.js"></script>
 <script>
     let petsCadastrados = [];
     let lembretesCadastrados = []; 
@@ -250,8 +251,9 @@
             window.AppInventor.setWebViewString("LOAD_PETS_LEMBRETES");
             setTimeout(() => { window.AppInventor.setWebViewString("LOAD_LEMBRETES"); }, 300);
         } else {
-            carregarPetsLembretes("1,Granola|2,Bela");
-            carregarLembretes(""); // Inicia Vazio
+            // Fora do app (navegador): carrega os pets salvos localmente
+            carregarPetsLembretes(petcareFormatoSimples(petcareObterPets()));
+            carregarLembretes(""); // Lembretes em si continuam vazios até integrar de verdade
         }
     });
 

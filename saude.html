@@ -116,11 +116,16 @@
 
 <!-- CHAMA A NAVBAR MODULAR -->
 <script src="navbar.js"></script>
+<script src="petsdb.js"></script>
 <script>
     // Inicializa a Navbar Modular e acende a aba da Saúde
     window.addEventListener('DOMContentLoaded', () => {
         if(typeof carregarMenuInferior === "function") {
             carregarMenuInferior('saude');
+        }
+        if (!window.AppInventor) {
+            // Fora do app (navegador): carrega os pets salvos localmente
+            carregarPetsDoBanco(petcareFormatoSaude(petcareObterPets()));
         }
     });
 

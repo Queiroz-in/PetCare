@@ -199,6 +199,7 @@
 </div>
 
 <script src="navbar.js"></script>
+<script src="petsdb.js"></script>
 <script>
     let petsCadastrados = [];
     let consultasCadastradas = []; 
@@ -216,8 +217,8 @@
             window.AppInventor.setWebViewString("LOAD_PETS_CONSULTAS");
             setTimeout(() => { window.AppInventor.setWebViewString("LOAD_CONSULTAS"); }, 300);
         } else {
-            // Modo Web PC: Inicia zerado, aguardando integração
-            carregarPetsConsultas("");
+            // Fora do app (navegador): carrega os pets salvos localmente
+            carregarPetsConsultas(petcareFormatoSimples(petcareObterPets()));
             carregarConsultas("");
         }
     });

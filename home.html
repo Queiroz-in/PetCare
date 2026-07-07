@@ -490,7 +490,7 @@
                     <span>Olá!</span>
                     <h1>Bem-vindo ao PetCare</h1>
                 </div>
-                <div class="sos-badge" onclick="abrirFuncao('sos')">SOS</div>
+                <div class="sos-badge" onclick="irParaEmergencia()">SOS</div>
             </div>
 
             <div id="petsRow" class="pets-select-row">
@@ -674,6 +674,7 @@
     </div>
 
     <script src="navbar.js"></script>
+    <script src="petsdb.js"></script>
     <script>
         let petAtivoId = null;
 
@@ -729,11 +730,34 @@
             document.getElementById("alertBar").style.display = "none";
         }
 
-        function abrirFuncao(nomeFuncao) { window.AppInventor && window.AppInventor.setWebViewString("MENU|" + nomeFuncao + "|" + petAtivoId); }
+        // Mapa de exceções: nome lógico da função -> arquivo real (quando é diferente)
+        const mapaPaginasFuncao = {};
+
+        function abrirFuncao(nomeFuncao) {
+            if (window.AppInventor) {
+                window.AppInventor.setWebViewString("MENU|" + nomeFuncao + "|" + petAtivoId);
+            } else {
+                // Fora do app (testando no navegador): navega direto pra página
+                window.location.href = mapaPaginasFuncao[nomeFuncao] || (nomeFuncao + ".html");
+            }
+        }
+
+        // Botão SOS: leva direto pra tela de Emergência, dentro ou fora do app
+        function irParaEmergencia() {
+            if (window.AppInventor && window.AppInventor.setWebViewString) {
+                window.AppInventor.setWebViewString("NAV|emergencia");
+            } else {
+                window.location.href = "emergencia.html";
+            }
+        }
         function abrirPerfilAtual() { if(petAtivoId && window.AppInventor) window.AppInventor.setWebViewString("PET|PERFIL|" + petAtivoId); }
 
         window.addEventListener('DOMContentLoaded', () => {
-            if(!window.AppInventor) mostrarEstadoVazio();
+            if (!window.AppInventor) {
+                // Fora do app (navegador): carrega os pets salvos localmente
+                const pets = petcareObterPets();
+                atualizarDadosDosPets(petcareFormatoHome([...pets].reverse()));
+            }
             configurarArrastoIntuitivo('scrollCarrossel');
             // Inicializa a Navbar Modular e acende a aba da Home
             carregarMenuInferior('home');
@@ -763,22 +787,48 @@
             document.querySelectorAll('#grpTipo .pill').forEach(el => { if(el.classList.contains('active')) tipo = el.innerText; });
             let sexo = "";
             document.querySelectorAll('#grpSexo .sex-btn').forEach(el => { if(el.classList.contains('active')) sexo = el.innerText; });
-            const nome = document.getElementById('addNome').value;
-            const raca = document.getElementById('addRaca').value;
-            const nasc = document.getElementById('addNasc').value;
-            const peso = document.getElementById('addPeso').value;
-            const cor = document.getElementById('addCor').value;
+            const nome = document.getElementById('addNome').value.trim();
+            const raca = document.getElementById('addRaca').value.trim();
+            const nasc = document.getElementById('addNasc').value.trim();
+            const peso = document.getElementById('addPeso').value.trim();
+            const cor = document.getElementById('addCor').value.trim();
             const castrado = document.getElementById('addCastrado').checked ? "Sim" : "Não";
-            const microchip = document.getElementById('addMicrochip').value;
-            const alergias = document.getElementById('addAlergias').value;
-            const stringDados = `NOVO_PET|${tipo}|${nome}|${sexo}|${raca}|${nasc}|${peso}|${cor}|${castrado}|${microchip}|${alergias}`;
-            if(window.AppInventor) {
-                window.AppInventor.setWebViewString(stringDados);
-                fecharModalAddPet();
-            } else {
-                console.log("Modo Web:", stringDados);
-                fecharModalAddPet();
+            const microchip = document.getElementById('addMicrochip').value.trim();
+            const alergias = document.getElementById('addAlergias').value.trim();
+
+            if (!nome) {
+                alert("Digite o nome do pet antes de salvar.");
+                return;
             }
+
+            const stringDados = `NOVO_PET|${tipo}|${nome}|${sexo}|${raca}|${nasc}|${peso}|${cor}|${castrado}|${microchip}|${alergias}`;
+
+            if (window.AppInventor) {
+                // App real: o TinyDB salva e o app deve chamar atualizarDadosDosPets(...) de volta
+                window.AppInventor.setWebViewString(stringDados);
+            } else {
+                // Fora do app (navegador): salva localmente e já atualiza a tela na hora
+                petcareAdicionarPet({ tipo, nome, sexo, raca, nascimento: nasc, peso, cor, castrado, microchip, alergias });
+                const pets = petcareObterPets();
+                atualizarDadosDosPets(petcareFormatoHome([...pets].reverse()));
+                console.log("Modo Web - pet salvo localmente:", stringDados);
+            }
+
+            limparFormularioPet();
+            fecharModalAddPet();
+        }
+
+        function limparFormularioPet() {
+            document.getElementById('addNome').value = "";
+            document.getElementById('addRaca').value = "";
+            document.getElementById('addNasc').value = "";
+            document.getElementById('addPeso').value = "";
+            document.getElementById('addCor').value = "";
+            document.getElementById('addCastrado').checked = true;
+            document.getElementById('addMicrochip').value = "";
+            document.getElementById('addAlergias').value = "";
+            document.querySelectorAll('#grpTipo .pill').forEach((el, i) => el.classList.toggle('active', i === 0));
+            document.querySelectorAll('#grpSexo .sex-btn').forEach((el, i) => el.classList.toggle('active', i === 1));
         }
 
         /* CONFIGURAÇÃO DO GESTO DE ARRASTAR NATIVO/INTUITIVO DO SMARTPHONE */
@@ -810,11 +860,17 @@
             });
 
             // Evitar disparos involuntários de links/botões ao arrastar
+            // + NAVEGAÇÃO REAL dos cards de Acesso Rápido (usa data-action)
             elemento.querySelectorAll('.quick-card, .nav-item').forEach(item => {
                 item.addEventListener('click', (e) => {
                     if (movendo) {
                         e.preventDefault();
                         e.stopPropagation();
+                        return;
+                    }
+                    const acao = item.dataset.action;
+                    if (acao && typeof navegarAbasGlobal === "function") {
+                        navegarAbasGlobal(acao);
                     }
                 });
             });
