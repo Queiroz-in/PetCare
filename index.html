@@ -128,10 +128,52 @@
             font-size: 15px;
             color: #1F2937;
             outline: none;
+            transition: all 0.2s ease;
         }
 
         input::placeholder {
             color: #9ca3af;
+        }
+
+        /* OTIMIZAÇÃO: Estilos de erro visual */
+        input.input-error {
+            border-color: #EF4444 !important;
+            background-color: #FFF5F5 !important;
+        }
+
+        .error-text {
+            color: #EF4444;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 4px;
+            display: none;
+        }
+
+        /* OTIMIZAÇÃO: Container para o botão de mostrar senha */
+        .password-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .password-wrapper input {
+            padding-right: 48px;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #9CA3AF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s ease;
+        }
+
+        .password-toggle:hover {
+            color: #5E2EBF;
         }
 
         /* Links e Checkbox */
@@ -185,6 +227,11 @@
             border-radius: 16px;
             cursor: pointer;
             margin-top: 16px;
+            transition: opacity 0.2s ease;
+        }
+
+        .btn-primary:active {
+            opacity: 0.9;
         }
 
         /* Botões Sociais */
@@ -250,11 +297,18 @@
                 <div class="input-group">
                     <label>E-mail</label>
                     <input type="email" id="loginEmail" placeholder="usepetcare@gmail.com">
+                    <div class="error-text" id="errLoginEmail">Por favor, insira um e-mail válido.</div>
                 </div>
                 
                 <div class="input-group">
                     <label>Senha</label>
-                    <input type="password" id="loginPassword" placeholder="**********">
+                    <div class="password-wrapper">
+                        <input type="password" id="loginPassword" placeholder="**********">
+                        <span class="password-toggle" onclick="togglePassword('loginPassword', this)">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                        </span>
+                    </div>
+                    <div class="error-text" id="errLoginPassword">A senha não pode estar vazia.</div>
                 </div>
                 
                 <button type="button" class="btn-primary" onclick="fazerLogin()">Continuar</button>
@@ -278,16 +332,19 @@
                 <div class="input-group">
                     <label>Nome</label>
                     <input type="text" id="regNome" placeholder="Pedro Santos Borges">
+                    <div class="error-text" id="errRegNome">Por favor, digite seu nome completo.</div>
                 </div>
                 
                 <div class="input-group">
                     <label>Número de Telefone</label>
                     <input type="text" id="regTelefone" placeholder="(11) 98765-4321" inputmode="numeric" maxlength="15">
+                    <div class="error-text" id="errRegTelefone">Insira um telefone válido.</div>
                 </div>
 
                 <div class="input-group">
                     <label>Data de Nascimento</label>
                     <input type="text" id="regData" placeholder="14/07/2008" inputmode="numeric" maxlength="10">
+                    <div class="error-text" id="errRegData">Insira uma data válida (DD/MM/AAAA).</div>
                 </div>
                 
                 <button type="button" class="btn-primary" onclick="finalizarCadastro()">Continuar</button>
@@ -319,7 +376,7 @@
             }, 2000);
         });
 
-        // Configuração de Máscaras automáticas que só aceitam números
+        // Máscaras automáticas
         document.getElementById('regTelefone').addEventListener('input', function (e) {
             var x = e.target.value.replace(/\D/g, '').match(/(\d{0,2})(\d{0,5})(\d{0,4})/);
             e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
@@ -336,8 +393,35 @@
             }
         });
 
+        // OTIMIZAÇÃO: Alternar visibilidade da senha (Olho)
+        function togglePassword(inputId, el) {
+            var input = document.getElementById(inputId);
+            if (input.type === "password") {
+                input.type = "text";
+                // Muda para ícone de olho riscado
+                el.innerHTML = '<svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>';
+            } else {
+                input.type = "password";
+                // Volta para ícone de olho aberto
+                el.innerHTML = '<svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+            }
+        }
+
+        // OTIMIZAÇÃO: Limpar estados de erro visual
+        function limparErros() {
+            document.querySelectorAll('input').forEach(input => input.classList.remove('input-error'));
+            document.querySelectorAll('.error-text').forEach(text => text.style.display = 'none');
+        }
+
+        // OTIMIZAÇÃO: Mostrar erro em campo específico
+        function aplicarErro(inputId, errorId) {
+            document.getElementById(inputId).classList.add('input-error');
+            document.getElementById(errorId).style.display = 'block';
+        }
+
         // Alternar visualização entre Login e Cadastro
         function mudarEtapa(idEtapa) {
+            limparErros(); // Limpa erros ao mudar de tela
             document.querySelectorAll('.form-step').forEach(step => step.classList.remove('active'));
             document.getElementById(idEtapa).classList.add('active');
             
@@ -349,23 +433,63 @@
             }
         }
 
-        // Envia dados de LOGIN para o App Inventor
-        function fazerLogin() {
-            var email = document.getElementById('loginEmail').value;
-            var pass = document.getElementById('loginPassword').value;
-            if(email === "" || pass === "") { alert("Preencha os campos!"); return; }
-            
-            window.AppInventor.setWebViewString("LOGIN|" + email + "|" + pass);
+        // OTIMIZAÇÃO: Ponte segura para comunicação com o App Inventor (Evita quebrar no Site/Navegador comum)
+        function enviarDadosApp(stringDados) {
+            if (window.AppInventor && window.AppInventor.setWebViewString) {
+                window.AppInventor.setWebViewString(stringDados);
+            } else {
+                console.log("Modo Web (Fora do App) - Dados enviados:", stringDados);
+            }
         }
 
-        // Envia dados de CADASTRO para o App Inventor
-        function finalizarCadastro() {
-            var nome = document.getElementById('regNome').value;
-            var tel = document.getElementById('regTelefone').value;
-            var dataNasc = document.getElementById('regData').value;
-            if(nome === "" || tel === "" || dataNasc === "") { alert("Preencha todos os campos!"); return; }
+        // Validação e Envio de LOGIN
+        function fazerLogin() {
+            limparErros();
+            var email = document.getElementById('loginEmail').value.trim();
+            var pass = document.getElementById('loginPassword').value;
+            var temErro = false;
+
+            // Regex simples e funcional para validar e-mail
+            var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if(!emailRegex.test(email)) {
+                aplicarErro('loginEmail', 'errLoginEmail');
+                temErro = true;
+            }
+            if(pass === "") {
+                aplicarErro('loginPassword', 'errLoginPassword');
+                temErro = true;
+            }
+
+            if(temErro) return;
             
-            window.AppInventor.setWebViewString("CADASTRO|" + nome + "|" + tel + "|" + dataNasc);
+            enviarDadosApp("LOGIN|" + email + "|" + pass);
+        }
+
+        // Validação e Envio de CADASTRO
+        function finalizarCadastro() {
+            limparErros();
+            var nome = document.getElementById('regNome').value.trim();
+            var tel = document.getElementById('regTelefone').value.trim();
+            var dataNasc = document.getElementById('regData').value.trim();
+            var temErro = false;
+
+            if(nome.length < 3) {
+                aplicarErro('regNome', 'errRegNome');
+                temErro = true;
+            }
+            if(tel.length < 14) { // Garante o preenchimento mínimo do celular com DDD
+                aplicarErro('regTelefone', 'errRegTelefone');
+                temErro = true;
+            }
+            if(dataNasc.length < 10) { // Garante formato DD/MM/AAAA completo
+                aplicarErro('regData', 'errRegData');
+                temErro = true;
+            }
+
+            if(temErro) return;
+            
+            enviarDadosApp("CADASTRO|" + nome + "|" + tel + "|" + dataNasc);
         }
     </script>
 
