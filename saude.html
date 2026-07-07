@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Verificador de Saúde - PetCare Profissional</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --pink: #FF5874; 
+            --creme: #FFF9F1; 
+            --yellow: #FFD03B; 
+            --gray: #8E8E93;
+            --white: #FFFFFF;
+        }
+
+        /* RESET GERAL */
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            background-color: var(--creme); 
+            font-family: 'Inter', sans-serif; 
+            height: 100dvh; 
+            overflow: hidden; 
+            display: flex; 
+            justify-content: center; 
+        }
+
+        .app-container { 
+            width: 100%; 
+            max-width: 390px; 
+            height: 100%; 
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+            background-color: var(--creme); 
+        }
+
+        /* HEADER E PROGRESSÃO */
+        .header-pink { 
+            background: var(--pink); 
+            padding: 48px 20px 24px; 
+            color: white; 
+            border-bottom-left-radius: 40px; 
+            border-bottom-right-radius: 40px; 
+            flex-shrink: 0; 
+            box-shadow: 0 4px 10px rgba(255, 88, 116, 0.2);
+        }
+        .header-pink h2 { font-family: 'Poppins', sans-serif; font-size: 24px; margin-bottom: 4px; }
+        .header-pink p { font-size: 13px; opacity: 0.9; }
+
+        .progress-container { display: flex; align-items: center; gap: 8px; margin-top: 20px; }
+        .step-dot { width: 24px; height: 24px; border-radius: 50%; background: rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: white; }
+        .step-dot.active { background: white; color: var(--pink); }
+        .step-line { flex: 1; height: 2px; background: rgba(255,255,255,0.3); }
+
+        /* VIEWS (TELAS) */
+        .view { display: none; flex: 1; overflow-y: auto; padding: 20px; -webkit-overflow-scrolling: touch; }
+        .view.active { display: block; }
+
+        /* ESTILOS DE ELEMENTOS */
+        .cat-title { font-size: 11px; font-weight: 700; color: var(--gray); margin: 24px 0 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .sintoma-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .sintoma-btn { 
+            padding: 14px 10px; 
+            background: var(--white); 
+            border: 1px solid #E5E7EB; 
+            border-radius: 12px; 
+            text-align: center; 
+            font-size: 13px; 
+            font-weight: 500; 
+            cursor: pointer; 
+            transition: all 0.2s ease; 
+        }
+        .sintoma-btn.selected { background: var(--pink); color: white; border-color: var(--pink); box-shadow: 0 4px 8px rgba(255, 88, 116, 0.3); }
+        
+        .diagnostic-card { background: var(--white); padding: 20px; border-radius: 20px; border: 1px solid #F0E6D2; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-top: 20px; }
+        .btn-main { width: 100%; padding: 18px; border: none; border-radius: 16px; font-weight: 700; font-size: 16px; margin-top: 24px; background: var(--pink); color: white; cursor: pointer; transition: 0.3s; }
+        .btn-main:active { transform: scale(0.98); }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <header class="header-pink">
+        <h2>Verificador de Saúde</h2>
+        <p>Identifique possíveis problemas no seu pet</p>
+        <div class="progress-container">
+            <div id="dot1" class="step-dot active">1</div><div class="step-line"></div>
+            <div id="dot2" class="step-dot">2</div><div class="step-line"></div>
+            <div id="dot3" class="step-dot">3</div>
+        </div>
+    </header>
+
+    <main class="view-content">
+        <div id="v1" class="view active">
+            <h3 style="margin-bottom: 20px;">Qual Pet está com sintomas?</h3>
+            <div id="petSelector" style="background: white; padding: 20px; border-radius: 16px; border: 2px solid var(--pink);">
+                <strong>Granola</strong><br><small style="color:var(--gray)">Caramelo - 3 anos</small>
+            </div>
+            <button class="btn-main" onclick="changeView(2)">Continuar</button>
+        </div>
+
+        <div id="v2" class="view">
+            <h3 style="margin-bottom: 20px;">Quais sintomas observou?</h3>
+            <div id="containerSintomas"></div>
+            <button class="btn-main" onclick="analisar()">Analisar Saúde</button>
+        </div>
+
+        <div id="v3" class="view">
+            <div class="diagnostic-card">
+                <h3 id="resTitulo" style="color: #BD4315;"></h3>
+                <p id="resDesc" style="margin-top:15px; line-height: 1.6;"></p>
+            </div>
+            <button class="btn-main" onclick="location.reload()">Nova Verificação</button>
+        </div>
+    </main>
+</div>
+
+<script>
+    // A base de dados expandida para cobrir 100% dos seus requisitos
+    const bancoSintomas = {
+        "Digestivo": { 
+            sintomas: ["Vômito", "Diarreia", "Barriga estufada"], 
+            diag: "Distúrbio Gastrointestinal", 
+            rec: "Mantenha dieta leve. Se houver desidratação, procure um veterinário." 
+        },
+        "Comportamental": { 
+            sintomas: ["Sem apetite", "Letargia / Cansaço"], 
+            diag: "Debilidade Geral", 
+            rec: "Observe o consumo de água. Apatia prolongada exige check-up." 
+        },
+        "Respiratório": { 
+            sintomas: ["Tosse / Espirros", "Dificuldade respiratória"], 
+            diag: "Afecção Respiratória", 
+            rec: "Evite correntes de ar. Nebulização pode ajudar na respiração." 
+        },
+        "Ocular": { 
+            sintomas: ["Secreção nos olhos", "Cegueira"], 
+            diag: "Problema Ocular", 
+            rec: "Limpeza com soro. Não automedique olhos!" 
+        },
+        "Pele": { 
+            sintomas: ["Coceira", "Perda de pelo"], 
+            diag: "Dermatite ou Alergia", 
+            rec: "Banho com shampoo neutro. Verifique pulgas." 
+        },
+        "Locomotor": { 
+            sintomas: ["Dor nas patas"], 
+            diag: "Lesão Ortopédica", 
+            rec: "Repouso e evitar saltos." 
+        },
+        "Metabólico": { 
+            sintomas: ["Sede excessiva", "Perda de peso"], 
+            diag: "Distúrbio Metabólico", 
+            rec: "Agende hemograma completo urgentemente." 
+        },
+        "Geral": { 
+            sintomas: ["Convulsão / Tremores"], 
+            diag: "Emergência Neurológica", 
+            rec: "Vá ao hospital 24h AGORA." 
+        },
+        "Urinário": { 
+            sintomas: ["Sangue na urina", "Não urina"], 
+            diag: "Obstrução Urinária", 
+            rec: "Emergência grave. Risco de obstrução total." 
+        },
+        "Reprodutivo": { 
+            sintomas: ["Corrimento"], 
+            diag: "Infecção Reprodutiva", 
+            rec: "Avaliação profissional necessária." 
+        }
+    };
+
+    // Renderização automática e robusta
+    const container = document.getElementById('containerSintomas');
+    for (let cat in bancoSintomas) {
+        container.innerHTML += `<div class="cat-title">${cat}</div><div class="sintoma-grid" id="grid-${cat}"></div>`;
+        bancoSintomas[cat].sintomas.forEach(s => {
+            document.getElementById(`grid-${cat}`).innerHTML += `<div class="sintoma-btn" onclick="this.classList.toggle('selected')">${s}</div>`;
+        });
+    }
+
+    function analisar() {
+        let selecionados = Array.from(document.querySelectorAll('.sintoma-btn.selected')).map(el => el.innerText);
+        
+        // Algoritmo de decisão: quem tem mais matches vence
+        let scores = Object.keys(bancoSintomas).map(cat => ({
+            ...bancoSintomas[cat], 
+            score: bancoSintomas[cat].sintomas.filter(s => selecionados.includes(s)).length
+        })).sort((a,b) => b.score - a.score);
+
+        let vencedor = scores[0].score > 0 ? scores[0] : { diag: "Inconclusivo", rec: "Não foram encontrados padrões claros." };
+        
+        document.getElementById('resTitulo').innerText = vencedor.diag;
+        document.getElementById('resDesc').innerText = vencedor.rec;
+        changeView(3);
+    }
+
+    function changeView(n) {
+        document.querySelectorAll('.view').forEach((v, i) => v.classList.toggle('active', i === n - 1));
+        document.querySelectorAll('.step-dot').forEach((d, i) => d.classList.toggle('active', i < n));
+    }
+</script>
+</body>
+</html>
