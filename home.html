@@ -280,74 +280,6 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.01);
         }
 
-        /* 5. BARRA INFERIOR */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            max-width: 390px;
-            height: 92px; 
-            background-color: #FFFFFF;
-            border-top-left-radius: 24px;
-            border-top-right-radius: 24px;
-            box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.06);
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            z-index: 999; 
-            padding: 0 16px 12px 16px; 
-            overflow-x: auto;
-            cursor: grab;
-            gap: 12px;
-            -webkit-overflow-scrolling: touch;
-        }
-        .bottom-nav::-webkit-scrollbar { display: none; }
-        .bottom-nav:active { cursor: grabbing; }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-            color: #8E9297;
-            font-size: 12px;
-            font-weight: 500;
-            cursor: pointer;
-            flex-shrink: 0;
-            min-width: 68px;
-            text-align: center;
-            user-select: none;
-        }
-
-        .nav-icon-box {
-            width: 46px;
-            height: 44px;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: transparent;
-            transition: background-color 0.2s ease;
-            position: relative;
-            pointer-events: none;
-        }
-
-        .nav-item svg { 
-            width: 24px; 
-            height: 24px; 
-            fill: none; 
-            stroke: #8E9297; 
-            stroke-width: 2.2; 
-            stroke-linecap: round; 
-            stroke-linejoin: round; 
-        }
-        
-        .nav-item.active { color: #FF7A00; font-weight: 700; }
-        .nav-item.active .nav-icon-box { background-color: #FFF2E6; }
-        .nav-item.active svg { stroke: #FF7A00; }
-
         /* =========================================
            MODAL "ADICIONAR PET" (BOTTOM SHEET)
            ========================================= */
@@ -552,7 +484,6 @@
 
     <div class="app-container">
         
-        <!-- Topo Laranja -->
         <div class="orange-header">
             <div class="header-top">
                 <div>
@@ -562,7 +493,6 @@
                 <div class="sos-badge" onclick="abrirFuncao('sos')">SOS</div>
             </div>
 
-            <!-- Seleção de Pets -->
             <div id="petsRow" class="pets-select-row">
                 <div class="pet-selector-item" onclick="abrirModalAddPet()">
                     <div class="pet-img-box add-btn">+</div>
@@ -571,7 +501,6 @@
             </div>
         </div>
 
-        <!-- Card Dinâmico do Pet -->
         <div id="petInfoCard" class="pet-info-card">
             <div class="card-pet-header">
                 <h2 id="placeholderNome">Seu Pet</h2>
@@ -599,7 +528,6 @@
             </div>
         </div>
 
-        <!-- Acesso Rápido -->
         <div class="section-title-container">
             <h2 class="section-title">Acesso Rápido</h2>
         </div>
@@ -607,61 +535,51 @@
         <div class="scroll-outer-wrapper" id="scrollCarrossel">
             <div class="grid-scroll-container">
                 
-                <!-- 1. Verificar Saúde -->
                 <div class="quick-card c-saude" data-action="saude">
                     <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                     <div><div class="title">Verificar Saúde</div><div class="desc">Identificar sintomas</div></div>
                 </div>
 
-                <!-- 2. Consultas -->
                 <div class="quick-card c-consultas" data-action="consultas">
                     <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                     <div><div class="title">Consultas</div><div class="desc">Agendar / Ver</div></div>
                 </div>
 
-                <!-- 3. Carteira de Vacina (Seringa 45° idêntica à referência) -->
                 <div class="quick-card c-vacina" data-action="vacinas">
                     <svg viewBox="0 0 24 24"><path d="M3 21l6-6 M14 6l-7 7a2.82 2.82 0 0 0 4 4l7-7Z M12 8l2 2 M9 11l2 2 M16 8l3-3 M17 3l4 4"/></svg>
                     <div><div class="title">Carteira de Vacina</div><div class="desc">Ver registros</div></div>
                 </div>
 
-                <!-- 4. Lembretes -->
                 <div class="quick-card c-lembretes" data-action="lembretes">
                     <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
                     <div><div class="title">Lembretes</div><div class="desc">Medicamentos e mais</div></div>
                 </div>
 
-                <!-- 5. Clínicas Próximas -->
                 <div class="quick-card c-clinicas" data-action="clinicas">
                     <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                     <div><div class="title">Clínicas Próximas</div><div class="desc">Encontre veterinários</div></div>
                 </div>
 
-                <!-- 6. Info de Raças -->
                 <div class="quick-card c-racas" data-action="racas">
                     <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zm20 0h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
                     <div><div class="title">Info de Raças</div><div class="desc">Conheça seu Pet</div></div>
                 </div>
 
-                <!-- 7. Animais Perdidos -->
                 <div class="quick-card c-perdidos" data-action="perdidos">
                     <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                     <div><div class="title">Animais Perdidos</div><div class="desc">Mural e contatos</div></div>
                 </div>
 
-                <!-- 8. Guia de Resgate -->
                 <div class="quick-card c-resgate" data-action="resgate">
                     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
                     <div><div class="title">Guia de Resgate</div><div class="desc">Como ajudar</div></div>
                 </div>
 
-                <!-- 9. Quem Somos -->
                 <div class="quick-card c-somos" data-action="quem-somos">
                     <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                     <div><div class="title">Quem Somos?</div><div class="desc">Origem do PetCare</div></div>
                 </div>
 
-                <!-- 10. Configurações (Estilo logo Slack idêntico à referência) -->
                 <div class="quick-card c-config" data-action="config">
                     <svg viewBox="0 0 24 24"><path d="M15 4v5 M15 15h5 M9 15v5 M4 9h5 M9 5v0.1 M19 9v0.1 M15 19v0.1 M5 15v0.1"/></svg>
                     <div><div class="title">Configurações</div><div class="desc">Personalize e modifique</div></div>
@@ -670,7 +588,6 @@
             </div>
         </div>
 
-        <!-- Lembretes Ativos -->
         <div class="reminders-section">
             <div class="reminders-header">
                 <h3>Lembretes Ativos</h3>
@@ -683,94 +600,10 @@
             </div>
         </div>
 
-        <!-- BARRA INFERIOR -->
-        <nav class="bottom-nav" id="bottomNav">
-            
-            <div class="nav-item active" onclick="selecionarAbaNav(this, 'home')">
-                <div class="nav-icon-box">
-                    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
-                </div>
-                <span>Início</span>
-            </div>
-
-            <div class="nav-item" onclick="selecionarAbaNav(this, 'saude')">
-                <div class="nav-icon-box">
-                    <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                </div>
-                <span>Saúde</span>
-            </div>
-
-            <!-- Seringa atualizada -->
-            <div class="nav-item" onclick="selecionarAbaNav(this, 'vacinas')">
-                <div class="nav-icon-box">
-                    <svg viewBox="0 0 24 24"><path d="M3 21l6-6 M14 6l-7 7a2.82 2.82 0 0 0 4 4l7-7Z M12 8l2 2 M9 11l2 2 M16 8l3-3 M17 3l4 4"/></svg>
-                </div>
-                <span>Vacinas</span>
-            </div>
-
-            <div class="nav-item" onclick="selecionarAbaNav(this, 'consultas')">
-                <div class="nav-icon-box">
-                    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                </div>
-                <span>Consultas</span>
-            </div>
-
-            <!-- Ponto vermelho removido -->
-            <div class="nav-item" onclick="selecionarAbaNav(this, 'lembretes')">
-                <div class="nav-icon-box">
-                    <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-                </div>
-                <span>Lembretes</span>
-            </div>
-
-            <div class="nav-item" onclick="selecionarAbaNav(this, 'clinicas')">
-                <div class="nav-icon-box">
-                    <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                </div>
-                <span>Clínicas</span>
-            </div>
-
-            <div class="nav-item" onclick="selecionarAbaNav(this, 'perdidos')">
-                <div class="nav-icon-box">
-                    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                </div>
-                <span>Mural</span>
-            </div>
-
-            <div class="nav-item" onclick="selecionarAbaNav(this, 'racas')">
-                <div class="nav-icon-box">
-                    <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zm20 0h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-                </div>
-                <span>Info</span>
-            </div>
-
-            <div class="nav-item" onclick="selecionarAbaNav(this, 'resgate')">
-                <div class="nav-icon-box">
-                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
-                </div>
-                <span>Resgate</span>
-            </div>
-
-            <div class="nav-item" onclick="selecionarAbaNav(this, 'quem-somos')">
-                <div class="nav-icon-box">
-                    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                </div>
-                <span>Origem</span>
-            </div>
-
-            <!-- Configurações atualizado -->
-            <div class="nav-item" onclick="selecionarAbaNav(this, 'config')">
-                <div class="nav-icon-box">
-                    <svg viewBox="0 0 24 24"><path d="M15 4v5 M15 15h5 M9 15v5 M4 9h5 M9 5v0.1 M19 9v0.1 M15 19v0.1 M5 15v0.1"/></svg>
-                </div>
-                <span>Config.</span>
-            </div>
-
-        </nav>
+        <div id="menu-inferior-container"></div>
 
     </div>
 
-    <!-- MODAL: ADICIONAR PET (BOTTOM SHEET) -->
     <div id="modalAddPet" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
@@ -840,6 +673,7 @@
         </div>
     </div>
 
+    <script src="navbar.js"></script>
     <script>
         let petAtivoId = null;
 
@@ -896,19 +730,13 @@
         }
 
         function abrirFuncao(nomeFuncao) { window.AppInventor && window.AppInventor.setWebViewString("MENU|" + nomeFuncao + "|" + petAtivoId); }
-        function navegarAbas(aba) { window.AppInventor && window.AppInventor.setWebViewString("NAV|" + aba); }
         function abrirPerfilAtual() { if(petAtivoId && window.AppInventor) window.AppInventor.setWebViewString("PET|PERFIL|" + petAtivoId); }
-
-        function selecionarAbaNav(elemento, nomeAba) {
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            elemento.classList.add('active');
-            navegarAbas(nomeAba);
-        }
 
         window.addEventListener('DOMContentLoaded', () => {
             if(!window.AppInventor) mostrarEstadoVazio();
             configurarArrastoIntuitivo('scrollCarrossel');
-            configurarArrastoIntuitivo('bottomNav');
+            // Inicializa a Navbar Modular e acende a aba da Home
+            carregarMenuInferior('home');
         });
 
         function abrirModalAddPet() { document.getElementById('modalAddPet').classList.add('active'); }
@@ -956,6 +784,7 @@
         /* CONFIGURAÇÃO DO GESTO DE ARRASTAR NATIVO/INTUITIVO DO SMARTPHONE */
         function configurarArrastoIntuitivo(idElemento) {
             const elemento = document.getElementById(idElemento);
+            if (!elemento) return; // Segurança caso o elemento não exista ainda
             let estaClicado = false;
             let posicaoXInicial;
             let rolagemEsquerdaInicial;
