@@ -19,12 +19,13 @@
             background-color: #FFF9F1;
             font-family: 'Inter', sans-serif;
             color: #000000;
-            padding-bottom: 110px;
+            padding-bottom: 110px; 
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             overflow-x: hidden;
+            margin: 0; 
         }
 
         .app-container {
@@ -32,15 +33,18 @@
             max-width: 390px;
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
-        /* 1. HEADER LARANJA */
+        /* 1. HEADER LARANJA TOTALMENTE GRUDADO NO TOPO */
         .orange-header {
             background-color: #FF7A00;
             border-bottom-left-radius: 40px;
             border-bottom-right-radius: 40px;
-            padding: 24px 20px 32px 20px;
+            padding: 48px 20px 32px 20px; 
             width: 100%;
+            margin-top: 0;
+            top: 0;
         }
 
         .header-top {
@@ -59,8 +63,9 @@
 
         .header-top h1 {
             font-family: 'Poppins', sans-serif;
-            font-size: 22px;
+            font-size: 24px;
             font-weight: 700;
+            letter-spacing: -0.5px;
         }
 
         .sos-badge {
@@ -94,8 +99,8 @@
         }
 
         .pet-img-box {
-            width: 62px;
-            height: 62px;
+            width: 66px;
+            height: 66px;
             border-radius: 20px;
             border: 2px solid #FFFFFF;
             overflow: hidden;
@@ -117,12 +122,12 @@
             font-size: 24px;
         }
 
-        /* 2. CARD DO PET SELECIONADO (Agora respirando perfeitamente) */
+        /* 2. CARD DO PET SELECIONADO */
         .pet-info-card {
             background-color: #FFFFFF;
             border-radius: 28px;
             padding: 24px 20px;
-            margin: 24px 20px; /* Margem ajustada para dar o respiro visual */
+            margin: 24px 20px; 
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.02);
         }
 
@@ -185,7 +190,7 @@
             cursor: pointer;
         }
 
-        /* 3. ACESSO RÁPIDO - CARROSSEL ARRASTÁVEL */
+        /* 3. ACESSO RÁPIDO - CARROSSEL AINDA MAIOR */
         .section-title-container {
             padding: 4px 20px 12px 20px;
         }
@@ -204,23 +209,22 @@
             cursor: grab;
         }
         
-        .scroll-outer-wrapper:active {
-            cursor: grabbing;
-        }
-        
+        .scroll-outer-wrapper:active { cursor: grabbing; }
         .scroll-outer-wrapper::-webkit-scrollbar { display: none; }
 
+        /* A GRADE AJUSTADA: 2 Linhas, Altura e Largura expandidas */
         .grid-scroll-container {
             display: grid;
-            grid-template-columns: repeat(5, 135px);
-            grid-template-rows: repeat(2, 125px);
+            grid-template-rows: repeat(2, 140px); /* Aumentado para 140px */
+            grid-auto-flow: column;
+            grid-auto-columns: 168px; /* Aumentado para 168px */
             gap: 14px;
             width: max-content;
         }
 
         .quick-card {
             border-radius: 20px;
-            padding: 16px;
+            padding: 18px 16px; /* Ajuste no preenchimento interno */
             color: #FFFFFF;
             display: flex;
             flex-direction: column;
@@ -234,9 +238,11 @@
         }
 
         .quick-card:active { transform: scale(0.96); }
-        .quick-card svg { width: 24px; height: 24px; fill: #FFFFFF; pointer-events: none; }
-        .quick-card .title { font-size: 13px; font-weight: 700; line-height: 1.3; margin-top: auto; pointer-events: none; }
-        .quick-card .desc { font-size: 10px; opacity: 0.9; margin-top: 2px; font-weight: 500; pointer-events: none; }
+        
+        /* Ícones e fontes levemente maiores para acompanhar o tamanho do cartão */
+        .quick-card svg { width: 28px; height: 28px; fill: #FFFFFF; pointer-events: none; }
+        .quick-card .title { font-size: 15px; font-weight: 700; line-height: 1.3; margin-top: auto; pointer-events: none; }
+        .quick-card .desc { font-size: 12px; opacity: 0.9; margin-top: 2px; font-weight: 500; pointer-events: none; }
 
         /* Cores Originais */
         .c-saude { background-color: #FF5874; }
@@ -282,7 +288,7 @@
             transform: translateX(-50%);
             width: 100%;
             max-width: 390px;
-            height: 76px;
+            height: 80px; 
             background-color: #FFFFFF;
             border-top-left-radius: 24px;
             border-top-right-radius: 24px;
@@ -290,7 +296,8 @@
             display: flex;
             justify-content: space-around;
             align-items: center;
-            z-index: 100;
+            z-index: 9999; 
+            padding-bottom: 8px; 
         }
 
         .nav-item {
@@ -313,6 +320,7 @@
 
     <div class="app-container">
         
+        <!-- Topo Laranja Grudado -->
         <div class="orange-header">
             <div class="header-top">
                 <div>
@@ -322,6 +330,7 @@
                 <div class="sos-badge" onclick="abrirFuncao('sos')">SOS</div>
             </div>
 
+            <!-- Seleção Dinâmica de Pets -->
             <div id="petsRow" class="pets-select-row">
                 <div class="pet-selector-item" onclick="solicitarNovoPet()">
                     <div class="pet-img-box add-btn">+</div>
@@ -330,6 +339,7 @@
             </div>
         </div>
 
+        <!-- Card Dinâmico do Pet -->
         <div id="petInfoCard" class="pet-info-card">
             <div class="card-pet-header">
                 <h2 id="placeholderNome">Seu Pet</h2>
@@ -357,6 +367,7 @@
             </div>
         </div>
 
+        <!-- Acesso Rápido - Cards Ajustados e Maiores -->
         <div class="section-title-container">
             <h2 class="section-title">Acesso Rápido</h2>
         </div>
@@ -417,6 +428,7 @@
             </div>
         </div>
 
+        <!-- 4. Lembretes Ativos -->
         <div class="reminders-section">
             <div class="reminders-header">
                 <h3>Lembretes Ativos</h3>
@@ -429,6 +441,7 @@
             </div>
         </div>
 
+        <!-- 5. Barra Inferior Fixa Invencível -->
         <nav class="bottom-nav">
             <div class="nav-item active">
                 <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
@@ -445,6 +458,10 @@
             <div class="nav-item" onclick="navegarAbas('consultas')">
                 <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
                 <span>Consultas</span>
+            </div>
+            <div class="nav-item" onclick="navegarAbas('lembretes')">
+                <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+                <span>Lembretes</span>
             </div>
         </nav>
 
@@ -520,9 +537,7 @@
             if(!window.AppInventor) mostrarEstadoVazio();
         });
 
-        // ----------------------------------------------------
         // LÓGICA DE ARRASTAR PARA ROLAR (Drag to Scroll) NO PC
-        // ----------------------------------------------------
         const slider = document.getElementById('scrollCarrossel');
         let isDown = false;
         let startX;
