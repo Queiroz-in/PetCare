@@ -776,10 +776,15 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            if (!window.AppInventor) {
-                // Fora do app (navegador): carrega os pets salvos localmente
-                const pets = petcareObterPets();
-                atualizarDadosDosPets(petcareFormatoHome([...pets].reverse()));
+            // Mostra na hora o que já está em cache local (evita tela vazia enquanto busca no banco)
+            const petsCache = petcareObterPets();
+            if (petsCache.length > 0) {
+                atualizarDadosDosPets(petcareFormatoHome([...petsCache].reverse()));
+            }
+            if (window.AppInventor) {
+                enviarComando("BUSCAR_PETS", "pets", {});
+            } else if (petsCache.length === 0) {
+                mostrarEstadoVazio();
             }
             configurarArrastoIntuitivo('scrollCarrossel');
             // Inicializa a Navbar Modular e acende a aba da Home
@@ -824,21 +829,27 @@
                 return;
             }
 
-            const stringDados = `NOVO_PET|${tipo}|${nome}|${sexo}|${raca}|${nasc}|${peso}|${cor}|${castrado}|${microchip}|${alergias}`;
+            // Atualiza local (cache otimista) e mostra na hora
+            petcareAdicionarPet({ tipo, nome, sexo, raca, nascimento: nasc, peso, cor, castrado, microchip, alergias });
+            const pets = petcareObterPets();
+            atualizarDadosDosPets(petcareFormatoHome([...pets].reverse()));
 
+            // Sincroniza com o banco de verdade (Firebase via App Inventor)
             if (window.AppInventor) {
-                // App real: o TinyDB salva e o app deve chamar atualizarDadosDosPets(...) de volta
-                window.AppInventor.setWebViewString(stringDados);
-            } else {
-                // Fora do app (navegador): salva localmente e já atualiza a tela na hora
-                petcareAdicionarPet({ tipo, nome, sexo, raca, nascimento: nasc, peso, cor, castrado, microchip, alergias });
-                const pets = petcareObterPets();
-                atualizarDadosDosPets(petcareFormatoHome([...pets].reverse()));
-                console.log("Modo Web - pet salvo localmente:", stringDados);
+                enviarComando("SALVAR_PETS", "pets", pets);
             }
 
             limparFormularioPet();
             fecharModalAddPet();
+        }
+
+        // Usado na tela de Perfil (botão de excluir) - lê-modifica-grava a lista inteira
+        function excluirPet(petId) {
+            const pets = petcareExcluirPet(petId);
+            atualizarDadosDosPets(petcareFormatoHome([...pets].reverse()));
+            if (window.AppInventor) {
+                enviarComando("SALVAR_PETS", "pets", pets);
+            }
         }
 
         function limparFormularioPet() {

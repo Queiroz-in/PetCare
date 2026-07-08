@@ -306,15 +306,33 @@
 </div>
 
 <script src="navbar.js"></script>
+<script src="petsdb.js"></script>
 <script>
     window.addEventListener('DOMContentLoaded', () => {
         if (typeof carregarMenuInferior === "function") carregarMenuInferior('');
         montarListaIdiomas();
 
-        // Se estiver fora do app (testando no navegador), mostra um aviso
-        // de estado vazio em vez de inventar dados de um usuário fictício.
-        if (!window.AppInventor) {
+        // Mostra na hora o que já está em cache local
+        const contaCache = petcareObterConta();
+        if (contaCache) {
+            carregarDadosConta([contaCache.nome, contaCache.telefone, contaCache.email, contaCache.nascimento].join("|"));
+        } else {
             mostrarContaVazia();
+        }
+
+        const prefsCache = petcareObterPreferencias();
+        if (prefsCache) {
+            aplicarEstadoNotif('notif-icon-perdido', !!prefsCache.PERDIDO);
+            aplicarEstadoNotif('notif-icon-mural', !!prefsCache.MURAL);
+            aplicarEstadoNotif('notif-icon-lembretes', !!prefsCache.LEMBRETES);
+            idiomaSelecionado = prefsCache.idioma || 'pt-BR';
+            montarListaIdiomas();
+        }
+
+        // Busca os dados reais no banco, se estiver rodando dentro do app
+        if (window.AppInventor) {
+            enviarComando("BUSCAR_CONTA", "conta", {});
+            enviarComando("BUSCAR_PREFERENCIAS", "preferencias", {});
         }
     });
 
@@ -475,16 +493,32 @@
         atualizarConfig('IDIOMA', codigo);
     }
 
-    // ---------- Comandos para o MIT App Inventor (TinyDB) ----------
+    // ---------- Comandos para o banco (conta e preferências) ----------
+    const mapaCampoConta = { NOME: 'nome', TELEFONE: 'telefone', EMAIL: 'email', NASCIMENTO: 'nascimento', SENHA: 'senha' };
+
     function atualizarPerfil(campo, valor) {
-        if (window.AppInventor) window.AppInventor.setWebViewString("PERFIL|" + campo + "|" + valor);
-        else console.log("Salvando:", campo, valor);
+        const conta = petcareObterConta() || {};
+        const chave = mapaCampoConta[campo] || campo.toLowerCase();
+        conta[chave] = valor;
+        petcareSalvarConta(conta);
+
+        if (window.AppInventor) {
+            enviarComando("SALVAR_CONTA", "conta", conta);
+        }
     }
 
     function atualizarConfig(chave, status) {
-        const valor = (status === true || status === false) ? (status ? "ON" : "OFF") : status;
-        if (window.AppInventor) window.AppInventor.setWebViewString("CONFIG|" + chave + "|" + valor);
-        else console.log("Config alterada:", chave, valor);
+        const prefs = petcareObterPreferencias() || {};
+        if (chave === 'IDIOMA') {
+            prefs.idioma = status;
+        } else {
+            prefs[chave] = status; // true/false
+        }
+        petcareSalvarPreferencias(prefs);
+
+        if (window.AppInventor) {
+            enviarComando("SALVAR_PREFERENCIAS", "preferencias", prefs);
+        }
     }
 
     function sairDaConta() {

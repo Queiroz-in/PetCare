@@ -105,7 +105,7 @@
                 <p id="resRec" style="font-size:14px; line-height: 1.6; color: #333;"></p>
             </div>
             
-            <button class="btn-main">Salvar no histórico do Pet</button>
+            <button class="btn-main" onclick="salvarHistoricoDoPet()">Salvar no histórico do Pet</button>
             <button class="btn-outline" onclick="location.reload()">Nova verificação</button>
         </div>
     </main>
@@ -123,9 +123,10 @@
         if(typeof carregarMenuInferior === "function") {
             carregarMenuInferior('saude');
         }
-        if (!window.AppInventor) {
-            // Fora do app (navegador): carrega os pets salvos localmente
-            carregarPetsDoBanco(petcareFormatoSaude(petcareObterPets()));
+        // Mostra na hora o que já está em cache local
+        carregarPetsDoBanco(petcareFormatoSaude(petcareObterPets()));
+        if (window.AppInventor) {
+            enviarComando("BUSCAR_PETS", "pets", {});
         }
     });
 
@@ -133,6 +134,7 @@
     // 1. LÓGICA DE INTEGRAÇÃO COM BANCO DE DADOS (PETS)
     // ==========================================
     let petSelecionado = null;
+    let ultimoDiagnostico = null;
 
     function carregarPetsDoBanco(dadosString) {
         const container = document.getElementById('listaPetsContainer');
@@ -322,11 +324,38 @@
         let topDoencas = provaveis.slice(0, 4).join(" <br>• ");
         document.getElementById('resDoencas').innerHTML = "• " + topDoencas;
 
+        // Guarda o resultado pra poder salvar no histórico depois
+        // (mesmo formato que a tela de Perfil usa: tipo / gravidade / descricao / data)
+        const gravidadeTexto = ["Leve", "Leve", "Moderado", "Grave", "Grave"][nivelMax] || "Leve";
+        ultimoDiagnostico = {
+            tipo: "Sintoma",
+            gravidade: gravidadeTexto,
+            descricao: "Sintomas: " + marcados.join(', ') + ". Diagnóstico provável: " + provaveis.slice(0, 4).join(', ') + ". " + recBox.innerText,
+            data: new Date().toLocaleDateString('pt-BR')
+        };
+
         if (window.AppInventor) {
             window.AppInventor.setWebViewString("DIAGNOSTICO|" + petSelecionado + "|" + provaveis[0] + "|" + nivelMax);
         }
 
         changeView(3);
+    }
+
+    // Salva o diagnóstico atual no histórico de saúde do pet selecionado
+    function salvarHistoricoDoPet() {
+        if (!petSelecionado) { alert("Selecione um pet primeiro!"); return; }
+        if (!ultimoDiagnostico) { alert("Nenhuma análise feita ainda."); return; }
+
+        // Atualiza local (cache otimista)
+        petcareAdicionarHistorico(petSelecionado, ultimoDiagnostico);
+        const listaAtualizada = petcareObterHistorico(petSelecionado);
+
+        // Sincroniza com o banco de verdade (Firebase via App Inventor)
+        if (window.AppInventor) {
+            enviarComando("SALVAR_HISTORICO", "historico_" + petSelecionado, listaAtualizada);
+        }
+
+        alert("Registro salvo no histórico do pet!");
     }
 
     // 5. TRANSIÇÃO DE TELAS

@@ -367,6 +367,7 @@
 
     </div>
 
+    <script src="petsdb.js"></script>
     <script>
         // Animação de Entrada inicial
         window.addEventListener('DOMContentLoaded', function() {
@@ -462,8 +463,34 @@
             }
 
             if(temErro) return;
-            
-            enviarDadosApp("LOGIN|" + email + "|" + pass);
+
+            if (window.AppInventor) {
+                // Guarda o que foi digitado pra comparar quando o banco responder (ver aoReceberContaLogin)
+                window._loginTentativa = { email: email, senha: pass };
+                enviarComando("BUSCAR_CONTA", "conta", {});
+            } else {
+                // Fora do app (navegador): compara direto com o que está salvo localmente
+                const conta = petcareObterConta();
+                validarLogin(conta, email, pass);
+            }
+        }
+
+        // Chamada pela função mestra (receberDadosBanco) quando a tag "conta" volta do banco,
+        // MAS só depois de uma tentativa de login (pra não disparar em outras telas).
+        function aoReceberContaLogin(conta) {
+            if (!window._loginTentativa) return;
+            validarLogin(conta, window._loginTentativa.email, window._loginTentativa.senha);
+            window._loginTentativa = null;
+        }
+
+        function validarLogin(conta, email, pass) {
+            if (conta && conta.email === email && conta.senha === pass) {
+                window.location.href = "home.html";
+            } else {
+                aplicarErro('loginEmail', 'errLoginEmail');
+                aplicarErro('loginPassword', 'errLoginPassword');
+                alert("E-mail ou senha incorretos, ou conta ainda não cadastrada.");
+            }
         }
 
         // Validação e Envio de CADASTRO
@@ -488,8 +515,19 @@
             }
 
             if(temErro) return;
-            
-            enviarDadosApp("CADASTRO|" + nome + "|" + tel + "|" + dataNasc);
+
+            // Junta com o e-mail/senha digitados na etapa de login (mesma tela)
+            var email = document.getElementById('loginEmail').value.trim();
+            var pass = document.getElementById('loginPassword').value;
+
+            const conta = { nome: nome, telefone: tel, nascimento: dataNasc, email: email, senha: pass };
+            petcareSalvarConta(conta);
+
+            if (window.AppInventor) {
+                enviarComando("SALVAR_CONTA", "conta", conta);
+            }
+
+            window.location.href = "home.html";
         }
     </script>
 

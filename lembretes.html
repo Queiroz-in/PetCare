@@ -247,13 +247,13 @@
             carregarMenuInferior('lembretes'); 
         }
         
+        // Mostra na hora o que já está em cache local
+        carregarPetsLembretes(petcareFormatoSimples(petcareObterPets()));
+        carregarLembretes(JSON.stringify(petcareObterLembretes()));
+
         if (window.AppInventor) {
-            window.AppInventor.setWebViewString("LOAD_PETS_LEMBRETES");
-            setTimeout(() => { window.AppInventor.setWebViewString("LOAD_LEMBRETES"); }, 300);
-        } else {
-            // Fora do app (navegador): carrega os pets salvos localmente
-            carregarPetsLembretes(petcareFormatoSimples(petcareObterPets()));
-            carregarLembretes(""); // Lembretes em si continuam vazios até integrar de verdade
+            enviarComando("BUSCAR_PETS", "pets", {});
+            enviarComando("BUSCAR_LEMBRETES", "lembretes", {});
         }
     });
 
@@ -467,35 +467,38 @@
             status: "Ativo"
         };
 
-        if(window.AppInventor) {
-            window.AppInventor.setWebViewString("ADD_LEMBRETE|" + JSON.stringify(novoLembrete));
-            fecharModalAddLembrete();
-        } else {
-            lembretesCadastrados.unshift(novoLembrete);
-            renderizarListaLembretes();
-            fecharModalAddLembrete();
+        lembretesCadastrados.unshift(novoLembrete);
+        petcareSalvarLembretes(lembretesCadastrados);
+        renderizarListaLembretes();
+
+        if (window.AppInventor) {
+            enviarComando("SALVAR_LEMBRETES", "lembretes", lembretesCadastrados);
         }
+
+        fecharModalAddLembrete();
     }
 
     function alternarStatusLembrete(idLembrete) {
-        if(window.AppInventor) {
-            window.AppInventor.setWebViewString("TOGGLE_LEMBRETE|" + idLembrete);
-        } else {
-            let lem = lembretesCadastrados.find(l => l.id === idLembrete);
-            if(lem) {
-                lem.status = lem.status === "Ativo" ? "Pausado" : "Ativo";
-                renderizarListaLembretes();
-            }
+        let lem = lembretesCadastrados.find(l => l.id === idLembrete);
+        if(lem) {
+            lem.status = lem.status === "Ativo" ? "Pausado" : "Ativo";
+            petcareSalvarLembretes(lembretesCadastrados);
+            renderizarListaLembretes();
+        }
+
+        if (window.AppInventor) {
+            enviarComando("SALVAR_LEMBRETES", "lembretes", lembretesCadastrados);
         }
     }
 
     function excluirLembrete(idLembrete) {
         if(confirm("Tem certeza que deseja apagar este lembrete?")) {
-            if(window.AppInventor) {
-                window.AppInventor.setWebViewString("EXCLUIR_LEMBRETE|" + idLembrete);
-            } else {
-                lembretesCadastrados = lembretesCadastrados.filter(l => l.id !== idLembrete);
-                renderizarListaLembretes();
+            lembretesCadastrados = lembretesCadastrados.filter(l => l.id !== idLembrete);
+            petcareSalvarLembretes(lembretesCadastrados);
+            renderizarListaLembretes();
+
+            if (window.AppInventor) {
+                enviarComando("SALVAR_LEMBRETES", "lembretes", lembretesCadastrados);
             }
         }
     }

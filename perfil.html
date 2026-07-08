@@ -163,7 +163,7 @@
         <button class="icon-btn btn-voltar" onclick="window.history.back()">
             <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
         </button>
-        <button class="icon-btn btn-excluir" title="Excluir pet">
+        <button class="icon-btn btn-excluir" title="Excluir pet" onclick="excluirPetAtual()">
             <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
         </button>
         <div class="info-overlay">
@@ -292,21 +292,30 @@
 
         const petId = getPetIdDaUrl();
 
-        if (window.AppInventor && window.AppInventor.setWebViewString) {
-            // App real: pede pro App Inventor os dados completos deste pet.
-            // O app deve responder chamando carregarPerfilPet(jsonDoPet) via evaluatejavascript.
-            window.AppInventor.setWebViewString("PET|CARREGAR_PERFIL|" + petId);
+        // Mostra na hora o que já está em cache local
+        const pet = petcareObterPetPorId(petId) || petcareObterPets()[0];
+        if (pet) {
+            carregarPerfilPet(JSON.stringify(pet));
         } else {
-            // Fora do app (navegador): busca tudo localmente
-            const pet = petcareObterPetPorId(petId) || petcareObterPets()[0];
-            if (pet) {
-                carregarPerfilPet(JSON.stringify(pet));
-            } else {
-                document.getElementById('perfilNome').innerText = "Nenhum pet encontrado";
-                document.getElementById('perfilSubtitulo').innerText = "Volte e cadastre um pet primeiro";
-            }
+            document.getElementById('perfilNome').innerText = "Nenhum pet encontrado";
+            document.getElementById('perfilSubtitulo').innerText = "Volte e cadastre um pet primeiro";
+        }
+
+        // Busca os dados reais no banco, se estiver rodando dentro do app
+        if (window.AppInventor) {
+            enviarComando("BUSCAR_PETS", "pets", {});
         }
     });
+
+    // Chamada pela função mestra (receberDadosBanco) quando a lista de pets volta do banco.
+    // Encontra o pet desta tela dentro da lista e atualiza o perfil.
+    function aoReceberListaPets(lista) {
+        const petId = getPetIdDaUrl();
+        const pet = lista.find(p => String(p.id) === String(petId));
+        if (pet) {
+            carregarPerfilPet(JSON.stringify(pet));
+        }
+    }
 
     // Função pública chamada pelo App Inventor (ou pelo próprio JS local) com os
     // dados completos do pet em JSON.
@@ -339,7 +348,7 @@
     function carregarResumoEListas(petId) {
         const vacinas = petcareObterVacinas(petId);
         const historico = petcareObterHistorico(petId);
-        const consultas = petcareObterConsultas(petId);
+        const consultas = petcareObterConsultas().filter(c => c.idPet === petId);
 
         document.getElementById('resumoVacinas').innerText = vacinas.length;
         document.getElementById('resumoConsultas').innerText = consultas.length;
@@ -347,6 +356,36 @@
 
         renderizarVacinas(vacinas);
         renderizarHistorico(historico);
+
+        // Busca os dados reais no banco, se estiver rodando dentro do app
+        if (window.AppInventor) {
+            enviarComando("BUSCAR_VACINAS", "vacinas_" + petId, {});
+            enviarComando("BUSCAR_HISTORICO", "historico_" + petId, {});
+            enviarComando("BUSCAR_CONSULTAS", "consultas", {});
+        }
+    }
+
+    // Chamadas pela função mestra (receberDadosBanco) quando os dados voltam do banco
+    function carregarListaVacinasJSON(vacinasJsonString) {
+        let lista = [];
+        try { lista = JSON.parse(vacinasJsonString) || []; } catch (e) {}
+        document.getElementById('resumoVacinas').innerText = lista.length;
+        renderizarVacinas(lista);
+    }
+
+    function carregarHistoricoJSON(historicoJsonString) {
+        let lista = [];
+        try { lista = JSON.parse(historicoJsonString) || []; } catch (e) {}
+        document.getElementById('resumoOcorrencias').innerText = lista.length;
+        renderizarHistorico(lista);
+    }
+
+    function carregarConsultas(consultasJsonString) {
+        if (!petAtual) return;
+        let lista = [];
+        try { lista = JSON.parse(consultasJsonString) || []; } catch (e) {}
+        const doEstePet = lista.filter(c => c.idPet === petAtual.id);
+        document.getElementById('resumoConsultas').innerText = doEstePet.length;
     }
 
     function converterDataPerfil(dataStr) {
@@ -452,15 +491,33 @@
         const hoje = new Date();
         const dataFormatada = String(hoje.getDate()).padStart(2,'0') + '/' + String(hoje.getMonth()+1).padStart(2,'0') + '/' + hoje.getFullYear();
 
-        const stringDados = `SALVAR_HISTORICO|${petAtual.id}|${tipo}|${gravidade}|${descricao}`;
+        // Atualiza local (cache otimista) e mostra na hora
+        petcareAdicionarHistorico(petAtual.id, { tipo, gravidade, descricao, data: dataFormatada });
+        const listaAtualizada = petcareObterHistorico(petAtual.id);
+        document.getElementById('resumoOcorrencias').innerText = listaAtualizada.length;
+        renderizarHistorico(listaAtualizada);
+
+        // Sincroniza com o banco de verdade (Firebase via App Inventor)
+        if (window.AppInventor) {
+            enviarComando("SALVAR_HISTORICO", "historico_" + petAtual.id, listaAtualizada);
+        }
+
+        fecharModalHistorico();
+    }
+
+    // Exclui o pet atual (botão de lixeira no topo) e volta pra Home
+    function excluirPetAtual() {
+        if (!petAtual) return;
+        if (!confirm(`Tem certeza que deseja excluir ${petAtual.nome}? Essa ação não pode ser desfeita.`)) return;
+
+        const listaAtualizada = petcareExcluirPet(petAtual.id);
 
         if (window.AppInventor) {
-            window.AppInventor.setWebViewString(stringDados);
+            enviarComando("SALVAR_PETS", "pets", listaAtualizada);
+            window.AppInventor.setWebViewString("NAV|home");
         } else {
-            petcareAdicionarHistorico(petAtual.id, { tipo, gravidade, descricao, data: dataFormatada });
-            carregarResumoEListas(petAtual.id);
+            window.location.href = "home.html";
         }
-        fecharModalHistorico();
     }
 </script>
 </body>

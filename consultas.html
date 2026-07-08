@@ -212,14 +212,13 @@
             carregarMenuInferior('consultas'); // Acende a aba Consultas na Navbar
         }
         
+        // Mostra na hora o que já está em cache local
+        carregarPetsConsultas(petcareFormatoSimples(petcareObterPets()));
+        carregarConsultas(JSON.stringify(petcareObterConsultas()));
+
         if (window.AppInventor) {
-            // Solicita dados do MIT App Inventor
-            window.AppInventor.setWebViewString("LOAD_PETS_CONSULTAS");
-            setTimeout(() => { window.AppInventor.setWebViewString("LOAD_CONSULTAS"); }, 300);
-        } else {
-            // Fora do app (navegador): carrega os pets salvos localmente
-            carregarPetsConsultas(petcareFormatoSimples(petcareObterPets()));
-            carregarConsultas("");
+            enviarComando("BUSCAR_PETS", "pets", {});
+            enviarComando("BUSCAR_CONSULTAS", "consultas", {});
         }
     });
 
@@ -432,34 +431,38 @@
             status: "Agendada"
         };
 
-        if(window.AppInventor) {
-            window.AppInventor.setWebViewString("ADD_CONSULTA|" + JSON.stringify(novaConsulta));
-            fecharModalAddConsulta();
-        } else {
-            // Web / Teste PC
-            consultasCadastradas.unshift(novaConsulta);
-            renderizarListaConsultas();
-            fecharModalAddConsulta();
+        // Atualiza local (cache otimista) e mostra na hora
+        consultasCadastradas.unshift(novaConsulta);
+        petcareSalvarConsultas(consultasCadastradas);
+        renderizarListaConsultas();
+
+        // Sincroniza com o banco de verdade (Firebase via App Inventor)
+        if (window.AppInventor) {
+            enviarComando("SALVAR_CONSULTAS", "consultas", consultasCadastradas);
         }
+
+        fecharModalAddConsulta();
     }
 
     function marcarComoConcluida(idConsulta) {
-        if(window.AppInventor) {
-            window.AppInventor.setWebViewString("CONCLUIR_CONSULTA|" + idConsulta);
-        } else {
-            let cons = consultasCadastradas.find(c => c.id === idConsulta);
-            if(cons) cons.status = "Concluída";
-            renderizarListaConsultas();
+        let cons = consultasCadastradas.find(c => c.id === idConsulta);
+        if(cons) cons.status = "Concluída";
+        petcareSalvarConsultas(consultasCadastradas);
+        renderizarListaConsultas();
+
+        if (window.AppInventor) {
+            enviarComando("SALVAR_CONSULTAS", "consultas", consultasCadastradas);
         }
     }
 
     function excluirConsulta(idConsulta) {
         if(confirm("Tem certeza que deseja apagar esta consulta?")) {
-            if(window.AppInventor) {
-                window.AppInventor.setWebViewString("EXCLUIR_CONSULTA|" + idConsulta);
-            } else {
-                consultasCadastradas = consultasCadastradas.filter(c => c.id !== idConsulta);
-                renderizarListaConsultas();
+            consultasCadastradas = consultasCadastradas.filter(c => c.id !== idConsulta);
+            petcareSalvarConsultas(consultasCadastradas);
+            renderizarListaConsultas();
+
+            if (window.AppInventor) {
+                enviarComando("SALVAR_CONSULTAS", "consultas", consultasCadastradas);
             }
         }
     }

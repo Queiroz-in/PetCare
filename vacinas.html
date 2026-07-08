@@ -221,12 +221,16 @@
             carregarMenuInferior('vacinas');
         }
         
-        if (window.AppInventor) {
-            // Avisa o AppInventor que a tela carregou e precisa que injete os pets via função
-            window.AppInventor.setWebViewString("LOAD_PETS_VACINA");
+        // Mostra na hora o que já está em cache local
+        const petsCache = petcareObterPets();
+        if (petsCache.length > 0) {
+            carregarPetsDaCarteira(petcareFormatoSimples(petsCache));
         } else {
-            // Fora do app (navegador): carrega os pets salvos localmente
-            carregarPetsDaCarteira(petcareFormatoSimples(petcareObterPets()));
+            carregarPetsDaCarteira("");
+        }
+
+        if (window.AppInventor) {
+            enviarComando("BUSCAR_PETS", "pets", {});
         }
     });
 
@@ -282,12 +286,10 @@
         document.getElementById('resumoNome').innerText = nome;
         document.getElementById('resumoAvatar').innerText = letra;
         
-        // Pede para o banco as vacinas deste pet específico
+        // Mostra na hora o que já está em cache local, e busca no banco se estiver no app
+        carregarListaVacinasJSON(JSON.stringify(petcareObterVacinas(id)));
         if (window.AppInventor) {
-            window.AppInventor.setWebViewString("BUSCAR_VACINAS|" + id);
-        } else {
-            // Fora do app (navegador): busca as vacinas salvas localmente
-            carregarListaVacinasJSON(JSON.stringify(petcareObterVacinas(id)));
+            enviarComando("BUSCAR_VACINAS", "vacinas_" + id, {});
         }
     }
 
@@ -439,20 +441,24 @@
             alert("Atenção: Nome, Data de Aplicação e Próxima Dose são obrigatórios.");
             return;
         }
-
-        const stringDados = `SALVAR_VACINA|${petAtivoId}|${nome}|${aplicacao}|${proxima}|${vet}|${clinica}|${lote}`;
-        
-        if(window.AppInventor) {
-            window.AppInventor.setWebViewString(stringDados);
-            fecharModalAddVacina();
-        } else {
-            // Fora do app (navegador): salva localmente e já atualiza a lista na hora
-            petcareAdicionarVacina(petAtivoId, { nome, aplicacao, proxima, vet, clinica, lote });
-            carregarListaVacinasJSON(JSON.stringify(petcareObterVacinas(petAtivoId)));
-            console.log("Modo Web - vacina salva localmente:", stringDados);
-            fecharModalAddVacina();
+        if (!petAtivoId) {
+            alert("Selecione um pet primeiro!");
+            return;
         }
+
+        // Atualiza local (cache otimista) e mostra na hora
+        petcareAdicionarVacina(petAtivoId, { nome, aplicacao, proxima, vet, clinica, lote });
+        const listaAtualizada = petcareObterVacinas(petAtivoId);
+        carregarListaVacinasJSON(JSON.stringify(listaAtualizada));
+
+        // Sincroniza com o banco de verdade (Firebase via App Inventor)
+        if (window.AppInventor) {
+            enviarComando("SALVAR_VACINAS", "vacinas_" + petAtivoId, listaAtualizada);
+        }
+
+        fecharModalAddVacina();
     }
 </script>
+
 </body>
 </html>
