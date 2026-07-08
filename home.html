@@ -501,7 +501,7 @@
         <div class="orange-header">
             <div class="header-top">
                 <div>
-                    <span>Olá!</span>
+                    <span data-i18n="home_ola">Olá!</span>
                     <h1>Bem-vindo ao PetCare</h1>
                 </div>
                 <div class="sos-badge" onclick="irParaEmergencia()">SOS</div>
@@ -510,7 +510,7 @@
             <div id="petsRow" class="pets-select-row">
                 <div class="pet-selector-item item-fixo" onclick="abrirModalAddPet()">
                     <div class="pet-img-box add-btn">+</div>
-                    <span>Adicionar</span>
+                    <span data-i18n="home_adicionar">Adicionar</span>
                 </div>
             </div>
         </div>
@@ -518,7 +518,7 @@
         <div id="petInfoCard" class="pet-info-card">
             <div class="card-pet-header">
                 <h2 id="placeholderNome">Seu Pet</h2>
-                <a href="#" class="ver-perfil-link" onclick="abrirPerfilAtual()">Ver perfil ❯</a>
+                <a href="#" class="ver-perfil-link" onclick="abrirPerfilAtual()" data-i18n="home_ver_perfil">Ver perfil ❯</a>
             </div>
             
             <div class="pet-stats-grid">
@@ -543,7 +543,7 @@
         </div>
 
         <div class="section-title-container">
-            <h2 class="section-title">Acesso Rápido</h2>
+            <h2 class="section-title" data-i18n="home_acesso_rapido">Acesso Rápido</h2>
         </div>
 
         <div class="scroll-outer-wrapper" id="scrollCarrossel">
@@ -604,12 +604,12 @@
 
         <div class="reminders-section">
             <div class="reminders-header">
-                <h3>Lembretes Ativos</h3>
-                <span class="ver-todos-link" onclick="abrirFuncao('lembretes')">Ver todos ❯</span>
+                <h3 data-i18n="home_lembretes_ativos">Lembretes Ativos</h3>
+                <span class="ver-todos-link" onclick="abrirFuncao('lembretes')" data-i18n="home_ver_todos">Ver todos ❯</span>
             </div>
             <div id="listaLembretes">
                 <div class="empty-reminders">
-                    Nenhum lembrete para hoje.
+                    <span data-i18n="home_nenhum_lembrete">Nenhum lembrete para hoje.</span>
                 </div>
             </div>
         </div>
@@ -689,6 +689,8 @@
 
     <script src="navbar.js"></script>
     <script src="petsdb.js"></script>
+    <script src="i18n.js"></script>
+    <script src="validacao.js"></script>
     <script>
         let petAtivoId = null;
 
@@ -699,7 +701,7 @@
             container.innerHTML = `
                 <div class="pet-selector-item item-fixo" onclick="abrirModalAddPet()">
                     <div class="pet-img-box add-btn">+</div>
-                    <span>Adicionar</span>
+                    <span data-i18n="home_adicionar">Adicionar</span>
                 </div>
             `;
             pets.forEach((petRaw, index) => {
@@ -720,6 +722,7 @@
                 container.appendChild(item);
                 if (index === 0) carregarEstatisticasPet(info);
             });
+            if (typeof aplicarTraducoes === "function") aplicarTraducoes();
         }
 
         function carregarEstatisticasPet(info) {
@@ -789,6 +792,7 @@
             configurarArrastoIntuitivo('scrollCarrossel');
             // Inicializa a Navbar Modular e acende a aba da Home
             carregarMenuInferior('home');
+            if (typeof aplicarTraducoes === "function") aplicarTraducoes();
         });
 
         function abrirModalAddPet() { document.getElementById('modalAddPet').classList.add('active'); }
@@ -824,10 +828,24 @@
             const microchip = document.getElementById('addMicrochip').value.trim();
             const alergias = document.getElementById('addAlergias').value.trim();
 
-            if (!nome) {
-                alert("Digite o nome do pet antes de salvar.");
-                return;
-            }
+            // ---------- Validação ----------
+            const vNome = validarNome(nome);
+            if (!vNome.valido) { alert(vNome.mensagem); return; }
+
+            const vRaca = validarTextoLivre(raca, { max: 40 });
+            if (!vRaca.valido) { alert(vRaca.mensagem); return; }
+
+            const vCor = validarTextoLivre(cor, { max: 40 });
+            if (!vCor.valido) { alert(vCor.mensagem); return; }
+
+            const vAlergias = validarTextoLivre(alergias, { max: 150 });
+            if (!vAlergias.valido) { alert(vAlergias.mensagem); return; }
+
+            const vNasc = validarDataNascimento(nasc);
+            if (!vNasc.valido) { alert(vNasc.mensagem); return; }
+
+            const vPeso = validarPeso(peso);
+            if (!vPeso.valido) { alert(vPeso.mensagem); return; }
 
             // Atualiza local (cache otimista) e mostra na hora
             petcareAdicionarPet({ tipo, nome, sexo, raca, nascimento: nasc, peso, cor, castrado, microchip, alergias });

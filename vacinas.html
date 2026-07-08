@@ -213,6 +213,7 @@
 
 <script src="navbar.js"></script>
 <script src="petsdb.js"></script>
+<script src="validacao.js"></script>
 <script>
     let petAtivoId = null;
 
@@ -445,6 +446,18 @@
             alert("Selecione um pet primeiro!");
             return;
         }
+
+        // ---------- Validação ----------
+        const vNome = validarTextoLivre(nome, { max: 60, obrigatorio: true });
+        if (!vNome.valido) { alert(vNome.mensagem); return; }
+
+        // Aplicação: precisa ter acontecido (não pode ser no futuro), e não pode ser antiga demais
+        const vAplicacao = validarDataPassadaRecente(aplicacao, { maxAnosNoPassado: 25 });
+        if (!vAplicacao.valido) { alert("Data de Aplicação: " + vAplicacao.mensagem); return; }
+
+        // Próxima dose: precisa ser uma data futura plausível
+        const vProxima = validarDataFutura(proxima, { maxAnosNoFuturo: 10 });
+        if (!vProxima.valido) { alert("Próxima Dose: " + vProxima.mensagem); return; }
 
         // Atualiza local (cache otimista) e mostra na hora
         petcareAdicionarVacina(petAtivoId, { nome, aplicacao, proxima, vet, clinica, lote });

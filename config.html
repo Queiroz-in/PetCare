@@ -97,19 +97,19 @@
 
 <div class="app-container">
     <header class="header-config">
-        <h2>Configurações</h2>
-        <p>Personalize suas preferências</p>
+        <h2 data-i18n="config_titulo">Configurações</h2>
+        <p data-i18n="config_subtitulo">Personalize suas preferências</p>
     </header>
 
     <main class="view-content">
-        <div class="section-title">Opções</div>
+        <div class="section-title" data-i18n="config_opcoes">Opções</div>
         <div class="config-card">
 
             <!-- CONTA -->
             <div class="config-item" data-section="conta" onclick="toggleSection('conta')">
                 <div class="item-label">
                     <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                    Conta
+                    <span data-i18n="config_conta">Conta</span>
                 </div>
                 <svg class="chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
             </div>
@@ -117,7 +117,7 @@
                 <div class="panel-inner">
 
                     <div class="field-row">
-                        <span class="field-label">Nome</span>
+                        <span class="field-label" data-i18n="config_nome">Nome</span>
                         <div class="field-edit-wrap">
                             <span class="field-value" data-display="nome">Carregando...</span>
                             <input type="text" class="edit-input" data-input="nome" value="" style="display:none;" onblur="salvarCampo('NOME','nome')">
@@ -128,7 +128,7 @@
                     </div>
 
                     <div class="field-row">
-                        <span class="field-label">Telefone</span>
+                        <span class="field-label" data-i18n="config_telefone">Telefone</span>
                         <div class="field-edit-wrap">
                             <span class="field-value" data-display="telefone">Carregando...</span>
                             <input type="text" class="edit-input" data-input="telefone" value="" style="display:none;" onblur="salvarCampo('TELEFONE','telefone')">
@@ -139,7 +139,7 @@
                     </div>
 
                     <div class="field-row">
-                        <span class="field-label">E-mail</span>
+                        <span class="field-label" data-i18n="config_email">E-mail</span>
                         <div class="field-edit-wrap">
                             <span class="field-value" data-display="email">Carregando...</span>
                             <input type="text" class="edit-input" data-input="email" value="" style="display:none; width:180px;" onblur="salvarCampo('EMAIL','email')">
@@ -150,7 +150,7 @@
                     </div>
 
                     <div class="field-row">
-                        <span class="field-label">Data de Nascimento</span>
+                        <span class="field-label" data-i18n="config_nascimento">Data de Nascimento</span>
                         <div class="field-edit-wrap">
                             <span class="field-value" data-display="nascimento">Carregando...</span>
                             <input type="text" class="edit-input" data-input="nascimento" value="" style="display:none;" onblur="salvarCampo('NASCIMENTO','nascimento')">
@@ -161,7 +161,7 @@
                     </div>
 
                     <div class="field-row">
-                        <span class="field-label">Senha</span>
+                        <span class="field-label" data-i18n="config_senha">Senha</span>
                         <div class="field-edit-wrap">
                             <span class="field-value" data-display="senha">••••••••••••</span>
                             <input type="password" class="edit-input" data-input="senha" value="" placeholder="Nova senha" style="display:none;" onblur="salvarCampo('SENHA','senha')">
@@ -178,33 +178,33 @@
             <div class="config-item" data-section="notif" onclick="toggleSection('notif')">
                 <div class="item-label">
                     <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-                    Notificações
+                    <span data-i18n="config_notificacoes">Notificações</span>
                 </div>
                 <svg class="chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
             </div>
             <div class="panel" id="panel-notif">
                 <div class="panel-inner">
-                    <div class="notif-title">Receber notificações:</div>
+                    <div class="notif-title" data-i18n="config_receber_notif">Receber notificações:</div>
 
                     <div class="notif-row">
                         <span class="notif-icon off" id="notif-icon-perdido" onclick="toggleNotif('PERDIDO','notif-icon-perdido')">
                             <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
                         </span>
-                        <span class="notif-text">Quando se aproximar de um animal perdido</span>
+                        <span class="notif-text" data-i18n="config_notif_perdido">Quando se aproximar de um animal perdido</span>
                     </div>
 
                     <div class="notif-row">
                         <span class="notif-icon off" id="notif-icon-mural" onclick="toggleNotif('MURAL','notif-icon-mural')">
                             <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
                         </span>
-                        <span class="notif-text">Quando receber mensagens do mural</span>
+                        <span class="notif-text" data-i18n="config_notif_mural">Quando receber mensagens do mural</span>
                     </div>
 
                     <div class="notif-row">
                         <span class="notif-icon off" id="notif-icon-lembretes" onclick="toggleNotif('LEMBRETES','notif-icon-lembretes')">
                             <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
                         </span>
-                        <span class="notif-text">Em datas de lembretes, consultas e vencimento de vacinas</span>
+                        <span class="notif-text" data-i18n="config_notif_lembretes">Em datas de lembretes, consultas e vencimento de vacinas</span>
                     </div>
                 </div>
             </div>
@@ -213,7 +213,7 @@
             <div class="config-item" data-section="idioma" onclick="toggleSection('idioma')">
                 <div class="item-label">
                     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20z"/></svg>
-                    Idioma
+                    <span data-i18n="config_idioma">Idioma</span>
                 </div>
                 <svg class="chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
             </div>
@@ -227,7 +227,7 @@
             <div class="config-item" data-section="privacidade" onclick="toggleSection('privacidade')">
                 <div class="item-label">
                     <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                    Política de Privacidade
+                    <span data-i18n="config_privacidade">Política de Privacidade</span>
                 </div>
                 <svg class="chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
             </div>
@@ -261,13 +261,13 @@
             <div class="config-item" data-section="localizacao" onclick="toggleSection('localizacao')">
                 <div class="item-label">
                     <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    Informação de Localização
+                    <span data-i18n="config_localizacao">Informação de Localização</span>
                 </div>
                 <svg class="chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
             </div>
             <div class="panel" id="panel-localizacao">
                 <div class="panel-inner">
-                    <div class="loc-intro">Permitir uso da localização para:</div>
+                    <div class="loc-intro" data-i18n="config_permitir_local">Permitir uso da localização para:</div>
 
                     <div class="loc-row">
                         <span class="loc-check"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>
@@ -295,7 +295,7 @@
             <div class="config-item btn-sair no-border" onclick="sairDaConta()">
                 <div class="item-label">
                     <svg viewBox="0 0 24 24" style="stroke:var(--red)"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
-                    Sair da Conta
+                    <span data-i18n="config_sair">Sair da Conta</span>
                 </div>
             </div>
 
@@ -307,10 +307,12 @@
 
 <script src="navbar.js"></script>
 <script src="petsdb.js"></script>
+<script src="i18n.js"></script>
 <script>
     window.addEventListener('DOMContentLoaded', () => {
         if (typeof carregarMenuInferior === "function") carregarMenuInferior('');
         montarListaIdiomas();
+        if (typeof aplicarTraducoes === "function") aplicarTraducoes();
 
         // Mostra na hora o que já está em cache local
         const contaCache = petcareObterConta();
@@ -491,6 +493,10 @@
         idiomaSelecionado = codigo;
         montarListaIdiomas();
         atualizarConfig('IDIOMA', codigo);
+
+        // Troca os textos da tela na hora, sem precisar recarregar
+        if (typeof aplicarTraducoes === "function") aplicarTraducoes();
+        if (typeof carregarMenuInferior === "function") carregarMenuInferior(''); // atualiza a navbar também
     }
 
     // ---------- Comandos para o banco (conta e preferências) ----------

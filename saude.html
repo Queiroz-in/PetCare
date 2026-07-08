@@ -44,6 +44,7 @@
         
         .btn-main { width: 100%; padding: 18px; border: none; border-radius: 16px; font-weight: 700; font-size: 16px; margin-top: 24px; background: var(--pink); color: white; cursor: pointer; transition: 0.3s; }
         .btn-main:disabled { background: #E5E7EB; color: #9CA3AF; cursor: not-allowed; }
+        .btn-main.salvo { background: #34C759; }
         .btn-outline { width: 100%; padding: 18px; border: 2px solid var(--pink); border-radius: 16px; font-weight: 700; font-size: 16px; margin-top: 12px; background: transparent; color: var(--pink); cursor: pointer; }
         
         /* ESTILOS DOS PETS DINÂMICOS */
@@ -105,7 +106,7 @@
                 <p id="resRec" style="font-size:14px; line-height: 1.6; color: #333;"></p>
             </div>
             
-            <button class="btn-main" onclick="salvarHistoricoDoPet()">Salvar no histórico do Pet</button>
+            <button id="btnSalvarHistorico" class="btn-main" onclick="salvarHistoricoDoPet()">Salvar no histórico do Pet</button>
             <button class="btn-outline" onclick="location.reload()">Nova verificação</button>
         </div>
     </main>
@@ -355,7 +356,15 @@
             enviarComando("SALVAR_HISTORICO", "historico_" + petSelecionado, listaAtualizada);
         }
 
-        alert("Registro salvo no histórico do pet!");
+        // Feedback visual (botão fica verde por um instante), sem popup
+        const btn = document.getElementById('btnSalvarHistorico');
+        const textoOriginal = btn.innerText;
+        btn.classList.add('salvo');
+        btn.innerText = "Salvo no histórico ✓";
+        setTimeout(() => {
+            btn.classList.remove('salvo');
+            btn.innerText = textoOriginal;
+        }, 2000);
     }
 
     // 5. TRANSIÇÃO DE TELAS

@@ -200,6 +200,7 @@
 
 <script src="navbar.js"></script>
 <script src="petsdb.js"></script>
+<script src="validacao.js"></script>
 <script>
     let petsCadastrados = [];
     let consultasCadastradas = []; 
@@ -418,6 +419,19 @@
         const obs = document.getElementById('consObs').value;
 
         if(!data || !hora) { alert("Atenção: Data e Horário são obrigatórios."); return; }
+
+        // ---------- Validação ----------
+        const vData = validarDataFutura(data, { maxAnosNoFuturo: 3 });
+        if (!vData.valido) { alert(vData.mensagem); return; }
+
+        const vVet = validarTextoLivre(vet, { max: 60 });
+        if (!vVet.valido) { alert(vVet.mensagem); return; }
+
+        const vClinica = validarTextoLivre(clinica, { max: 60 });
+        if (!vClinica.valido) { alert(vClinica.mensagem); return; }
+
+        const vObs = validarTextoLivre(obs, { max: 300 });
+        if (!vObs.valido) { alert(vObs.mensagem); return; }
 
         const novaConsulta = {
             id: Math.random().toString(36).substr(2, 9),

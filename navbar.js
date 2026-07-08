@@ -90,7 +90,7 @@ function carregarMenuInferior(abaAtiva) {
                         <path d="M9 22V12h6v10"/>
                     </svg>
                 </div>
-                <span>Início</span>
+                <span>${typeof t === "function" ? t('nav_inicio') : 'Início'}</span>
             </div>
             
             <div class="nav-item-mod ${abaAtiva === 'saude' ? 'active' : ''}" onclick="navegarAbasGlobal('saude')">
@@ -99,7 +99,7 @@ function carregarMenuInferior(abaAtiva) {
                         <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                     </svg>
                 </div>
-                <span>Saúde</span>
+                <span>${typeof t === "function" ? t('nav_saude') : 'Saúde'}</span>
             </div>
             
             <div class="nav-item-mod ${abaAtiva === 'vacinas' ? 'active' : ''}" onclick="navegarAbasGlobal('vacinas')">
@@ -108,7 +108,7 @@ function carregarMenuInferior(abaAtiva) {
                         <path d="M3 21l6-6 M14 6l-7 7a2.82 2.82 0 0 0 4 4l7-7Z M12 8l2 2 M9 11l2 2 M16 8l3-3 M17 3l4 4"/>
                     </svg>
                 </div>
-                <span>Vacinas</span>
+                <span>${typeof t === "function" ? t('nav_vacinas') : 'Vacinas'}</span>
             </div>
             
             <div class="nav-item-mod ${abaAtiva === 'consultas' ? 'active' : ''}" onclick="navegarAbasGlobal('consultas')">
@@ -120,7 +120,7 @@ function carregarMenuInferior(abaAtiva) {
                         <line x1="3" y1="10" x2="21" y2="10"/>
                     </svg>
                 </div>
-                <span>Consultas</span>
+                <span>${typeof t === "function" ? t('nav_consultas') : 'Consultas'}</span>
             </div>
             
             <div class="nav-item-mod ${abaAtiva === 'lembretes' ? 'active' : ''}" onclick="navegarAbasGlobal('lembretes')">
@@ -131,7 +131,7 @@ function carregarMenuInferior(abaAtiva) {
                         <circle cx="18" cy="6" r="3.5" fill="#FF3B30" stroke="none" />
                     </svg>
                 </div>
-                <span>Lembretes</span>
+                <span>${typeof t === "function" ? t('nav_lembretes') : 'Lembretes'}</span>
             </div>
             
         </nav>

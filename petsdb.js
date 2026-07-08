@@ -190,6 +190,16 @@ function petcareSalvarLembretes(lista) {
     return lista;
 }
 
+const PETCARE_PERDIDOS_KEY = 'petcare_perdidos_v1';
+function petcareObterPerdidos() {
+    try { return JSON.parse(localStorage.getItem(PETCARE_PERDIDOS_KEY) || "[]"); }
+    catch (e) { return []; }
+}
+function petcareSalvarPerdidos(lista) {
+    localStorage.setItem(PETCARE_PERDIDOS_KEY, JSON.stringify(lista));
+    return lista;
+}
+
 
 /* ==========================================================
    4. CONTA DO USUÁRIO (um objeto só, global)
@@ -325,6 +335,13 @@ function receberDadosBanco(tag, valorRecebido) {
         petcareSalvarLembretes(lista);
         if (typeof carregarLembretes === "function") {
             carregarLembretes(JSON.stringify(lista));
+        }
+
+    } else if (tag === "perdidos") {
+        const lista = dados || [];
+        petcareSalvarPerdidos(lista);
+        if (typeof carregarPerdidosJSON === "function") {
+            carregarPerdidosJSON(JSON.stringify(lista));
         }
 
     } else if (tag === "conta") {

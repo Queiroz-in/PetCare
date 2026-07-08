@@ -233,6 +233,7 @@
 
 <script src="navbar.js"></script>
 <script src="petsdb.js"></script>
+<script src="validacao.js"></script>
 <script>
     let petsCadastrados = [];
     let lembretesCadastrados = []; 
@@ -453,6 +454,16 @@
         const data = document.getElementById('lemData').value.trim();
 
         if(!titulo || !hora || !data) { alert("Atenção: Título, Horário e Próxima Data são obrigatórios."); return; }
+
+        // ---------- Validação ----------
+        const vTitulo = validarTextoLivre(titulo, { max: 60, obrigatorio: true });
+        if (!vTitulo.valido) { alert(vTitulo.mensagem); return; }
+
+        const vDesc = validarTextoLivre(desc, { max: 200 });
+        if (!vDesc.valido) { alert(vDesc.mensagem); return; }
+
+        const vData = validarDataFutura(data, { maxAnosNoFuturo: 5 });
+        if (!vData.valido) { alert(vData.mensagem); return; }
 
         const novoLembrete = {
             id: Math.random().toString(36).substr(2, 9),

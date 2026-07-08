@@ -234,38 +234,6 @@
             opacity: 0.9;
         }
 
-        /* Botões Sociais */
-        .social-container {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .social-btn {
-            width: 100%;
-            background-color: #FFFFFF;
-            border: 1px solid #E5E7EB;
-            border-radius: 14px;
-            padding: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            font-family: 'Inter', sans-serif;
-            font-weight: 500;
-            font-size: 15px;
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-        }
-
-        .social-btn.google { color: #4285F4; }
-        .social-btn.instagram { color: #E1306C; }
-        .social-btn.linkedin { color: #0077B5; }
-        .social-btn.apple { color: #000000; }
-
-        .social-btn img { width: 20px; height: 20px; }
-
         /* Frase institucional inferior */
         .footer-text {
             font-family: 'Inter', sans-serif;
@@ -317,7 +285,7 @@
                     <label class="checkbox-label">
                         <input type="checkbox" id="remember"> Lembrar de mim
                     </label>
-                    <span class="forgot-password">Esqueceu sua Senha?</span>
+                    <span class="forgot-password" onclick="mudarEtapa('stepForgot')">Esqueceu sua Senha?</span>
                 </div>
 
                 <div class="toggle-container">
@@ -354,13 +322,38 @@
                 </div>
             </div>
 
-        </div>
+            <div id="stepForgot" class="form-step">
+                <h2>Esqueceu sua senha?</h2>
+                <p class="subtitle">Confirme seu e-mail cadastrado pra criar uma senha nova</p>
 
-        <div id="socialBox" class="social-container">
-            <button class="social-btn google"><img src="https://cdn-icons-png.flaticon.com/512/300/300221.png" alt="G"> Google</button>
-            <button class="social-btn instagram"><img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="I"> Instagram</button>
-            <button class="social-btn linkedin"><img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="L"> LinkedIn</button>
-            <button class="social-btn apple"><img src="https://cdn-icons-png.flaticon.com/512/0/747.png" alt="A"> Apple</button>
+                <div class="input-group">
+                    <label>E-mail cadastrado</label>
+                    <input type="email" id="forgotEmail" placeholder="usepetcare@gmail.com">
+                    <div class="error-text" id="errForgotEmail">Não encontramos uma conta com esse e-mail.</div>
+                </div>
+
+                <button type="button" class="btn-primary" id="btnVerificarEmail" onclick="verificarEmailRecuperacao()">Verificar E-mail</button>
+
+                <div id="blocoNovaSenha" style="display:none;">
+                    <div class="input-group">
+                        <label>Nova Senha</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="forgotNovaSenha" placeholder="**********">
+                            <span class="password-toggle" onclick="togglePassword('forgotNovaSenha', this)">
+                                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            </span>
+                        </div>
+                        <div class="error-text" id="errForgotSenha">A senha precisa ter pelo menos 6 caracteres.</div>
+                    </div>
+
+                    <button type="button" class="btn-primary" onclick="salvarNovaSenha()">Salvar Nova Senha</button>
+                </div>
+
+                <div class="toggle-container">
+                    Lembrou a senha? <span class="toggle-form" onclick="mudarEtapa('stepLogin')">Voltar pro Login</span>
+                </div>
+            </div>
+
         </div>
 
         <p class="footer-text">Amor, cuidado e bem-estar para quem você ama!</p>
@@ -371,6 +364,13 @@
     <script>
         // Animação de Entrada inicial
         window.addEventListener('DOMContentLoaded', function() {
+            // "Lembrar de mim": se já tem uma sessão salva, pula direto pra Home
+            const sessao = (typeof petcareObterSessao === "function") ? petcareObterSessao() : null;
+            if (sessao && sessao.ativa) {
+                window.location.href = "home.html";
+                return;
+            }
+
             setTimeout(function() {
                 document.getElementById('logo').classList.add('subiu');
                 document.getElementById('mainContent').classList.add('visivel');
@@ -420,18 +420,11 @@
             document.getElementById(errorId).style.display = 'block';
         }
 
-        // Alternar visualização entre Login e Cadastro
+        // Alternar visualização entre Login, Cadastro e Recuperação de Senha
         function mudarEtapa(idEtapa) {
             limparErros(); // Limpa erros ao mudar de tela
             document.querySelectorAll('.form-step').forEach(step => step.classList.remove('active'));
             document.getElementById(idEtapa).classList.add('active');
-            
-            var socialBox = document.getElementById('socialBox');
-            if(idEtapa === 'stepRegister') {
-                socialBox.style.display = 'none';
-            } else {
-                socialBox.style.display = 'flex';
-            }
         }
 
         // OTIMIZAÇÃO: Ponte segura para comunicação com o App Inventor (Evita quebrar no Site/Navegador comum)
@@ -478,13 +471,76 @@
         // Chamada pela função mestra (receberDadosBanco) quando a tag "conta" volta do banco,
         // MAS só depois de uma tentativa de login (pra não disparar em outras telas).
         function aoReceberContaLogin(conta) {
+            if (window._recuperacaoTentativa) {
+                const email = window._recuperacaoTentativa;
+                window._recuperacaoTentativa = null;
+                processarVerificacaoEmail(conta, email);
+                return;
+            }
             if (!window._loginTentativa) return;
             validarLogin(conta, window._loginTentativa.email, window._loginTentativa.senha);
             window._loginTentativa = null;
         }
 
+        // ---------- Esqueceu sua Senha ----------
+        function verificarEmailRecuperacao() {
+            limparErros();
+            const email = document.getElementById('forgotEmail').value.trim();
+            var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) { aplicarErro('forgotEmail', 'errForgotEmail'); return; }
+
+            if (window.AppInventor) {
+                window._recuperacaoTentativa = email;
+                enviarComando("BUSCAR_CONTA", "conta", {});
+            } else {
+                const conta = petcareObterConta();
+                processarVerificacaoEmail(conta, email);
+            }
+        }
+
+        function processarVerificacaoEmail(conta, email) {
+            if (conta && conta.email === email) {
+                document.getElementById('blocoNovaSenha').style.display = 'block';
+                document.getElementById('btnVerificarEmail').style.display = 'none';
+                document.getElementById('forgotEmail').disabled = true;
+            } else {
+                aplicarErro('forgotEmail', 'errForgotEmail');
+            }
+        }
+
+        function salvarNovaSenha() {
+            limparErros();
+            const novaSenha = document.getElementById('forgotNovaSenha').value;
+            if (!novaSenha || novaSenha.length < 6) { aplicarErro('forgotNovaSenha', 'errForgotSenha'); return; }
+
+            const conta = petcareObterConta() || {};
+            conta.senha = novaSenha;
+            petcareSalvarConta(conta);
+
+            if (window.AppInventor) {
+                enviarComando("SALVAR_CONTA", "conta", conta);
+            }
+
+            alert("Senha atualizada! Faça login com sua nova senha.");
+
+            // Reseta a etapa de recuperação e volta pro login
+            document.getElementById('blocoNovaSenha').style.display = 'none';
+            document.getElementById('btnVerificarEmail').style.display = 'block';
+            document.getElementById('forgotEmail').disabled = false;
+            document.getElementById('forgotEmail').value = '';
+            document.getElementById('forgotNovaSenha').value = '';
+            mudarEtapa('stepLogin');
+        }
+
         function validarLogin(conta, email, pass) {
             if (conta && conta.email === email && conta.senha === pass) {
+                // "Lembrar de mim": guarda uma sessão local pra pular o login da próxima vez
+                const lembrar = document.getElementById('remember').checked;
+                if (lembrar) {
+                    petcareSalvarSessao({ ativa: true, email: email });
+                } else {
+                    petcareLimparSessao();
+                }
                 window.location.href = "home.html";
             } else {
                 aplicarErro('loginEmail', 'errLoginEmail');

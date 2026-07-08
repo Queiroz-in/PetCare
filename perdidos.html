@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Animais Perdidos - PetCare</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --blue-header: #16305A;
+            --blue-action: #0076C4;
+            --creme: #FFF9F1;
+            --gray: #8E8E93;
+            --gray-light: #F3F4F6;
+            --text-dark: #1F2937;
+            --white: #FFFFFF;
+            --red: #FF3B30;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--creme); font-family: 'Inter', sans-serif; height: 100dvh; display: flex; justify-content: center; overflow: hidden; }
+        .app-container { width: 100%; max-width: 390px; height: 100%; display: flex; flex-direction: column; background-color: var(--creme); position: relative; }
+
+        .header-perdidos { background: var(--blue-header); padding: 40px 20px 24px; color: white; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; flex-shrink: 0; z-index: 10; }
+        .header-perdidos h2 { font-family: 'Poppins', sans-serif; font-size: 22px; margin-bottom: 4px; display: flex; align-items: center; gap: 10px; }
+        .header-perdidos h2 svg { width: 22px; height: 22px; stroke: white; fill: none; stroke-width: 2.2; }
+        .header-perdidos p { font-size: 13px; opacity: 0.85; }
+
+        .view-content { flex: 1; overflow-y: auto; padding: 16px 20px 110px; -webkit-overflow-scrolling: touch; }
+        .view-content::-webkit-scrollbar { display: none; }
+
+        .search-row { display: flex; gap: 10px; margin-bottom: 14px; }
+        .search-box { flex: 1; background: var(--white); border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; gap: 8px; border: 1px solid #ECECEC; }
+        .search-box svg { width: 16px; height: 16px; stroke: var(--gray); fill: none; stroke-width: 2; flex-shrink: 0; }
+        .search-box input { border: none; outline: none; font-size: 13px; width: 100%; font-family: 'Inter', sans-serif; background: transparent; }
+        .filter-btn { width: 44px; height: 44px; background: var(--white); border: 1px solid #ECECEC; border-radius: 14px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+        .filter-btn svg { width: 18px; height: 18px; stroke: var(--text-dark); fill: none; stroke-width: 2; }
+
+        .btn-reportar { width: 100%; background: var(--blue-action); color: white; font-weight: 700; font-size: 14px; padding: 15px; border-radius: 14px; border: none; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 18px; cursor: pointer; }
+        .btn-reportar svg { width: 16px; height: 16px; stroke: white; fill: none; stroke-width: 2.5; }
+        .btn-reportar:active { transform: scale(0.98); }
+
+        .filtro-especies { display: flex; gap: 8px; margin-bottom: 14px; overflow-x: auto; }
+        .filtro-especies::-webkit-scrollbar { display: none; }
+        .chip-especie { flex-shrink: 0; padding: 7px 14px; border-radius: 20px; background: var(--white); border: 1px solid #ECECEC; font-size: 12px; font-weight: 600; color: var(--gray); cursor: pointer; }
+        .chip-especie.active { background: var(--blue-header); color: white; border-color: var(--blue-header); }
+
+        .card-perdido { background: var(--white); border-radius: 20px; padding: 14px; margin-bottom: 14px; border: 1px solid #F0F0F0; box-shadow: 0 4px 12px rgba(0,0,0,0.03); cursor: pointer; }
+        .card-top { display: flex; gap: 12px; margin-bottom: 10px; }
+        .card-foto { width: 56px; height: 56px; border-radius: 14px; background: var(--gray-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; }
+        .card-foto svg { width: 26px; height: 26px; stroke: var(--gray); fill: none; stroke-width: 1.8; }
+        .card-info { flex: 1; min-width: 0; }
+        .card-nome { font-size: 15px; font-weight: 700; color: var(--text-dark); }
+        .card-raca { font-size: 12px; color: var(--gray); margin-bottom: 4px; }
+        .card-reporter { display: flex; align-items: center; gap: 5px; font-size: 11.5px; color: var(--blue-action); font-weight: 600; }
+        .card-reporter svg { width: 12px; height: 12px; stroke: var(--blue-action); fill: none; stroke-width: 2.2; }
+        .card-distancia { font-size: 11px; font-weight: 700; color: var(--blue-action); background: #EAF4FC; padding: 3px 9px; border-radius: 10px; flex-shrink: 0; height: fit-content; }
+
+        .card-detalhe { font-size: 12px; color: var(--text-dark); margin-bottom: 4px; line-height: 1.4; }
+        .card-detalhe b { font-weight: 700; }
+
+        .card-actions { display: flex; gap: 8px; margin-top: 10px; }
+        .btn-ligar-card, .btn-mapa-card { flex: 1; padding: 10px; border-radius: 12px; font-size: 12.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 6px; border: none; cursor: pointer; }
+        .btn-ligar-card { background: var(--blue-action); color: white; }
+        .btn-mapa-card { background: var(--white); color: var(--text-dark); border: 1px solid #E5E7EB; }
+        .btn-ligar-card svg, .btn-mapa-card svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.3; }
+
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--gray); font-size: 13px; }
+
+        /* Modal Reportar */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); display: none; align-items: flex-end; justify-content: center; z-index: 100; }
+        .modal-overlay.aberto { display: flex; }
+        .modal-box { background: var(--white); width: 100%; max-width: 390px; border-top-left-radius: 28px; border-top-right-radius: 28px; padding: 22px 20px; max-height: 88vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .modal-header h3 { font-family: 'Poppins', sans-serif; font-size: 17px; color: var(--text-dark); }
+        .modal-close { background: var(--gray-light); border: none; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; color: var(--gray); }
+
+        .campo-label { font-size: 12px; font-weight: 600; color: var(--gray); margin: 14px 0 6px; }
+        .campo-input { width: 100%; padding: 12px 14px; border: 1px solid #E5E7EB; border-radius: 12px; font-size: 13px; font-family: 'Inter', sans-serif; outline: none; }
+        textarea.campo-input { resize: none; min-height: 70px; }
+        .campo-row { display: flex; gap: 10px; }
+        .campo-row .campo-col { flex: 1; }
+
+        .pills-row { display: flex; gap: 8px; flex-wrap: wrap; }
+        .pill { padding: 9px 16px; border-radius: 20px; border: 1px solid #E5E7EB; font-size: 12.5px; font-weight: 600; color: var(--gray); cursor: pointer; }
+        .pill.active { background: var(--blue-header); color: white; border-color: var(--blue-header); }
+
+        .btn-salvar-perdido { width: 100%; background: var(--blue-action); color: white; font-weight: 700; font-size: 15px; padding: 16px; border-radius: 14px; border: none; margin-top: 20px; cursor: pointer; }
+
+        /* Modal Contato/Detalhe */
+        .contato-overlay { position: fixed; inset: 0; background: var(--blue-header); display: none; flex-direction: column; z-index: 200; }
+        .contato-overlay.aberto { display: flex; }
+        .contato-topo { padding: 48px 20px 24px; color: white; }
+        .contato-voltar { background: rgba(255,255,255,0.2); border: none; width: 36px; height: 36px; border-radius: 12px; color: white; font-size: 18px; margin-bottom: 20px; cursor: pointer; }
+        .contato-nome { font-family: 'Poppins', sans-serif; font-size: 22px; margin-bottom: 4px; }
+        .contato-reporter { font-size: 13px; opacity: 0.85; }
+        .contato-corpo { background: var(--creme); flex: 1; border-top-left-radius: 32px; border-top-right-radius: 32px; padding: 28px 20px; display: flex; flex-direction: column; align-items: center; }
+        .contato-telefone { font-family: 'Poppins', sans-serif; font-size: 20px; color: var(--text-dark); margin-bottom: 24px; }
+        .contato-botoes { width: 100%; display: flex; flex-direction: column; gap: 12px; }
+        .btn-contato-ligar, .btn-contato-msg { width: 100%; padding: 16px; border-radius: 14px; border: none; font-weight: 700; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; }
+        .btn-contato-ligar { background: var(--blue-action); color: white; }
+        .btn-contato-msg { background: var(--white); color: var(--text-dark); border: 1px solid #E5E7EB; }
+        .btn-contato-ligar svg, .btn-contato-msg svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 2.3; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <header class="header-perdidos">
+        <h2>
+            <svg viewBox="0 0 24 24"><path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0L12 5.34l-.77-.76a5.4 5.4 0 0 0-7.65 7.65L12 20.5l8.42-8.27a5.4 5.4 0 0 0 0-7.65z"/></svg>
+            Animais Perdidos
+        </h2>
+        <p>Mural de animais perdidos e contatos</p>
+    </header>
+
+    <main class="view-content">
+        <div class="search-row">
+            <div class="search-box">
+                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                <input type="text" id="campoBusca" placeholder="Buscar por nome, raça..." oninput="renderizarPerdidos()">
+            </div>
+            <div class="filter-btn" onclick="toggleFiltro()">
+                <svg viewBox="0 0 24 24"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>
+            </div>
+        </div>
+
+        <div class="filtro-especies" id="filtroEspecies" style="display:none;">
+            <div class="chip-especie active" data-especie="Todos" onclick="selecionarFiltro(this)">Todos</div>
+            <div class="chip-especie" data-especie="Cachorro" onclick="selecionarFiltro(this)">Cachorro</div>
+            <div class="chip-especie" data-especie="Gato" onclick="selecionarFiltro(this)">Gato</div>
+            <div class="chip-especie" data-especie="Pássaro" onclick="selecionarFiltro(this)">Pássaro</div>
+            <div class="chip-especie" data-especie="Outro" onclick="selecionarFiltro(this)">Outro</div>
+        </div>
+
+        <button class="btn-reportar" onclick="abrirModalReportar()">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Reportar Animal Perdido
+        </button>
+
+        <div id="listaPerdidos"></div>
+    </main>
+
+    <div id="menu-inferior-container"></div>
+</div>
+
+<!-- MODAL: Reportar Animal Perdido -->
+<div class="modal-overlay" id="modalReportar">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3>Reportar Animal Perdido</h3>
+            <button class="modal-close" onclick="fecharModalReportar()">✕</button>
+        </div>
+
+        <div class="campo-label">Tipo de Animal</div>
+        <div class="pills-row" id="grpTipoPerdido">
+            <div class="pill active" onclick="selecionarPill(this,'grpTipoPerdido')">Cachorro</div>
+            <div class="pill" onclick="selecionarPill(this,'grpTipoPerdido')">Gato</div>
+            <div class="pill" onclick="selecionarPill(this,'grpTipoPerdido')">Pássaro</div>
+            <div class="pill" onclick="selecionarPill(this,'grpTipoPerdido')">Hamster</div>
+            <div class="pill" onclick="selecionarPill(this,'grpTipoPerdido')">Coelho</div>
+            <div class="pill" onclick="selecionarPill(this,'grpTipoPerdido')">Outro</div>
+        </div>
+
+        <div class="campo-label">Nome</div>
+        <input type="text" class="campo-input" id="perdidoNome" placeholder="Ex: Sol, Mel, Théo...">
+
+        <div class="campo-label">Raça</div>
+        <input type="text" class="campo-input" id="perdidoRaca" placeholder="Ex: Vira-lata, Persa...">
+
+        <div class="campo-row">
+            <div class="campo-col">
+                <div class="campo-label">Data da Perda</div>
+                <input type="date" class="campo-input" id="perdidoData">
+            </div>
+            <div class="campo-col">
+                <div class="campo-label">Horário da Perda</div>
+                <input type="time" class="campo-input" id="perdidoHorario">
+            </div>
+        </div>
+
+        <div class="campo-label">Característica/Descrição</div>
+        <textarea class="campo-input" id="perdidoDescricao" placeholder="Ex: Perdido próximo à Praça do Centro, coleira azul..."></textarea>
+
+        <div class="campo-label">Local da Perda</div>
+        <input type="text" class="campo-input" id="perdidoLocal" placeholder="Ex: Vila Velha, ES">
+
+        <div class="campo-row">
+            <div class="campo-col">
+                <div class="campo-label">Seu Nome</div>
+                <input type="text" class="campo-input" id="perdidoSeuNome" placeholder="Seu nome">
+            </div>
+            <div class="campo-col">
+                <div class="campo-label">Seu Telefone</div>
+                <input type="text" class="campo-input" id="perdidoSeuTelefone" placeholder="(11) 98765-4321">
+            </div>
+        </div>
+
+        <button class="btn-salvar-perdido" onclick="salvarPerdido()">Publicar no Mural</button>
+    </div>
+</div>
+
+<!-- OVERLAY: Contato/Detalhe -->
+<div class="contato-overlay" id="overlayContato">
+    <div class="contato-topo">
+        <button class="contato-voltar" onclick="fecharContato()">←</button>
+        <div class="contato-nome" id="contatoNome">Sol</div>
+        <div class="contato-reporter" id="contatoReporter">Henrique Marçal</div>
+    </div>
+    <div class="contato-corpo">
+        <div class="contato-telefone" id="contatoTelefone">(11) 98765-4321</div>
+        <div class="contato-botoes">
+            <button class="btn-contato-ligar" onclick="ligarContatoAtual()">
+                <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                Ligar
+            </button>
+            <button class="btn-contato-msg" onclick="mensagemContatoAtual()">
+                <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                Mensagem
+            </button>
+        </div>
+    </div>
+</div>
+
+<script src="navbar.js"></script>
+<script src="petsdb.js"></script>
+<script src="i18n.js"></script>
+<script src="validacao.js"></script>
+<script>
+    let listaPerdidosAtual = [];
+    let filtroAtivo = 'Todos';
+    let contatoSelecionado = null;
+    let localizacaoUsuario = { lat: 0, lng: 0 };
+
+    // Fórmula de Haversine: calcula distância exata em metros usando GPS
+    // (mesma lógica usada em clinicas.html, pra manter consistência no app)
+    function calcularDistanciaMetros(lat1, lon1, lat2, lon2) {
+        const R = 6371e3;
+        const p1 = lat1 * Math.PI / 180;
+        const p2 = lat2 * Math.PI / 180;
+        const dp = (lat2 - lat1) * Math.PI / 180;
+        const dl = (lon2 - lon1) * Math.PI / 180;
+        const a = Math.sin(dp / 2) * Math.sin(dp / 2) +
+                  Math.cos(p1) * Math.cos(p2) * Math.sin(dl / 2) * Math.sin(dl / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    }
+
+    function formatarDistancia(metros) {
+        if (metros == null || isNaN(metros)) return "";
+        return metros > 1000 ? (metros / 1000).toFixed(1) + " km" : Math.round(metros) + " m";
+    }
+
+    function iniciarGeolocalizacao(aoTerminar) {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    localizacaoUsuario.lat = position.coords.latitude;
+                    localizacaoUsuario.lng = position.coords.longitude;
+                    if (aoTerminar) aoTerminar();
+                },
+                (error) => {
+                    console.warn("GPS negado. Usando localização de fallback.");
+                    localizacaoUsuario.lat = -20.1286;
+                    localizacaoUsuario.lng = -40.3078;
+                    if (aoTerminar) aoTerminar();
+                },
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+            );
+        } else {
+            localizacaoUsuario.lat = -20.1286;
+            localizacaoUsuario.lng = -40.3078;
+            if (aoTerminar) aoTerminar();
+        }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        if (typeof carregarMenuInferior === "function") carregarMenuInferior('');
+        if (typeof aplicarTraducoes === "function") aplicarTraducoes();
+
+        // Mostra na hora o que já está em cache local
+        listaPerdidosAtual = petcareObterPerdidos();
+
+        // Pega a localização do usuário primeiro, pra já mostrar a lista ordenada por proximidade
+        iniciarGeolocalizacao(() => renderizarPerdidos());
+
+        if (window.AppInventor) {
+            enviarComando("BUSCAR_PERDIDOS", "perdidos", {});
+        }
+    });
+
+    // Chamada pela função mestra (receberDadosBanco) quando os dados voltam do banco
+    function carregarPerdidosJSON(dadosJsonString) {
+        try { listaPerdidosAtual = JSON.parse(dadosJsonString) || []; }
+        catch (e) { listaPerdidosAtual = []; }
+        renderizarPerdidos();
+    }
+
+    function toggleFiltro() {
+        const el = document.getElementById('filtroEspecies');
+        el.style.display = (el.style.display === 'none') ? 'flex' : 'none';
+    }
+
+    function selecionarFiltro(el) {
+        document.querySelectorAll('#filtroEspecies .chip-especie').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
+        filtroAtivo = el.dataset.especie;
+        renderizarPerdidos();
+    }
+
+    function calcularTempoAtras(dataStr) {
+        if (!dataStr) return "";
+        const partes = dataStr.split("-"); // yyyy-mm-dd (input type=date)
+        if (partes.length !== 3) return dataStr;
+        return partes[2] + "/" + partes[1] + "/" + partes[0];
+    }
+
+    function renderizarPerdidos() {
+        const container = document.getElementById('listaPerdidos');
+        const lista = listaFiltradaOrdenada();
+
+        if (lista.length === 0) {
+            container.innerHTML = `<div class="empty-state">Nenhum animal perdido encontrado por aqui.<br>Seja o primeiro a ajudar publicando um caso.</div>`;
+            return;
+        }
+
+        container.innerHTML = lista.map((p, i) => `
+            <div class="card-perdido" onclick="abrirContato(${i})">
+                <div class="card-top">
+                    <div class="card-foto">
+                        <svg viewBox="0 0 24 24"><path d="M4.5 9.5c1 1 2.5 1 3.5 0M16 9.5c1 1 2.5 1 3.5 0M12 3c-4 0-7 3-7 7 0 4 3 8 7 8s7-4 7-8c0-4-3-7-7-7z"/></svg>
+                    </div>
+                    <div class="card-info">
+                        <div class="card-nome">${p.nome}</div>
+                        <div class="card-raca">${p.tipo}${p.raca ? ' • ' + p.raca : ''}</div>
+                        <div class="card-reporter">
+                            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            ${p.seuNome || 'Anônimo'}
+                        </div>
+                    </div>
+                    ${p._distanciaMetros != null ? `<div class="card-distancia">${formatarDistancia(p._distanciaMetros)}</div>` : ''}
+                </div>
+                <div class="card-detalhe"><b>Local:</b> ${p.local || '-'}</div>
+                <div class="card-detalhe"><b>Data:</b> ${calcularTempoAtras(p.data)}${p.horario ? ' - ' + p.horario : ''}</div>
+                ${p.descricao ? `<div class="card-detalhe"><b>Info:</b> ${p.descricao}</div>` : ''}
+                <div class="card-actions">
+                    <button class="btn-ligar-card" onclick="event.stopPropagation(); fazerLigacaoPerdido('${(p.seuTelefone || '').replace(/\D/g,'')}')">
+                        <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                        Ligar
+                    </button>
+                    <button class="btn-mapa-card" onclick="event.stopPropagation(); verNoMapa(${p.lat || 'null'}, ${p.lng || 'null'}, '${encodeURIComponent(p.local || '')}')">
+                        <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        Ver no Mapa
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // ---------- Modal Reportar ----------
+    function abrirModalReportar() { document.getElementById('modalReportar').classList.add('aberto'); }
+    function fecharModalReportar() { document.getElementById('modalReportar').classList.remove('aberto'); }
+
+    function selecionarPill(el, grupoId) {
+        document.querySelectorAll(`#${grupoId} .pill`).forEach(p => p.classList.remove('active'));
+        el.classList.add('active');
+    }
+
+    function salvarPerdido() {
+        let tipo = "Cachorro";
+        document.querySelectorAll('#grpTipoPerdido .pill').forEach(p => { if (p.classList.contains('active')) tipo = p.innerText; });
+
+        const nome = document.getElementById('perdidoNome').value.trim();
+        const raca = document.getElementById('perdidoRaca').value.trim();
+        const data = document.getElementById('perdidoData').value;
+        const horario = document.getElementById('perdidoHorario').value;
+        const descricao = document.getElementById('perdidoDescricao').value.trim();
+        const local = document.getElementById('perdidoLocal').value.trim();
+        const seuNome = document.getElementById('perdidoSeuNome').value.trim();
+        const seuTelefone = document.getElementById('perdidoSeuTelefone').value.trim();
+
+        // ---------- Validação (esse post é PÚBLICO, então validamos com mais rigor) ----------
+        const vNome = validarNome(nome);
+        if (!vNome.valido) { alert(vNome.mensagem); return; }
+
+        const vRaca = validarTextoLivre(raca, { max: 40 });
+        if (!vRaca.valido) { alert(vRaca.mensagem); return; }
+
+        const vDescricao = validarTextoLivre(descricao, { max: 300 });
+        if (!vDescricao.valido) { alert(vDescricao.mensagem); return; }
+
+        const vLocal = validarNome(local, { min: 3, max: 100 });
+        if (!vLocal.valido) { alert("Preencha o local da perda corretamente."); return; }
+
+        const vSeuNome = validarNome(seuNome || "Anônimo", { min: 2, max: 40 });
+        if (seuNome && !vSeuNome.valido) { alert(vSeuNome.mensagem); return; }
+
+        const vTelefone = validarTelefone(seuTelefone);
+        if (!vTelefone.valido) { alert(vTelefone.mensagem); return; }
+
+        if (data) {
+            const vData = validarDataPassadaRecente(data, { maxAnosNoPassado: 2 });
+            if (!vData.valido) { alert(vData.mensagem); return; }
+        }
+
+        const novoRegistro = {
+            id: 'perdido_' + Date.now(),
+            tipo, nome, raca, data, horario, descricao, local, seuNome, seuTelefone,
+            lat: localizacaoUsuario.lat || null,
+            lng: localizacaoUsuario.lng || null
+        };
+
+        // Atualiza local (cache otimista) e mostra na hora
+        listaPerdidosAtual.unshift(novoRegistro);
+        petcareSalvarPerdidos(listaPerdidosAtual);
+        renderizarPerdidos();
+
+        // Sincroniza com o banco de verdade (Firebase/CloudDB via App Inventor)
+        if (window.AppInventor) {
+            enviarComando("SALVAR_PERDIDOS", "perdidos", listaPerdidosAtual);
+        }
+
+        fecharModalReportar();
+    }
+
+    // ---------- Overlay de Contato ----------
+    function listaFiltradaOrdenada() {
+        const busca = (document.getElementById('campoBusca').value || "").toLowerCase();
+        let lista = listaPerdidosAtual.filter(p => {
+            const bateEspecie = (filtroAtivo === 'Todos') || (p.tipo === filtroAtivo);
+            const bateBusca = !busca || (p.nome + " " + (p.raca || "")).toLowerCase().includes(busca);
+            return bateEspecie && bateBusca;
+        });
+        return lista.map(p => {
+            const distM = (p.lat && p.lng && localizacaoUsuario.lat)
+                ? calcularDistanciaMetros(localizacaoUsuario.lat, localizacaoUsuario.lng, p.lat, p.lng)
+                : null;
+            return Object.assign({}, p, { _distanciaMetros: distM });
+        }).sort((a, b) => {
+            if (a._distanciaMetros == null) return 1;
+            if (b._distanciaMetros == null) return -1;
+            return a._distanciaMetros - b._distanciaMetros;
+        });
+    }
+
+    function abrirContato(indice) {
+        const lista = listaFiltradaOrdenada();
+        contatoSelecionado = lista[indice];
+        if (!contatoSelecionado) return;
+
+        document.getElementById('contatoNome').innerText = contatoSelecionado.nome;
+        document.getElementById('contatoReporter').innerText = contatoSelecionado.seuNome || 'Anônimo';
+        document.getElementById('contatoTelefone').innerText = contatoSelecionado.seuTelefone || '-';
+        document.getElementById('overlayContato').classList.add('aberto');
+    }
+
+    function fecharContato() {
+        document.getElementById('overlayContato').classList.remove('aberto');
+    }
+
+    function ligarContatoAtual() {
+        if (contatoSelecionado) fazerLigacaoPerdido((contatoSelecionado.seuTelefone || '').replace(/\D/g, ''));
+    }
+
+    function mensagemContatoAtual() {
+        alert("Sistema de mensagens ainda não disponível — por enquanto, use o botão Ligar.");
+    }
+
+    // ---------- Ações utilitárias ----------
+    function fazerLigacaoPerdido(numero) {
+        if (!numero) { alert("Telefone não informado."); return; }
+        if (window.AppInventor) {
+            window.AppInventor.setWebViewString("CALL|" + numero);
+        } else {
+            window.location.href = "tel:" + numero;
+        }
+    }
+
+    function verNoMapa(lat, lng, localCodificado) {
+        let url;
+        if (lat && lng) {
+            url = "https://www.google.com/maps/search/?api=1&query=" + lat + "," + lng;
+        } else if (localCodificado) {
+            url = "https://www.google.com/maps/search/?api=1&query=" + localCodificado;
+        } else {
+            alert("Local não informado.");
+            return;
+        }
+        if (window.AppInventor) {
+            window.AppInventor.setWebViewString("MAPA|" + (lat && lng ? lat + "," + lng : localCodificado));
+        } else {
+            window.open(url, "_blank");
+        }
+    }
+</script>
+</body>
+</html>
