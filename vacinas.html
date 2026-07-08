@@ -285,6 +285,9 @@
         // Pede para o banco as vacinas deste pet específico
         if (window.AppInventor) {
             window.AppInventor.setWebViewString("BUSCAR_VACINAS|" + id);
+        } else {
+            // Fora do app (navegador): busca as vacinas salvas localmente
+            carregarListaVacinasJSON(JSON.stringify(petcareObterVacinas(id)));
         }
     }
 
@@ -443,7 +446,10 @@
             window.AppInventor.setWebViewString(stringDados);
             fecharModalAddVacina();
         } else {
-            console.log("Modo Web - Simulando AppInventor recebendo dados:", stringDados);
+            // Fora do app (navegador): salva localmente e já atualiza a lista na hora
+            petcareAdicionarVacina(petAtivoId, { nome, aplicacao, proxima, vet, clinica, lote });
+            carregarListaVacinasJSON(JSON.stringify(petcareObterVacinas(petAtivoId)));
+            console.log("Modo Web - vacina salva localmente:", stringDados);
             fecharModalAddVacina();
         }
     }

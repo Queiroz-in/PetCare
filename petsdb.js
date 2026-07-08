@@ -89,3 +89,65 @@ function petcareFormatoSaude(lista) {
 function petcareFormatoSimples(lista) {
     return lista.map(p => [p.id, p.nome].join(',')).join('|');
 }
+
+// Busca um pet específico pelo id (usado na tela de Perfil)
+function petcareObterPetPorId(petId) {
+    const lista = petcareObterPets();
+    return lista.find(p => String(p.id) === String(petId)) || null;
+}
+
+/* ==========================================================
+   ARMAZENAMENTO GENÉRICO POR PET
+   Guarda listas (vacinas, histórico, consultas...) num único
+   objeto no localStorage, indexado pelo id do pet:
+   { "pet_123": [ {...}, {...} ], "pet_456": [ {...} ] }
+   ========================================================== */
+
+function petcareObterTudo(chave) {
+    try {
+        const raw = localStorage.getItem(chave);
+        return raw ? JSON.parse(raw) : {};
+    } catch (e) {
+        console.error('Erro ao ler dados locais (' + chave + '):', e);
+        return {};
+    }
+}
+
+function petcareSalvarTudo(chave, objeto) {
+    try {
+        localStorage.setItem(chave, JSON.stringify(objeto));
+        return true;
+    } catch (e) {
+        console.error('Erro ao salvar dados locais (' + chave + '):', e);
+        return false;
+    }
+}
+
+function petcareObterListaPet(chave, petId) {
+    const tudo = petcareObterTudo(chave);
+    return tudo[petId] || [];
+}
+
+function petcareAdicionarItemPet(chave, petId, item) {
+    const tudo = petcareObterTudo(chave);
+    if (!tudo[petId]) tudo[petId] = [];
+    const novoItem = Object.assign({ id: chave + '_' + Date.now() }, item);
+    tudo[petId].push(novoItem);
+    petcareSalvarTudo(chave, tudo);
+    return novoItem;
+}
+
+// ---------- Vacinas ----------
+const PETCARE_VACINAS_KEY = 'petcare_vacinas_v1';
+function petcareObterVacinas(petId) { return petcareObterListaPet(PETCARE_VACINAS_KEY, petId); }
+function petcareAdicionarVacina(petId, vacina) { return petcareAdicionarItemPet(PETCARE_VACINAS_KEY, petId, vacina); }
+
+// ---------- Histórico de saúde (sintomas / tratamentos) ----------
+const PETCARE_HISTORICO_KEY = 'petcare_historico_v1';
+function petcareObterHistorico(petId) { return petcareObterListaPet(PETCARE_HISTORICO_KEY, petId); }
+function petcareAdicionarHistorico(petId, registro) { return petcareAdicionarItemPet(PETCARE_HISTORICO_KEY, petId, registro); }
+
+// ---------- Consultas (pronto para quando a tela consultas.html for integrada) ----------
+const PETCARE_CONSULTAS_KEY = 'petcare_consultas_v1';
+function petcareObterConsultas(petId) { return petcareObterListaPet(PETCARE_CONSULTAS_KEY, petId); }
+function petcareAdicionarConsulta(petId, consulta) { return petcareAdicionarItemPet(PETCARE_CONSULTAS_KEY, petId, consulta); }

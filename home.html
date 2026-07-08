@@ -81,8 +81,22 @@
             display: flex;
             gap: 16px;
             overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+            touch-action: pan-x;
         }
         .pets-select-row::-webkit-scrollbar { display: none; }
+
+        /* Botão "Adicionar" sempre visível e fixo no início da lista,
+           mesmo quando o usuário cadastra muitos pets */
+        .pet-selector-item.item-fixo {
+            position: sticky;
+            left: 0;
+            z-index: 3;
+            background-color: #FF7A00;
+            padding-right: 6px;
+        }
 
         .pet-selector-item {
             display: flex;
@@ -494,7 +508,7 @@
             </div>
 
             <div id="petsRow" class="pets-select-row">
-                <div class="pet-selector-item" onclick="abrirModalAddPet()">
+                <div class="pet-selector-item item-fixo" onclick="abrirModalAddPet()">
                     <div class="pet-img-box add-btn">+</div>
                     <span>Adicionar</span>
                 </div>
@@ -683,7 +697,7 @@
             const pets = dadosString.split("|");
             const container = document.getElementById("petsRow");
             container.innerHTML = `
-                <div class="pet-selector-item" onclick="abrirModalAddPet()">
+                <div class="pet-selector-item item-fixo" onclick="abrirModalAddPet()">
                     <div class="pet-img-box add-btn">+</div>
                     <span>Adicionar</span>
                 </div>
@@ -701,7 +715,9 @@
                     </div>
                     <span>${nome}</span>
                 `;
-                container.insertBefore(item, container.firstChild);
+                // Sempre adiciona DEPOIS do botão "Adicionar" (que fica fixo à esquerda),
+                // assim ele nunca "some" da tela mesmo com muitos pets cadastrados.
+                container.appendChild(item);
                 if (index === 0) carregarEstatisticasPet(info);
             });
         }
@@ -750,7 +766,14 @@
                 window.location.href = "emergencia.html";
             }
         }
-        function abrirPerfilAtual() { if(petAtivoId && window.AppInventor) window.AppInventor.setWebViewString("PET|PERFIL|" + petAtivoId); }
+        function abrirPerfilAtual() {
+            if (!petAtivoId) return;
+            if (window.AppInventor && window.AppInventor.setWebViewString) {
+                window.AppInventor.setWebViewString("PET|PERFIL|" + petAtivoId);
+            } else {
+                window.location.href = "perfil.html?id=" + petAtivoId;
+            }
+        }
 
         window.addEventListener('DOMContentLoaded', () => {
             if (!window.AppInventor) {
