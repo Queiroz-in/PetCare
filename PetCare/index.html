@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetCare</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #FFF9F1; /* Cor creme suave */
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            padding: 24px;
+            position: relative;
+        }
+
+        /* LOGO: Começa no centro e sobe */
+        .logo-container {
+            position: absolute;
+            z-index: 10;
+            transition: all 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+            text-align: center;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(1.8);
+        }
+
+        .logo-container.subiu {
+            top: 100px;
+            left: 50%;
+            transform: translate(-50%, 0) scale(1.1);
+        }
+
+        .logo-container img {
+            width: 150px;
+            height: auto;
+            display: block;
+        }
+
+        /* CONTAINER DAS TELAS */
+        .content-container {
+            width: 100%;
+            max-width: 350px;
+            margin-top: 210px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s cubic-bezier(0.25, 1, 0.5, 1);
+            pointer-events: none;
+        }
+
+        .content-container.visivel {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        /* Card Branco */
+        .card {
+            background-color: #FFFFFF;
+            border-radius: 32px;
+            padding: 32px 24px;
+            width: 100%;
+            box-shadow: 0 10px 30px rgba(94, 46, 191, 0.04);
+        }
+
+        /* Controladores de exibição de cada etapa */
+        .form-step {
+            display: none;
+        }
+
+        .form-step.active {
+            display: block;
+        }
+
+        h2 {
+            font-family: 'Poppins', sans-serif;
+            color: #000000;
+            font-size: 26px;
+            font-weight: 700;
+            text-align: left;
+            margin-bottom: 4px;
+        }
+
+        .subtitle {
+            color: #6B7280;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: left;
+            margin-bottom: 24px;
+            line-height: 1.4;
+        }
+
+        .input-group {
+            text-align: left;
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: #000000;
+        }
+
+        input {
+            width: 100%;
+            padding: 16px;
+            border: 1.5px solid #d1d5db;
+            border-radius: 16px;
+            background-color: #f3f4f6;
+            font-size: 15px;
+            color: #1F2937;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        input::placeholder {
+            color: #9ca3af;
+        }
+
+        /* OTIMIZAÇÃO: Estilos de erro visual */
+        input.input-error {
+            border-color: #EF4444 !important;
+            background-color: #FFF5F5 !important;
+        }
+
+        .error-text {
+            color: #EF4444;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 4px;
+            display: none;
+        }
+
+        /* OTIMIZAÇÃO: Container para o botão de mostrar senha */
+        .password-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .password-wrapper input {
+            padding-right: 48px;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #9CA3AF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s ease;
+        }
+
+        .password-toggle:hover {
+            color: #5E2EBF;
+        }
+
+        /* Links e Checkbox */
+        .extra-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+            font-size: 14px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: #000000;
+            cursor: pointer;
+        }
+
+        .checkbox-label input {
+            width: auto;
+            margin: 0;
+            accent-color: #5E2EBF;
+        }
+
+        .forgot-password, .toggle-form {
+            color: #000000;
+            font-weight: 600;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .toggle-container {
+            margin-top: 16px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* Botão Amarelo */
+        .btn-primary {
+            width: 100%;
+            background-color: #FFD03B;
+            color: #5E2EBF;
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            border: none;
+            padding: 16px;
+            border-radius: 16px;
+            cursor: pointer;
+            margin-top: 16px;
+            transition: opacity 0.2s ease;
+        }
+
+        .btn-primary:active {
+            opacity: 0.9;
+        }
+
+        /* Botões Sociais */
+        .social-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .social-btn {
+            width: 100%;
+            background-color: #FFFFFF;
+            border: 1px solid #E5E7EB;
+            border-radius: 14px;
+            padding: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 15px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .social-btn.google { color: #4285F4; }
+        .social-btn.instagram { color: #E1306C; }
+        .social-btn.linkedin { color: #0077B5; }
+        .social-btn.apple { color: #000000; }
+
+        .social-btn img { width: 20px; height: 20px; }
+
+        /* Frase institucional inferior */
+        .footer-text {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 15px;
+            color: #5E2EBF; /* Roxo da marca */
+            text-align: center;
+            margin-top: 24px;
+            line-height: 1.4;
+            max-width: 280px;
+            align-self: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="logo" class="logo-container">
+        <img src="logopetcare.png" alt="PetCare Logo" onerror="this.src='https://placehold.co/150x150/FFF9F1/5E2EBF?text=petcare'">
+    </div>
+
+    <div id="mainContent" class="content-container">
+        
+        <div class="card">
+            
+            <div id="stepLogin" class="form-step active">
+                <h2>Entrar!</h2>
+                <p class="subtitle">Bem-vindo à PetCare</p>
+                
+                <div class="input-group">
+                    <label>E-mail</label>
+                    <input type="email" id="loginEmail" placeholder="usepetcare@gmail.com">
+                    <div class="error-text" id="errLoginEmail">Por favor, insira um e-mail válido.</div>
+                </div>
+                
+                <div class="input-group">
+                    <label>Senha</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="loginPassword" placeholder="**********">
+                        <span class="password-toggle" onclick="togglePassword('loginPassword', this)">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                        </span>
+                    </div>
+                    <div class="error-text" id="errLoginPassword">A senha não pode estar vazia.</div>
+                </div>
+                
+                <button type="button" class="btn-primary" onclick="fazerLogin()">Continuar</button>
+
+                <div class="extra-options">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="remember"> Lembrar de mim
+                    </label>
+                    <span class="forgot-password">Esqueceu sua Senha?</span>
+                </div>
+
+                <div class="toggle-container">
+                    Não tem uma conta? <span class="toggle-form" onclick="mudarEtapa('stepRegister')">Cadastre-se!</span>
+                </div>
+            </div>
+
+            <div id="stepRegister" class="form-step">
+                <h2>Quase lá!</h2>
+                <p class="subtitle">Precisaremos de mais informações sobre você</p>
+                
+                <div class="input-group">
+                    <label>Nome</label>
+                    <input type="text" id="regNome" placeholder="Pedro Santos Borges">
+                    <div class="error-text" id="errRegNome">Por favor, digite seu nome completo.</div>
+                </div>
+                
+                <div class="input-group">
+                    <label>Número de Telefone</label>
+                    <input type="text" id="regTelefone" placeholder="(11) 98765-4321" inputmode="numeric" maxlength="15">
+                    <div class="error-text" id="errRegTelefone">Insira um telefone válido.</div>
+                </div>
+
+                <div class="input-group">
+                    <label>Data de Nascimento</label>
+                    <input type="text" id="regData" placeholder="14/07/2008" inputmode="numeric" maxlength="10">
+                    <div class="error-text" id="errRegData">Insira uma data válida (DD/MM/AAAA).</div>
+                </div>
+                
+                <button type="button" class="btn-primary" onclick="finalizarCadastro()">Continuar</button>
+
+                <div class="toggle-container">
+                    Já possui conta? <span class="toggle-form" onclick="mudarEtapa('stepLogin')">Faça Login</span>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="socialBox" class="social-container">
+            <button class="social-btn google"><img src="https://cdn-icons-png.flaticon.com/512/300/300221.png" alt="G"> Google</button>
+            <button class="social-btn instagram"><img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="I"> Instagram</button>
+            <button class="social-btn linkedin"><img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="L"> LinkedIn</button>
+            <button class="social-btn apple"><img src="https://cdn-icons-png.flaticon.com/512/0/747.png" alt="A"> Apple</button>
+        </div>
+
+        <p class="footer-text">Amor, cuidado e bem-estar para quem você ama!</p>
+
+    </div>
+
+    <script>
+        // Animação de Entrada inicial
+        window.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                document.getElementById('logo').classList.add('subiu');
+                document.getElementById('mainContent').classList.add('visivel');
+            }, 2000);
+        });
+
+        // Máscaras automáticas
+        document.getElementById('regTelefone').addEventListener('input', function (e) {
+            var x = e.target.value.replace(/\D/g, '').match(/(\d{0,2})(\d{0,5})(\d{0,4})/);
+            e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
+        });
+
+        document.getElementById('regData').addEventListener('input', function (e) {
+            var v = e.target.value.replace(/\D/g, '');
+            if (v.length >= 5) {
+                e.target.value = v.substring(0,2) + '/' + v.substring(2,4) + '/' + v.substring(4,8);
+            } else if (v.length >= 3) {
+                e.target.value = v.substring(0,2) + '/' + v.substring(2,4);
+            } else {
+                e.target.value = v;
+            }
+        });
+
+        // OTIMIZAÇÃO: Alternar visibilidade da senha (Olho)
+        function togglePassword(inputId, el) {
+            var input = document.getElementById(inputId);
+            if (input.type === "password") {
+                input.type = "text";
+                // Muda para ícone de olho riscado
+                el.innerHTML = '<svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>';
+            } else {
+                input.type = "password";
+                // Volta para ícone de olho aberto
+                el.innerHTML = '<svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+            }
+        }
+
+        // OTIMIZAÇÃO: Limpar estados de erro visual
+        function limparErros() {
+            document.querySelectorAll('input').forEach(input => input.classList.remove('input-error'));
+            document.querySelectorAll('.error-text').forEach(text => text.style.display = 'none');
+        }
+
+        // OTIMIZAÇÃO: Mostrar erro em campo específico
+        function aplicarErro(inputId, errorId) {
+            document.getElementById(inputId).classList.add('input-error');
+            document.getElementById(errorId).style.display = 'block';
+        }
+
+        // Alternar visualização entre Login e Cadastro
+        function mudarEtapa(idEtapa) {
+            limparErros(); // Limpa erros ao mudar de tela
+            document.querySelectorAll('.form-step').forEach(step => step.classList.remove('active'));
+            document.getElementById(idEtapa).classList.add('active');
+            
+            var socialBox = document.getElementById('socialBox');
+            if(idEtapa === 'stepRegister') {
+                socialBox.style.display = 'none';
+            } else {
+                socialBox.style.display = 'flex';
+            }
+        }
+
+        // OTIMIZAÇÃO: Ponte segura para comunicação com o App Inventor (Evita quebrar no Site/Navegador comum)
+        function enviarDadosApp(stringDados) {
+            if (window.AppInventor && window.AppInventor.setWebViewString) {
+                window.AppInventor.setWebViewString(stringDados);
+            } else {
+                console.log("Modo Web (Fora do App) - Dados enviados:", stringDados);
+            }
+        }
+
+        // Validação e Envio de LOGIN
+        function fazerLogin() {
+            limparErros();
+            var email = document.getElementById('loginEmail').value.trim();
+            var pass = document.getElementById('loginPassword').value;
+            var temErro = false;
+
+            // Regex simples e funcional para validar e-mail
+            var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if(!emailRegex.test(email)) {
+                aplicarErro('loginEmail', 'errLoginEmail');
+                temErro = true;
+            }
+            if(pass === "") {
+                aplicarErro('loginPassword', 'errLoginPassword');
+                temErro = true;
+            }
+
+            if(temErro) return;
+            
+            enviarDadosApp("LOGIN|" + email + "|" + pass);
+        }
+
+        // Validação e Envio de CADASTRO
+        function finalizarCadastro() {
+            limparErros();
+            var nome = document.getElementById('regNome').value.trim();
+            var tel = document.getElementById('regTelefone').value.trim();
+            var dataNasc = document.getElementById('regData').value.trim();
+            var temErro = false;
+
+            if(nome.length < 3) {
+                aplicarErro('regNome', 'errRegNome');
+                temErro = true;
+            }
+            if(tel.length < 14) { // Garante o preenchimento mínimo do celular com DDD
+                aplicarErro('regTelefone', 'errRegTelefone');
+                temErro = true;
+            }
+            if(dataNasc.length < 10) { // Garante formato DD/MM/AAAA completo
+                aplicarErro('regData', 'errRegData');
+                temErro = true;
+            }
+
+            if(temErro) return;
+            
+            enviarDadosApp("CADASTRO|" + nome + "|" + tel + "|" + dataNasc);
+        }
+    </script>
+
+</body>
+</html>

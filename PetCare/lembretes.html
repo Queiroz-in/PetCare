@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Lembretes - PetCare</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --orange: #FFB300; 
+            --orange-light: #FFF8E5;
+            --creme: #FFF9F1; 
+            --gray: #8E8E93;
+            --gray-light: #F3F4F6;
+            --text-dark: #1F2937;
+            --red: #FF3B30;
+            --white: #FFFFFF;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        
+        body { background-color: var(--creme); font-family: 'Inter', sans-serif; height: 100dvh; display: flex; justify-content: center; overflow: hidden; }
+        .app-container { width: 100%; max-width: 390px; height: 100%; display: flex; flex-direction: column; background-color: var(--creme); position: relative; }
+
+        /* HEADER ORANGE COM STATS */
+        .header-orange { background: var(--orange); padding: 48px 20px 24px; color: white; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; flex-shrink: 0; z-index: 10; position: relative; }
+        .header-orange h2 { font-family: 'Poppins', sans-serif; font-size: 24px; margin-bottom: 4px; }
+        .header-orange p { font-size: 13px; opacity: 0.9; }
+        
+        .btn-add-header { position: absolute; top: 48px; right: 20px; width: 40px; height: 40px; background: rgba(255,255,255,0.25); border-radius: 14px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.4); cursor: pointer; color: white; transition: 0.2s; }
+        .btn-add-header:active { transform: scale(0.9); background: rgba(255,255,255,0.4); }
+        .btn-add-header svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
+        .stats-orange { display: flex; gap: 10px; margin-top: 24px; }
+        .stat-orange-box { flex: 1; background: rgba(255,255,255,0.2); border-radius: 16px; padding: 14px 5px; text-align: center; }
+        .stat-orange-box b { font-size: 20px; font-family: 'Poppins', sans-serif; display: block; line-height: 1.1; }
+        .stat-orange-box span { font-size: 11px; font-weight: 500; opacity: 0.9; }
+
+        /* ABAS (TABS) */
+        .tabs-container { display: flex; justify-content: space-between; padding: 20px; background: transparent; }
+        .tab-btn { flex: 1; text-align: center; padding: 10px 0; font-size: 13px; font-weight: 600; color: var(--gray); cursor: pointer; border: 1px solid transparent; border-radius: 20px; transition: 0.2s; margin: 0 4px; }
+        .tab-btn.active { color: var(--orange); border-color: var(--orange); background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+
+        /* CONTEÚDO ROLÁVEL (LISTA) */
+        .view-content { flex: 1; overflow-y: auto; padding: 0 20px 110px 20px; -webkit-overflow-scrolling: touch; }
+        .view-content::-webkit-scrollbar { display: none; }
+
+        .empty-msg { text-align: center; color: var(--gray); padding: 40px 20px; font-size: 14px; background: var(--white); border-radius: 20px; border: 2px dashed #E5E7EB; margin-top: 10px; line-height: 1.5; }
+
+        /* CARDS DE LEMBRETE */
+        .reminder-card { background: var(--white); border-radius: 20px; padding: 16px; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid #E5E7EB; display: flex; gap: 14px; position: relative; transition: opacity 0.3s; }
+        .reminder-card.pausado { opacity: 0.6; }
+        
+        .reminder-icon-box { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: #F3F4F6; }
+        .reminder-icon-box svg { width: 24px; height: 24px; stroke-width: 2; fill: none; }
+        
+        /* Cores dos Ícones baseados no tipo */
+        .ic-med { border: 2px solid #4A90E2; color: #4A90E2; background: #EBF4FC; }
+        .ic-ban { border: 2px solid #E1306C; color: #E1306C; background: #FCEBF1; }
+        .ic-ali { border: 2px solid #FF9500; color: #FF9500; background: #FFF6EB; }
+        .ic-vac { border: 2px solid #00CBB0; color: #00CBB0; background: #E5F9F6; }
+        .ic-vet { border: 2px solid #9F7AFF; color: #9F7AFF; background: #F4EFFF; }
+        .ic-out { border: 2px solid #8E8E93; color: #8E8E93; background: #F3F4F6; }
+
+        .reminder-info { flex: 1; }
+        .reminder-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
+        .reminder-header h4 { font-size: 15px; font-weight: 700; color: var(--text-dark); line-height: 1.2; padding-right: 60px;}
+        
+        .card-actions { position: absolute; top: 16px; right: 16px; display: flex; gap: 8px; }
+        .btn-action { background: transparent; border: none; width: 24px; height: 24px; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--gray); transition: 0.2s; }
+        .btn-action:hover { background: var(--gray-light); }
+        .btn-action.active-bell { color: var(--orange); }
+        .btn-action.delete:hover { color: var(--red); background: var(--red-light); }
+        .btn-action svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+
+        .reminder-desc { font-size: 12px; color: var(--gray); margin-bottom: 12px; }
+
+        .reminder-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+        .tag-pill { background: var(--gray-light); color: var(--gray); font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 8px; }
+        
+        .reminder-footer { font-size: 12px; font-weight: 600; color: var(--green); display: flex; align-items: center; gap: 4px; }
+        .reminder-footer svg { width: 14px; height: 14px; }
+        .reminder-card.pausado .reminder-footer { color: var(--gray); }
+
+        /* MODAL NOVO LEMBRETE (BOTTOM SHEET) */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.5); z-index: 99999; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-content { background-color: #FFFFFF; width: 100%; max-width: 390px; height: 92vh; border-radius: 28px 28px 0 0; padding: 24px 20px; overflow-y: auto; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1); }
+        .modal-content::-webkit-scrollbar { display: none; }
+        .modal-overlay.active .modal-content { transform: translateY(0); }
+        
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; position: sticky; top: 0; background: white; padding-bottom: 10px; z-index: 10; }
+        .modal-header h3 { font-family: 'Poppins', sans-serif; font-size: 20px; font-weight: 700; }
+        .close-btn { background-color: var(--gray-light); border: none; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-dark); font-weight: bold; font-size: 14px; }
+
+        .form-label { font-size: 13px; font-weight: 700; margin-bottom: 8px; margin-top: 16px; display: block; color: var(--text-dark); }
+        .form-input { width: 100%; background-color: var(--white); border: 1px solid #E5E7EB; border-radius: 12px; padding: 14px; font-size: 13px; font-family: 'Inter', sans-serif; outline: none; color: var(--text-dark); transition: 0.2s; }
+        .form-input:focus { border-color: var(--orange); box-shadow: 0 0 0 2px var(--orange-light); }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+        /* SELETOR DE PETS (MODAL) */
+        .pets-selector { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; }
+        .pets-selector::-webkit-scrollbar { display: none; }
+        .pet-pill { display: flex; align-items: center; gap: 8px; background: var(--white); padding: 4px 14px 4px 4px; border-radius: 30px; border: 1px solid #E5E7EB; cursor: pointer; transition: 0.2s; white-space: nowrap; font-weight: 600; font-size: 13px; color: var(--text-dark); }
+        .pet-pill img, .pet-pill .avatar-placeholder { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; background: #FFD03B; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 14px;}
+        .pet-pill.active { border-color: var(--orange); background: var(--orange-light); color: var(--orange); border-width: 2px; }
+
+        /* GRID TIPO DE LEMBRETE */
+        .type-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 5px; }
+        .type-btn { background: var(--white); border: 1px solid #E5E7EB; border-radius: 16px; padding: 16px 8px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; transition: 0.2s; }
+        .type-btn svg { width: 28px; height: 28px; stroke: var(--gray); fill: none; stroke-width: 1.8; }
+        .type-btn span { font-size: 11px; font-weight: 600; color: var(--gray); text-align: center; }
+        .type-btn.active { border-color: var(--orange); background: var(--orange-light); border-width: 2px; padding: 15px 7px; }
+        .type-btn.active svg { stroke: var(--orange); stroke-width: 2; }
+        .type-btn.active span { color: var(--orange); font-weight: 700; }
+
+        /* PILLS DE FREQUÊNCIA */
+        .pill-group { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 5px; }
+        .pill { padding: 8px 12px; border: 1px solid #E5E7EB; border-radius: 20px; font-size: 12px; font-weight: 600; color: var(--gray); cursor: pointer; background-color: var(--white); transition: all 0.2s; }
+        .pill.active { border-color: var(--orange); color: var(--orange); background-color: var(--orange-light); }
+
+        .btn-salvar { width: 100%; background-color: var(--orange); color: #FFFFFF; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 16px; border: none; padding: 16px; border-radius: 16px; cursor: pointer; margin-top: 32px; margin-bottom: 24px; transition: 0.2s; }
+        .btn-salvar:active { transform: scale(0.98); }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    
+    <header class="header-orange">
+        <button class="btn-add-header" onclick="abrirModalAddLembrete()">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <h2>Lembretes</h2>
+        <p>Medicamentos, banhos e mais</p>
+        
+        <div class="stats-orange">
+            <div class="stat-orange-box">
+                <b id="statAtivos">0</b>
+                <span>Ativos</span>
+            </div>
+            <div class="stat-orange-box">
+                <b id="statPausados">0</b>
+                <span>Pausados</span>
+            </div>
+            <div class="stat-orange-box">
+                <b id="statTotal">0</b>
+                <span>Total</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="tabs-container">
+        <div class="tab-btn active" onclick="filtrarLembretes('Todas', this)">Todos</div>
+        <div class="tab-btn" onclick="filtrarLembretes('Ativos', this)">Ativos</div>
+        <div class="tab-btn" onclick="filtrarLembretes('Pausados', this)">Pausados</div>
+    </div>
+
+    <main class="view-content" id="listaLembretesContainer">
+        </main>
+
+    <div id="menu-inferior-container"></div>
+</div>
+
+<div id="modalAddLembrete" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Novo Lembrete</h3>
+            <button class="close-btn" onclick="fecharModalAddLembrete()">✕</button>
+        </div>
+
+        <label class="form-label" style="margin-top:0;">Pet</label>
+        <div class="pets-selector" id="petsModalContainer">
+            <span style="font-size:12px; color:var(--gray);">Carregando pets...</span>
+        </div>
+
+        <label class="form-label">Tipo de Lembrete</label>
+        <div class="type-grid" id="grpTipoLembrete">
+            <div class="type-btn active" onclick="selecionarTipoModal(this, 'Medicamento', 'ic-med')">
+                <svg viewBox="0 0 24 24"><path d="M10.5 20.5l-6-6a4.95 4.95 0 117-7l6 6a4.95 4.95 0 11-7 7z"/><path d="M8.5 8.5l7 7"/></svg>
+                <span>Medicamento</span>
+            </div>
+            <div class="type-btn" onclick="selecionarTipoModal(this, 'Vacina', 'ic-vac')">
+                <svg viewBox="0 0 24 24"><path d="M3 21l6-6 M14 6l-7 7a2.82 2.82 0 0 0 4 4l7-7Z M12 8l2 2 M9 11l2 2 M16 8l3-3 M17 3l4 4"/></svg>
+                <span>Vacina</span>
+            </div>
+            <div class="type-btn" onclick="selecionarTipoModal(this, 'Banho', 'ic-ban')">
+                <svg viewBox="0 0 24 24"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg>
+                <span>Banho</span>
+            </div>
+            <div class="type-btn" onclick="selecionarTipoModal(this, 'Alimentação', 'ic-ali')">
+                <svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 2v20M21 2a5 5 0 0 0-5 5v3h10V7a5 5 0 0 0-5-5z"/></svg>
+                <span>Alimentação</span>
+            </div>
+            <div class="type-btn" onclick="selecionarTipoModal(this, 'Veterinário', 'ic-vet')">
+                <svg viewBox="0 0 24 24"><path d="M12 2v20M2 12h20"/></svg>
+                <span>Veterinário</span>
+            </div>
+            <div class="type-btn" onclick="selecionarTipoModal(this, 'Outro', 'ic-out')">
+                <svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+                <span>Outro</span>
+            </div>
+        </div>
+
+        <label class="form-label">Título</label>
+        <input type="text" id="lemTitulo" class="form-input" placeholder="Ex: Antiparasitário, Ração...">
+
+        <label class="form-label">Descrição</label>
+        <input type="text" id="lemDesc" class="form-input" placeholder="Ex: Nexgard - 1 comprimido">
+
+        <label class="form-label">Frequência</label>
+        <div class="pill-group" id="grpFrequencia">
+            <span class="pill" onclick="selecionarFrequencia(this, 'Diário')">Diário</span>
+            <span class="pill" onclick="selecionarFrequencia(this, 'Semanal')">Semanal</span>
+            <span class="pill active" onclick="selecionarFrequencia(this, 'Mensal')">Mensal</span>
+            <span class="pill" onclick="selecionarFrequencia(this, 'Uma vez')">Uma vez</span>
+        </div>
+
+        <div class="form-grid">
+            <div>
+                <label class="form-label">Horário</label>
+                <input type="text" id="lemHora" class="form-input" placeholder="08:00" inputmode="numeric" maxlength="5">
+            </div>
+            <div>
+                <label class="form-label">Próxima Data</label>
+                <input type="text" id="lemData" class="form-input" placeholder="dd/mm/aaaa" inputmode="numeric" maxlength="10">
+            </div>
+        </div>
+
+        <button class="btn-salvar" onclick="salvarNovoLembrete()">Salvar Lembrete</button>
+    </div>
+</div>
+
+<script src="navbar.js"></script>
+<script src="petsdb.js"></script>
+<script>
+    let petsCadastrados = [];
+    let lembretesCadastrados = []; 
+    let petModalSelecionado = null;
+    let tipoModalSelecionado = "Medicamento";
+    let classeIconeModal = "ic-med";
+    let freqModalSelecionada = "Mensal";
+    let filtroAtual = "Todas";
+
+    window.addEventListener('DOMContentLoaded', () => {
+        if(typeof carregarMenuInferior === "function") {
+            carregarMenuInferior('lembretes'); 
+        }
+        
+        if (window.AppInventor) {
+            window.AppInventor.setWebViewString("LOAD_PETS_LEMBRETES");
+            setTimeout(() => { window.AppInventor.setWebViewString("LOAD_LEMBRETES"); }, 300);
+        } else {
+            // Fora do app (navegador): carrega os pets salvos localmente
+            carregarPetsLembretes(petcareFormatoSimples(petcareObterPets()));
+            carregarLembretes(""); // Lembretes em si continuam vazios até integrar de verdade
+        }
+    });
+
+    // ==========================================
+    // 1. DADOS DOS PETS (Para o Modal)
+    // ==========================================
+    function carregarPetsLembretes(dadosString) {
+        const container = document.getElementById('petsModalContainer');
+        container.innerHTML = "";
+        petsCadastrados = [];
+
+        if (!dadosString || dadosString === "") {
+            container.innerHTML = `<span style="font-size:12px; color:var(--red);">Nenhum pet cadastrado. Adicione um na Home.</span>`;
+            return;
+        }
+
+        const petsRaw = dadosString.split("|");
+        petsRaw.forEach((petInfo, index) => {
+            const dados = petInfo.split(",");
+            const petObj = { id: dados[0], nome: dados[1], avatar: dados[1].charAt(0).toUpperCase() };
+            petsCadastrados.push(petObj);
+
+            const div = document.createElement('div');
+            div.className = `pet-pill ${index === 0 ? 'active' : ''}`;
+            div.onclick = () => selecionarPetModal(div, petObj.id);
+            div.innerHTML = `<div class="avatar-placeholder">${petObj.avatar}</div> ${petObj.nome}`;
+            
+            container.appendChild(div);
+
+            if(index === 0) petModalSelecionado = petObj.id; 
+        });
+    }
+
+    // ==========================================
+    // 2. SELETORES DO MODAL
+    // ==========================================
+    function selecionarPetModal(elemento, idPet) {
+        document.querySelectorAll('#petsModalContainer .pet-pill').forEach(c => c.classList.remove('active'));
+        elemento.classList.add('active');
+        petModalSelecionado = idPet;
+    }
+
+    function selecionarTipoModal(elemento, tipo, classeIcone) {
+        document.querySelectorAll('#grpTipoLembrete .type-btn').forEach(el => el.classList.remove('active'));
+        elemento.classList.add('active');
+        tipoModalSelecionado = tipo;
+        classeIconeModal = classeIcone;
+    }
+
+    function selecionarFrequencia(elemento, freq) {
+        document.querySelectorAll('#grpFrequencia .pill').forEach(el => el.classList.remove('active'));
+        elemento.classList.add('active');
+        freqModalSelecionada = freq;
+    }
+
+    // ==========================================
+    // 3. LÓGICA DOS LEMBRETES (LISTA E RENDERIZAÇÃO)
+    // ==========================================
+    function carregarLembretes(dadosJsonString) {
+        if (!dadosJsonString || dadosJsonString === "") {
+            lembretesCadastrados = [];
+        } else {
+            try { lembretesCadastrados = JSON.parse(dadosJsonString); } 
+            catch(e) { lembretesCadastrados = []; }
+        }
+        renderizarListaLembretes();
+    }
+
+    function filtrarLembretes(filtro, elementoTab) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        elementoTab.classList.add('active');
+        filtroAtual = filtro;
+        renderizarListaLembretes();
+    }
+
+    // Função auxiliar para retornar o SVG correto baseado no tipo
+    function getIconePorTipo(tipo) {
+        switch(tipo) {
+            case 'Medicamento': return `<svg viewBox="0 0 24 24"><path d="M10.5 20.5l-6-6a4.95 4.95 0 117-7l6 6a4.95 4.95 0 11-7 7z"/><path d="M8.5 8.5l7 7"/></svg>`;
+            case 'Vacina': return `<svg viewBox="0 0 24 24"><path d="M3 21l6-6 M14 6l-7 7a2.82 2.82 0 0 0 4 4l7-7Z M12 8l2 2 M9 11l2 2 M16 8l3-3 M17 3l4 4"/></svg>`;
+            case 'Banho': return `<svg viewBox="0 0 24 24"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg>`;
+            case 'Alimentação': return `<svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 2v20M21 2a5 5 0 0 0-5 5v3h10V7a5 5 0 0 0-5-5z"/></svg>`;
+            case 'Veterinário': return `<svg viewBox="0 0 24 24"><path d="M12 2v20M2 12h20"/></svg>`;
+            default: return `<svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>`;
+        }
+    }
+
+    function renderizarListaLembretes() {
+        const container = document.getElementById('listaLembretesContainer');
+        container.innerHTML = "";
+
+        let qtdAtivos = 0, qtdPausados = 0;
+        
+        lembretesCadastrados.forEach(l => {
+            if(l.status === "Ativo") qtdAtivos++;
+            else qtdPausados++;
+        });
+
+        document.getElementById('statAtivos').innerText = qtdAtivos;
+        document.getElementById('statPausados').innerText = qtdPausados;
+        document.getElementById('statTotal').innerText = lembretesCadastrados.length;
+
+        const listaFiltrada = lembretesCadastrados.filter(l => {
+            if(filtroAtual === "Todas") return true;
+            if(filtroAtual === "Ativos" && l.status === "Ativo") return true;
+            if(filtroAtual === "Pausados" && l.status === "Pausado") return true;
+            return false;
+        });
+
+        if (listaFiltrada.length === 0) {
+            container.innerHTML = `<div class="empty-msg">Nenhum lembrete ${filtroAtual === 'Todas' ? 'registrado' : filtroAtual.toLowerCase()} no momento.<br><br>Clique no <b>+</b> no topo da tela para criar um.</div>`;
+            return;
+        }
+
+        listaFiltrada.forEach(l => {
+            let petRelacionado = petsCadastrados.find(p => p.id === l.idPet) || { nome: "Pet" };
+            let isPausado = l.status === "Pausado";
+            
+            // Ícone do sino (cheio se ativo, com risco se pausado)
+            let bellIcon = isPausado ? 
+                `<svg viewBox="0 0 24 24"><path d="M13.73 21a2 2 0 0 1-3.46 0"/><path d="M18.63 13A17.89 17.89 0 0 1 18 8"/><path d="M6.26 6.26A5.86 5.86 0 0 0 6 8c0 7-3 9-3 9h14"/><path d="M18 8a6 6 0 0 0-9.33-5"/><line x1="1" y1="1" x2="23" y2="23"/></svg>` : 
+                `<svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>`;
+
+            const card = document.createElement('div');
+            card.className = `reminder-card ${isPausado ? 'pausado' : ''}`;
+            card.innerHTML = `
+                <div class="reminder-icon-box ${l.classeIcone}">
+                    ${getIconePorTipo(l.tipo)}
+                </div>
+                <div class="reminder-info">
+                    <div class="reminder-header">
+                        <h4>${l.titulo}</h4>
+                        <div class="card-actions">
+                            <button class="btn-action ${isPausado ? '' : 'active-bell'}" onclick="alternarStatusLembrete('${l.id}')">
+                                ${bellIcon}
+                            </button>
+                            <button class="btn-action delete" onclick="excluirLembrete('${l.id}')">
+                                <svg viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    ${l.desc ? `<p class="reminder-desc">${l.desc}</p>` : ''}
+                    
+                    <div class="reminder-tags">
+                        <span class="tag-pill">${petRelacionado.nome}</span>
+                        <span class="tag-pill">${l.hora}</span>
+                        <span class="tag-pill">${l.freq}</span>
+                    </div>
+
+                    <div class="reminder-footer">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        Próximo: ${l.data}
+                    </div>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    // ==========================================
+    // 4. AÇÕES (ADICIONAR, PAUSAR, EXCLUIR)
+    // ==========================================
+    function abrirModalAddLembrete() {
+        if(petsCadastrados.length === 0) { alert("Cadastre um pet primeiro na tela Início!"); return; }
+        
+        document.getElementById('lemTitulo').value = "";
+        document.getElementById('lemDesc').value = "";
+        document.getElementById('lemHora').value = "";
+        document.getElementById('lemData').value = "";
+        
+        document.getElementById('modalAddLembrete').classList.add('active');
+    }
+
+    function fecharModalAddLembrete() {
+        document.getElementById('modalAddLembrete').classList.remove('active');
+    }
+
+    // Máscaras
+    document.getElementById('lemData').addEventListener('input', function(e) {
+        let v = e.target.value.replace(/\D/g, '');
+        if (v.length >= 5) e.target.value = v.substring(0,2) + '/' + v.substring(2,4) + '/' + v.substring(4,8);
+        else if (v.length >= 3) e.target.value = v.substring(0,2) + '/' + v.substring(2,4);
+        else e.target.value = v;
+    });
+
+    document.getElementById('lemHora').addEventListener('input', function(e) {
+        let v = e.target.value.replace(/\D/g, '');
+        if (v.length >= 3) e.target.value = v.substring(0,2) + ':' + v.substring(2,4);
+        else e.target.value = v;
+    });
+
+    function salvarNovoLembrete() {
+        const titulo = document.getElementById('lemTitulo').value.trim();
+        const desc = document.getElementById('lemDesc').value.trim();
+        const hora = document.getElementById('lemHora').value.trim();
+        const data = document.getElementById('lemData').value.trim();
+
+        if(!titulo || !hora || !data) { alert("Atenção: Título, Horário e Próxima Data são obrigatórios."); return; }
+
+        const novoLembrete = {
+            id: Math.random().toString(36).substr(2, 9),
+            idPet: petModalSelecionado,
+            tipo: tipoModalSelecionado,
+            classeIcone: classeIconeModal,
+            titulo: titulo,
+            desc: desc,
+            freq: freqModalSelecionada,
+            hora: hora,
+            data: data,
+            status: "Ativo"
+        };
+
+        if(window.AppInventor) {
+            window.AppInventor.setWebViewString("ADD_LEMBRETE|" + JSON.stringify(novoLembrete));
+            fecharModalAddLembrete();
+        } else {
+            lembretesCadastrados.unshift(novoLembrete);
+            renderizarListaLembretes();
+            fecharModalAddLembrete();
+        }
+    }
+
+    function alternarStatusLembrete(idLembrete) {
+        if(window.AppInventor) {
+            window.AppInventor.setWebViewString("TOGGLE_LEMBRETE|" + idLembrete);
+        } else {
+            let lem = lembretesCadastrados.find(l => l.id === idLembrete);
+            if(lem) {
+                lem.status = lem.status === "Ativo" ? "Pausado" : "Ativo";
+                renderizarListaLembretes();
+            }
+        }
+    }
+
+    function excluirLembrete(idLembrete) {
+        if(confirm("Tem certeza que deseja apagar este lembrete?")) {
+            if(window.AppInventor) {
+                window.AppInventor.setWebViewString("EXCLUIR_LEMBRETE|" + idLembrete);
+            } else {
+                lembretesCadastrados = lembretesCadastrados.filter(l => l.id !== idLembrete);
+                renderizarListaLembretes();
+            }
+        }
+    }
+</script>
+</body>
+</html>
