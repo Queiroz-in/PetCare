@@ -303,7 +303,7 @@
 
         // Busca os dados reais no banco, se estiver rodando dentro do app
         if (window.AppInventor) {
-            enviarComando("BUSCAR_PETS", "pets", {});
+            enviarComando("BUSCAR_PETS", tagUsuario("pets"), {});
         }
     });
 
@@ -359,9 +359,9 @@
 
         // Busca os dados reais no banco, se estiver rodando dentro do app
         if (window.AppInventor) {
-            enviarComando("BUSCAR_VACINAS", "vacinas_" + petId, {});
-            enviarComando("BUSCAR_HISTORICO", "historico_" + petId, {});
-            enviarComando("BUSCAR_CONSULTAS", "consultas", {});
+            enviarComando("BUSCAR_VACINAS", tagUsuario("vacinas_" + petId), {});
+            enviarComando("BUSCAR_HISTORICO", tagUsuario("historico_" + petId), {});
+            enviarComando("BUSCAR_CONSULTAS", tagUsuario("consultas"), {});
         }
     }
 
@@ -499,7 +499,7 @@
 
         // Sincroniza com o banco de verdade (Firebase via App Inventor)
         if (window.AppInventor) {
-            enviarComando("SALVAR_HISTORICO", "historico_" + petAtual.id, listaAtualizada);
+            enviarComando("SALVAR_HISTORICO", tagUsuario("historico_" + petAtual.id), listaAtualizada);
         }
 
         fecharModalHistorico();
@@ -513,8 +513,10 @@
         const listaAtualizada = petcareExcluirPet(petAtual.id);
 
         if (window.AppInventor) {
-            enviarComando("SALVAR_PETS", "pets", listaAtualizada);
-            window.AppInventor.setWebViewString("NAV|home");
+            enviarComando("SALVAR_PETS", tagUsuario("pets"), listaAtualizada);
+            // Pequena espera antes de navegar - dá tempo do comando ser
+            // processado antes da página trocar (evita perder o comando).
+            setTimeout(() => { window.AppInventor.setWebViewString("NAV|home"); }, 600);
         } else {
             window.location.href = "home.html";
         }

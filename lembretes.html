@@ -253,8 +253,8 @@
         carregarLembretes(JSON.stringify(petcareObterLembretes()));
 
         if (window.AppInventor) {
-            enviarComando("BUSCAR_PETS", "pets", {});
-            enviarComando("BUSCAR_LEMBRETES", "lembretes", {});
+            enviarComando("BUSCAR_PETS", tagUsuario("pets"), {});
+            enviarComando("BUSCAR_LEMBRETES", tagUsuario("lembretes"), {});
         }
     });
 
@@ -483,7 +483,7 @@
         renderizarListaLembretes();
 
         if (window.AppInventor) {
-            enviarComando("SALVAR_LEMBRETES", "lembretes", lembretesCadastrados);
+            enviarComando("SALVAR_LEMBRETES", tagUsuario("lembretes"), lembretesCadastrados);
         }
 
         fecharModalAddLembrete();
@@ -498,7 +498,7 @@
         }
 
         if (window.AppInventor) {
-            enviarComando("SALVAR_LEMBRETES", "lembretes", lembretesCadastrados);
+            enviarComando("SALVAR_LEMBRETES", tagUsuario("lembretes"), lembretesCadastrados);
         }
     }
 
@@ -509,7 +509,7 @@
             renderizarListaLembretes();
 
             if (window.AppInventor) {
-                enviarComando("SALVAR_LEMBRETES", "lembretes", lembretesCadastrados);
+                enviarComando("SALVAR_LEMBRETES", tagUsuario("lembretes"), lembretesCadastrados);
             }
         }
     }

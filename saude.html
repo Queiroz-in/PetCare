@@ -127,7 +127,7 @@
         // Mostra na hora o que já está em cache local
         carregarPetsDoBanco(petcareFormatoSaude(petcareObterPets()));
         if (window.AppInventor) {
-            enviarComando("BUSCAR_PETS", "pets", {});
+            enviarComando("BUSCAR_PETS", tagUsuario("pets"), {});
         }
     });
 
@@ -353,7 +353,7 @@
 
         // Sincroniza com o banco de verdade (Firebase via App Inventor)
         if (window.AppInventor) {
-            enviarComando("SALVAR_HISTORICO", "historico_" + petSelecionado, listaAtualizada);
+            enviarComando("SALVAR_HISTORICO", tagUsuario("historico_" + petSelecionado), listaAtualizada);
         }
 
         // Feedback visual (botão fica verde por um instante), sem popup

@@ -2,32 +2,78 @@
    petsdb.js
    Camada de dados do PetCare — usada em TODAS as telas.
 
-   Tem duas responsabilidades:
+   NOVIDADE IMPORTANTE: agora os dados são separados POR CONTA.
+   Cada usuário logado só vê os próprios pets, vacinas, consultas,
+   lembretes e preferências — puxados pelo próprio login, não um
+   "balde" compartilhado por todo mundo que usa o app.
 
-   1) PERSISTÊNCIA LOCAL (localStorage): usada como fallback
-      só quando a página é aberta fora do app (testando no
-      navegador, sem window.AppInventor). Deixa o app 100%
-      testável mesmo sem o TinyDB/Firebase de verdade.
+   O único dado que continua GLOBAL (compartilhado por todo mundo,
+   de propósito) é o Mural de Animais Perdidos — é uma rede social,
+   então todo post deve aparecer pra todo usuário.
 
-   2) PONTE COM O APP INVENTOR / FIREBASE: as funções
-      enviarComando(...) e receberDadosBanco(...) no fim do
-      arquivo. Dentro do app de verdade, é isso que salva e
-      busca os dados reais do usuário.
-
-   Nenhuma tela precisa saber QUAL das duas está em uso — cada
-   página só chama "salvarX" / "buscarX" e este arquivo decide
-   se manda pro AppInventor ou grava no localStorage.
+   Duas responsabilidades, como antes:
+   1) PERSISTÊNCIA LOCAL (localStorage): fallback pra quando a
+      página abre fora do app (sem window.AppInventor).
+   2) PONTE COM O APP INVENTOR / FIREBASE / CLOUDDB: enviarComando
+      e receberDadosBanco, no fim do arquivo.
    ========================================================== */
 
 
 /* ==========================================================
-   1. PETS
+   0. USUÁRIO ATUAL (conta logada)
    ========================================================== */
-const PETCARE_STORAGE_KEY = 'petcare_pets_v1';
+
+// Transforma um e-mail num identificador seguro pra usar em tags/chaves
+// (só letras minúsculas, números e "_")
+function sanitizarEmailParaId(email) {
+    return (email || "").toLowerCase().trim().replace(/[^a-z0-9]/g, "_");
+}
+
+const PETCARE_USUARIO_ATUAL_KEY = 'petcare_usuario_atual_v1';
+
+function petcareObterUsuarioAtual() {
+    return localStorage.getItem(PETCARE_USUARIO_ATUAL_KEY) || null;
+}
+function petcareDefinirUsuarioAtual(email) {
+    localStorage.setItem(PETCARE_USUARIO_ATUAL_KEY, sanitizarEmailParaId(email));
+}
+function petcareLimparUsuarioAtual() {
+    localStorage.removeItem(PETCARE_USUARIO_ATUAL_KEY);
+}
+
+// Chave de localStorage isolada por conta (pra não misturar dados de
+// contas diferentes testadas no mesmo navegador/aparelho)
+function chaveLocal(baseChave) {
+    const usuario = petcareObterUsuarioAtual();
+    return usuario ? baseChave + "__" + usuario : baseChave;
+}
+
+// Tag remota (CloudDB/Firebase) isolada por conta. Formato: "usuario::base"
+// O "::" nunca aparece nem no id do usuário nem nos nomes-base, então dá
+// pra separar os dois de volta com segurança (usado em receberDadosBanco).
+function tagUsuario(baseTag) {
+    const usuario = petcareObterUsuarioAtual();
+    if (!usuario) {
+        console.warn("tagUsuario chamado sem usuário logado — usando tag sem escopo:", baseTag);
+        return baseTag;
+    }
+    return usuario + "::" + baseTag;
+}
+
+// Usado só no login/cadastro, quando ainda não sabemos se o e-mail
+// digitado é o "usuário atual" (pode estar errado/não existir ainda)
+function tagContaPorEmail(email) {
+    return sanitizarEmailParaId(email) + "::conta";
+}
+
+
+/* ==========================================================
+   1. PETS (por conta)
+   ========================================================== */
 
 function petcareObterPets() {
     try {
-        const raw = localStorage.getItem(PETCARE_STORAGE_KEY);
+        const raw = localStorage.getItem(chaveLocal('petcare_pets_v1'));
         return raw ? JSON.parse(raw) : [];
     } catch (e) {
         console.error('Erro ao ler pets salvos localmente:', e);
@@ -37,7 +83,7 @@ function petcareObterPets() {
 
 function petcareSalvarPets(lista) {
     try {
-        localStorage.setItem(PETCARE_STORAGE_KEY, JSON.stringify(lista));
+        localStorage.setItem(chaveLocal('petcare_pets_v1'), JSON.stringify(lista));
         return true;
     } catch (e) {
         console.error('Erro ao salvar pets localmente:', e);
@@ -63,21 +109,17 @@ function petcareObterPetPorId(petId) {
     return petcareObterPets().find(p => String(p.id) === String(petId)) || null;
 }
 
-// Calcula idade aproximada a partir de uma data "DD/MM/AAAA"
 function petcareCalcularIdade(dataNascStr) {
     if (!dataNascStr) return "-";
     const partes = dataNascStr.split("/");
     if (partes.length !== 3) return "-";
-
     const nascimento = new Date(partes[2], partes[1] - 1, partes[0]);
     if (isNaN(nascimento.getTime())) return "-";
-
     const hoje = new Date();
     let anos = hoje.getFullYear() - nascimento.getFullYear();
     let meses = hoje.getMonth() - nascimento.getMonth();
     if (hoje.getDate() < nascimento.getDate()) meses--;
     if (meses < 0) { anos--; meses += 12; }
-
     if (anos < 1) {
         const m = Math.max(meses, 0);
         return m === 1 ? "1 mês" : `${m} meses`;
@@ -85,65 +127,52 @@ function petcareCalcularIdade(dataNascStr) {
     return anos === 1 ? "1 ano" : `${anos} anos`;
 }
 
-/* Conversores: pegam uma lista de pets (array de objetos) e montam
-   a mesma string "pipe-delimitada" que cada tela já sabe ler, pra
-   nenhuma tela precisar mudar a própria lógica de renderização. */
-
-// Home: id,nome,idade,peso,raca,alerta
 function petcareFormatoHome(lista) {
     return lista.map(p =>
         [p.id, p.nome, petcareCalcularIdade(p.nascimento), (p.peso ? p.peso + ' kg' : '-'), (p.raca || '-'), ''].join(',')
     ).join('|');
 }
-
-// Saúde: id,nome,especie
 function petcareFormatoSaude(lista) {
     return lista.map(p => [p.id, p.nome, (p.tipo || 'Pet')].join(',')).join('|');
 }
-
-// Consultas / Vacinas / Lembretes: id,nome
 function petcareFormatoSimples(lista) {
     return lista.map(p => [p.id, p.nome].join(',')).join('|');
 }
 
 
 /* ==========================================================
-   2. ARMAZENAMENTO GENÉRICO POR PET (vacinas, histórico...)
-      { "pet_123": [ {...}, {...} ], "pet_456": [ {...} ] }
+   2. ARMAZENAMENTO GENÉRICO POR PET (vacinas, histórico)
+      { "pet_123": [ {...} ], "pet_456": [ {...} ] } - por conta
    ========================================================== */
 
 function petcareObterTudo(chave) {
     try {
-        const raw = localStorage.getItem(chave);
+        const raw = localStorage.getItem(chaveLocal(chave));
         return raw ? JSON.parse(raw) : {};
     } catch (e) {
         console.error('Erro ao ler dados locais (' + chave + '):', e);
         return {};
     }
 }
-
 function petcareSalvarTudo(chave, objeto) {
     try {
-        localStorage.setItem(chave, JSON.stringify(objeto));
+        localStorage.setItem(chaveLocal(chave), JSON.stringify(objeto));
         return true;
     } catch (e) {
         console.error('Erro ao salvar dados locais (' + chave + '):', e);
         return false;
     }
 }
-
 function petcareObterListaPet(chave, petId) {
     const tudo = petcareObterTudo(chave);
     return tudo[petId] || [];
 }
-
 function petcareSalvarListaPet(chave, petId, lista) {
     const tudo = petcareObterTudo(chave);
     tudo[petId] = lista;
     petcareSalvarTudo(chave, tudo);
     return lista;
 }
-
 function petcareAdicionarItemPet(chave, petId, item) {
     const lista = petcareObterListaPet(chave, petId);
     const novoItem = Object.assign({ id: chave + '_' + Date.now() }, item);
@@ -152,13 +181,11 @@ function petcareAdicionarItemPet(chave, petId, item) {
     return novoItem;
 }
 
-// ---------- Vacinas (por pet) ----------
 const PETCARE_VACINAS_KEY = 'petcare_vacinas_v1';
 function petcareObterVacinas(petId) { return petcareObterListaPet(PETCARE_VACINAS_KEY, petId); }
 function petcareSalvarVacinas(petId, lista) { return petcareSalvarListaPet(PETCARE_VACINAS_KEY, petId, lista); }
 function petcareAdicionarVacina(petId, vacina) { return petcareAdicionarItemPet(PETCARE_VACINAS_KEY, petId, vacina); }
 
-// ---------- Histórico de saúde (por pet) ----------
 const PETCARE_HISTORICO_KEY = 'petcare_historico_v1';
 function petcareObterHistorico(petId) { return petcareObterListaPet(PETCARE_HISTORICO_KEY, petId); }
 function petcareSalvarHistorico(petId, lista) { return petcareSalvarListaPet(PETCARE_HISTORICO_KEY, petId, lista); }
@@ -166,29 +193,33 @@ function petcareAdicionarHistorico(petId, registro) { return petcareAdicionarIte
 
 
 /* ==========================================================
-   3. LISTAS GLOBAIS DO USUÁRIO (consultas e lembretes cobrem
-      todos os pets numa lista só, cada item com "idPet")
+   3. LISTAS GLOBAIS DA CONTA (consultas e lembretes cobrem
+      todos os pets DA MESMA CONTA numa lista só)
    ========================================================== */
 
-const PETCARE_CONSULTAS_KEY = 'petcare_consultas_v1';
 function petcareObterConsultas() {
-    try { return JSON.parse(localStorage.getItem(PETCARE_CONSULTAS_KEY) || "[]"); }
+    try { return JSON.parse(localStorage.getItem(chaveLocal('petcare_consultas_v1')) || "[]"); }
     catch (e) { return []; }
 }
 function petcareSalvarConsultas(lista) {
-    localStorage.setItem(PETCARE_CONSULTAS_KEY, JSON.stringify(lista));
+    localStorage.setItem(chaveLocal('petcare_consultas_v1'), JSON.stringify(lista));
     return lista;
 }
 
-const PETCARE_LEMBRETES_KEY = 'petcare_lembretes_v1';
 function petcareObterLembretes() {
-    try { return JSON.parse(localStorage.getItem(PETCARE_LEMBRETES_KEY) || "[]"); }
+    try { return JSON.parse(localStorage.getItem(chaveLocal('petcare_lembretes_v1')) || "[]"); }
     catch (e) { return []; }
 }
 function petcareSalvarLembretes(lista) {
-    localStorage.setItem(PETCARE_LEMBRETES_KEY, JSON.stringify(lista));
+    localStorage.setItem(chaveLocal('petcare_lembretes_v1'), JSON.stringify(lista));
     return lista;
 }
+
+
+/* ==========================================================
+   4. MURAL DE ANIMAIS PERDIDOS — GLOBAL DE PROPÓSITO
+      (rede social: todo mundo vê os posts de todo mundo)
+   ========================================================== */
 
 const PETCARE_PERDIDOS_KEY = 'petcare_perdidos_v1';
 function petcareObterPerdidos() {
@@ -202,64 +233,79 @@ function petcareSalvarPerdidos(lista) {
 
 
 /* ==========================================================
-   4. CONTA DO USUÁRIO (um objeto só, global)
+   5. CONTA E PREFERÊNCIAS (por conta)
    ========================================================== */
 
-const PETCARE_CONTA_KEY = 'petcare_conta_v1';
 function petcareObterConta() {
-    try { return JSON.parse(localStorage.getItem(PETCARE_CONTA_KEY) || "null"); }
+    try { return JSON.parse(localStorage.getItem(chaveLocal('petcare_conta_v1')) || "null"); }
     catch (e) { return null; }
 }
 function petcareSalvarConta(objeto) {
-    localStorage.setItem(PETCARE_CONTA_KEY, JSON.stringify(objeto));
+    localStorage.setItem(chaveLocal('petcare_conta_v1'), JSON.stringify(objeto));
     return objeto;
 }
 
-const PETCARE_PREFERENCIAS_KEY = 'petcare_preferencias_v1';
 function petcareObterPreferencias() {
-    try { return JSON.parse(localStorage.getItem(PETCARE_PREFERENCIAS_KEY) || "null"); }
+    try { return JSON.parse(localStorage.getItem(chaveLocal('petcare_preferencias_v1')) || "null"); }
     catch (e) { return null; }
 }
 function petcareSalvarPreferencias(objeto) {
-    localStorage.setItem(PETCARE_PREFERENCIAS_KEY, JSON.stringify(objeto));
+    localStorage.setItem(chaveLocal('petcare_preferencias_v1'), JSON.stringify(objeto));
     return objeto;
+}
+
+// ---------- Sessão ("Lembrar de mim") ----------
+const PETCARE_SESSAO_KEY = 'petcare_sessao_v1';
+function petcareObterSessao() {
+    try { return JSON.parse(localStorage.getItem(PETCARE_SESSAO_KEY) || "null"); }
+    catch (e) { return null; }
+}
+function petcareSalvarSessao(objeto) {
+    localStorage.setItem(PETCARE_SESSAO_KEY, JSON.stringify(objeto));
+    return objeto;
+}
+function petcareLimparSessao() {
+    localStorage.removeItem(PETCARE_SESSAO_KEY);
+}
+
+/* ---------- Diretório local de contas (só pra testar no navegador) ----------
+   Fora do app, não temos como perguntar pro CloudDB "esse e-mail já existe?"
+   então mantemos uma lista simples aqui, só pra simular o mesmo
+   comportamento que o banco de verdade vai ter. */
+const PETCARE_DIRETORIO_CONTAS_KEY = 'petcare_diretorio_contas_v1';
+function petcareObterDiretorioContas() {
+    try { return JSON.parse(localStorage.getItem(PETCARE_DIRETORIO_CONTAS_KEY) || "{}"); }
+    catch (e) { return {}; }
+}
+function petcareRegistrarContaNoDiretorio(email, dadosConta) {
+    const dir = petcareObterDiretorioContas();
+    dir[sanitizarEmailParaId(email)] = dadosConta;
+    localStorage.setItem(PETCARE_DIRETORIO_CONTAS_KEY, JSON.stringify(dir));
+}
+function petcareBuscarContaNoDiretorio(email) {
+    const dir = petcareObterDiretorioContas();
+    return dir[sanitizarEmailParaId(email)] || null;
 }
 
 
 /* ==========================================================
-   5. PONTE COM O APP INVENTOR / FIREBASE
+   6. PONTE COM O APP INVENTOR / FIREBASE / CLOUDDB
    ==========================================================
-   Protocolo único usado nas duas direções:
+   Protocolo (sem mudança nenhuma nos blocos do App Inventor):
 
        "COMANDO|TAG|DADOS_EM_JSON"
 
-   - COMANDO contém "BUSCAR" (ler) ou "SALVAR"/"NOVO" (gravar)
-   - TAG     é a chave usada no Firebase (StoreValue / GetValue)
-   - DADOS   é o payload inteiro em JSON
+   A única diferença agora é que a TAG passa a vir no formato
+   "usuario::base" (ex: "joao_gmail_com::pets") pra maioria dos
+   dados — exceto o Mural de Perdidos (tag "perdidos", sem
+   escopo) e a checagem de conta durante login/cadastro (tag
+   "email_da_pessoa::conta", construída antes de sabermos se
+   aquele e-mail é de fato "o usuário atual").
 
-   Do lado do App Inventor (blocos), a regra é SEMPRE a mesma,
-   pra qualquer tela, sem precisar de um "if" por tipo de dado:
-
-     when WebViewer1.WebViewStringChange
-     do  initialize local lista_dados to split(WebViewString, "|")
-         initialize local comando to lista_dados[1]
-         initialize local tag     to lista_dados[2]
-         initialize local dados   to lista_dados[3]
-         if text comando contains "SALVAR" or comando contains "NOVO"
-           then FirebaseDB1.StoreValue(tag, dados)
-         else if text comando contains "BUSCAR"
-           then FirebaseDB1.GetValue(tag, valueIfTagNotThere = "VAZIO")
-
-     when FirebaseDB1.GotValue (tag, value)
-     do  WebViewer1.RunJavaScript(
-             join("receberDadosBanco('", tag, "', '", value, "');")
-         )
-
-   (LOGIN/CADASTRO em index.html usam o mesmo BUSCAR/SALVAR,
-   só que com tag = "conta" — ver tutorial completo à parte.)
+   Os blocos do App Inventor continuam exatamente iguais — pra
+   eles, é só um texto de tag qualquer, não importa o formato.
    ========================================================== */
 
-// ---------- ENVIO: JS -> App Inventor / Firebase ----------
 function enviarComando(comando, tag, dadosObjeto) {
     const payload = comando + "|" + tag + "|" + JSON.stringify(dadosObjeto);
     if (window.AppInventor && window.AppInventor.setWebViewString) {
@@ -270,81 +316,72 @@ function enviarComando(comando, tag, dadosObjeto) {
     return payload;
 }
 
-/* ---------- RECEPÇÃO: App Inventor -> JS : FUNÇÃO MESTRA ----------
-   É esta a função que o RunJavaScript do App Inventor chama sempre,
-   pra qualquer tela. Ela olha a "tag" e decide pra qual função de
-   cada página os dados devem ir — e também espelha no localStorage,
-   pra manter tudo consistente caso o app alterne entre online/offline. */
 function receberDadosBanco(tag, valorRecebido) {
     if (!tag) { console.warn("receberDadosBanco chamado sem tag."); return; }
+
+    // Separa "usuario::base" de volta em duas partes (quando aplicável)
+    let base = tag;
+    if (tag.indexOf("::") !== -1) {
+        base = tag.split("::")[1];
+    }
 
     let dados = null;
     if (valorRecebido && valorRecebido !== "VAZIO") {
         try { dados = JSON.parse(valorRecebido); } catch (e) {
-            console.error("Erro ao converter dados do Firebase (tag=" + tag + "):", e);
+            console.error("Erro ao converter dados do banco (tag=" + tag + "):", e);
         }
     }
 
-    if (tag === "pets") {
-        const lista = dados || [];
-        petcareSalvarPets(lista);
-        if (typeof atualizarDadosDosPets === "function") {
-            atualizarDadosDosPets(petcareFormatoHome(lista));
-        }
-        if (typeof carregarPetsDaCarteira === "function") {
-            carregarPetsDaCarteira(petcareFormatoSimples(lista));
-        }
-        if (typeof carregarPetsDoBanco === "function") {
-            carregarPetsDoBanco(petcareFormatoSaude(lista));
-        }
-        if (typeof carregarPetsConsultas === "function") {
-            carregarPetsConsultas(petcareFormatoSimples(lista));
-        }
-        if (typeof carregarPetsLembretes === "function") {
-            carregarPetsLembretes(petcareFormatoSimples(lista));
-        }
-        if (typeof aoReceberListaPets === "function") {
-            aoReceberListaPets(lista);
+    if (base === "pets") {
+        let lista = dados || [];
+
+        // Trava de segurança: nunca apaga pets já salvos localmente por
+        // causa de uma resposta vazia/falha temporária do banco.
+        if (lista.length === 0) {
+            const jaSalvos = petcareObterPets();
+            if (jaSalvos.length > 0) {
+                console.warn("Lista de pets veio vazia do banco, mas já existiam pets salvos localmente - mantendo.");
+                lista = jaSalvos;
+            }
         }
 
-    } else if (tag.indexOf("vacinas_") === 0) {
-        const petId = tag.substring("vacinas_".length);
+        petcareSalvarPets(lista);
+        if (typeof atualizarDadosDosPets === "function") atualizarDadosDosPets(petcareFormatoHome(lista));
+        if (typeof carregarPetsDaCarteira === "function") carregarPetsDaCarteira(petcareFormatoSimples(lista));
+        if (typeof carregarPetsDoBanco === "function") carregarPetsDoBanco(petcareFormatoSaude(lista));
+        if (typeof carregarPetsConsultas === "function") carregarPetsConsultas(petcareFormatoSimples(lista));
+        if (typeof carregarPetsLembretes === "function") carregarPetsLembretes(petcareFormatoSimples(lista));
+        if (typeof aoReceberListaPets === "function") aoReceberListaPets(lista);
+
+    } else if (base.indexOf("vacinas_") === 0) {
+        const petId = base.substring("vacinas_".length);
         const lista = dados || [];
         petcareSalvarVacinas(petId, lista);
-        if (typeof carregarListaVacinasJSON === "function") {
-            carregarListaVacinasJSON(JSON.stringify(lista));
-        }
+        if (typeof carregarListaVacinasJSON === "function") carregarListaVacinasJSON(JSON.stringify(lista));
 
-    } else if (tag.indexOf("historico_") === 0) {
-        const petId = tag.substring("historico_".length);
+    } else if (base.indexOf("historico_") === 0) {
+        const petId = base.substring("historico_".length);
         const lista = dados || [];
         petcareSalvarHistorico(petId, lista);
-        if (typeof carregarHistoricoJSON === "function") {
-            carregarHistoricoJSON(JSON.stringify(lista));
-        }
+        if (typeof carregarHistoricoJSON === "function") carregarHistoricoJSON(JSON.stringify(lista));
 
-    } else if (tag === "consultas") {
+    } else if (base === "consultas") {
         const lista = dados || [];
         petcareSalvarConsultas(lista);
-        if (typeof carregarConsultas === "function") {
-            carregarConsultas(JSON.stringify(lista));
-        }
+        if (typeof carregarConsultas === "function") carregarConsultas(JSON.stringify(lista));
 
-    } else if (tag === "lembretes") {
+    } else if (base === "lembretes") {
         const lista = dados || [];
         petcareSalvarLembretes(lista);
-        if (typeof carregarLembretes === "function") {
-            carregarLembretes(JSON.stringify(lista));
-        }
+        if (typeof carregarLembretes === "function") carregarLembretes(JSON.stringify(lista));
 
-    } else if (tag === "perdidos") {
+    } else if (base === "perdidos") {
+        // Este é global, sem escopo de usuário - não passa pelo "::"
         const lista = dados || [];
         petcareSalvarPerdidos(lista);
-        if (typeof carregarPerdidosJSON === "function") {
-            carregarPerdidosJSON(JSON.stringify(lista));
-        }
+        if (typeof carregarPerdidosJSON === "function") carregarPerdidosJSON(JSON.stringify(lista));
 
-    } else if (tag === "conta") {
+    } else if (base === "conta") {
         const conta = dados || {};
         petcareSalvarConta(conta);
         if (typeof carregarDadosConta === "function") {
@@ -354,7 +391,7 @@ function receberDadosBanco(tag, valorRecebido) {
             aoReceberContaLogin(conta);
         }
 
-    } else if (tag === "preferencias") {
+    } else if (base === "preferencias") {
         const prefs = dados || {};
         petcareSalvarPreferencias(prefs);
         if (typeof carregarPreferencias === "function") {
@@ -363,6 +400,6 @@ function receberDadosBanco(tag, valorRecebido) {
         }
 
     } else {
-        console.warn("Nenhum roteamento definido ainda para a tag:", tag);
+        console.warn("Nenhum roteamento definido ainda para a tag:", tag, "(base:", base, ")");
     }
 }

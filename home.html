@@ -779,13 +779,19 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
+            // Segurança: sem usuário logado, não tem de quem puxar os dados - volta pro login
+            if (typeof petcareObterUsuarioAtual === "function" && !petcareObterUsuarioAtual()) {
+                window.location.href = "index.html";
+                return;
+            }
+
             // Mostra na hora o que já está em cache local (evita tela vazia enquanto busca no banco)
             const petsCache = petcareObterPets();
             if (petsCache.length > 0) {
                 atualizarDadosDosPets(petcareFormatoHome([...petsCache].reverse()));
             }
             if (window.AppInventor) {
-                enviarComando("BUSCAR_PETS", "pets", {});
+                enviarComando("BUSCAR_PETS", tagUsuario("pets"), {});
             } else if (petsCache.length === 0) {
                 mostrarEstadoVazio();
             }
@@ -854,7 +860,7 @@
 
             // Sincroniza com o banco de verdade (Firebase via App Inventor)
             if (window.AppInventor) {
-                enviarComando("SALVAR_PETS", "pets", pets);
+                enviarComando("SALVAR_PETS", tagUsuario("pets"), pets);
             }
 
             limparFormularioPet();
@@ -866,7 +872,7 @@
             const pets = petcareExcluirPet(petId);
             atualizarDadosDosPets(petcareFormatoHome([...pets].reverse()));
             if (window.AppInventor) {
-                enviarComando("SALVAR_PETS", "pets", pets);
+                enviarComando("SALVAR_PETS", tagUsuario("pets"), pets);
             }
         }
 

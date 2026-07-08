@@ -310,6 +310,12 @@
 <script src="i18n.js"></script>
 <script>
     window.addEventListener('DOMContentLoaded', () => {
+        // Segurança: sem usuário logado, não tem de quem puxar os dados - volta pro login
+        if (typeof petcareObterUsuarioAtual === "function" && !petcareObterUsuarioAtual()) {
+            window.location.href = "index.html";
+            return;
+        }
+
         if (typeof carregarMenuInferior === "function") carregarMenuInferior('');
         montarListaIdiomas();
         if (typeof aplicarTraducoes === "function") aplicarTraducoes();
@@ -333,8 +339,8 @@
 
         // Busca os dados reais no banco, se estiver rodando dentro do app
         if (window.AppInventor) {
-            enviarComando("BUSCAR_CONTA", "conta", {});
-            enviarComando("BUSCAR_PREFERENCIAS", "preferencias", {});
+            enviarComando("BUSCAR_CONTA", tagUsuario("conta"), {});
+            enviarComando("BUSCAR_PREFERENCIAS", tagUsuario("preferencias"), {});
         }
     });
 
@@ -509,7 +515,7 @@
         petcareSalvarConta(conta);
 
         if (window.AppInventor) {
-            enviarComando("SALVAR_CONTA", "conta", conta);
+            enviarComando("SALVAR_CONTA", tagUsuario("conta"), conta);
         }
     }
 
@@ -523,12 +529,14 @@
         petcareSalvarPreferencias(prefs);
 
         if (window.AppInventor) {
-            enviarComando("SALVAR_PREFERENCIAS", "preferencias", prefs);
+            enviarComando("SALVAR_PREFERENCIAS", tagUsuario("preferencias"), prefs);
         }
     }
 
     function sairDaConta() {
         if (confirm("Deseja realmente sair do aplicativo?")) {
+            if (typeof petcareLimparSessao === "function") petcareLimparSessao(); // limpa o "Lembrar de mim"
+            if (typeof petcareLimparUsuarioAtual === "function") petcareLimparUsuarioAtual(); // limpa qual conta estava logada
             if (window.AppInventor) window.AppInventor.setWebViewString("LOGOUT");
             else window.location.href = "index.html";
         }

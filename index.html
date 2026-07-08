@@ -279,7 +279,7 @@
                     <div class="error-text" id="errLoginPassword">A senha não pode estar vazia.</div>
                 </div>
                 
-                <button type="button" class="btn-primary" onclick="fazerLogin()">Continuar</button>
+                <button type="button" id="btnLogin" class="btn-primary" onclick="fazerLogin()">Continuar</button>
 
                 <div class="extra-options">
                     <label class="checkbox-label">
@@ -454,6 +454,9 @@
         }
 
         // Validação e Envio de LOGIN
+        let loginTimeoutId = null;
+        let cadastroTimeoutId = null;
+
         function fazerLogin() {
             limparErros();
             var email = document.getElementById('loginEmail').value.trim();
@@ -475,18 +478,35 @@
             if(temErro) return;
 
             if (window.AppInventor) {
+                // Mostra que algo está acontecendo, pra nunca parecer que o botão "não fez nada"
+                const btn = document.getElementById('btnLogin');
+                btn.disabled = true;
+                btn.innerText = "Verificando...";
+
                 // Guarda o que foi digitado pra comparar quando o banco responder (ver aoReceberContaLogin)
                 window._loginTentativa = { email: email, senha: pass };
-                enviarComando("BUSCAR_CONTA", "conta", {});
+                enviarComando("BUSCAR_CONTA", tagContaPorEmail(email), {});
+
+                // Prazo de segurança: se o banco não responder em alguns segundos, avisa em vez de ficar em silêncio
+                clearTimeout(loginTimeoutId);
+                loginTimeoutId = setTimeout(() => {
+                    if (window._loginTentativa) {
+                        window._loginTentativa = null;
+                        btn.disabled = false;
+                        btn.innerText = "Continuar";
+                        alert("Não conseguimos verificar sua conta agora. Verifique sua conexão com a internet e tente novamente.");
+                    }
+                }, 6000);
             } else {
-                // Fora do app (navegador): compara direto com o que está salvo localmente
-                const conta = petcareObterConta();
+                // Fora do app (navegador): compara com o diretório local de contas
+                const conta = petcareBuscarContaNoDiretorio(email);
                 validarLogin(conta, email, pass);
             }
         }
 
-        // Chamada pela função mestra (receberDadosBanco) quando a tag "conta" volta do banco,
-        // MAS só depois de uma tentativa de login (pra não disparar em outras telas).
+        // Chamada pela função mestra (receberDadosBanco) toda vez que a tag "conta"
+        // volta do banco - decide qual fluxo pendente ela pertence (login, recuperação
+        // de senha, ou checagem de e-mail já existente no cadastro).
         function aoReceberContaLogin(conta) {
             if (window._recuperacaoTentativa) {
                 const email = window._recuperacaoTentativa;
@@ -494,7 +514,26 @@
                 processarVerificacaoEmail(conta, email);
                 return;
             }
+            if (window._cadastroTentativa) {
+                clearTimeout(cadastroTimeoutId);
+                const btn = document.querySelector('#stepRegister .btn-primary');
+                if (btn) { btn.disabled = false; btn.innerText = "Continuar"; }
+
+                const novaConta = window._cadastroTentativa;
+                window._cadastroTentativa = null;
+
+                if (conta && conta.email === novaConta.email) {
+                    aplicarErro('regEmail', 'errRegEmail');
+                    alert("Já existe uma conta com esse e-mail. Tente fazer login.");
+                    return;
+                }
+                criarContaDeVerdade(novaConta);
+                return;
+            }
             if (!window._loginTentativa) return;
+            clearTimeout(loginTimeoutId); // a resposta chegou, cancela o aviso de prazo esgotado
+            const btn = document.getElementById('btnLogin');
+            if (btn) { btn.disabled = false; btn.innerText = "Continuar"; }
             validarLogin(conta, window._loginTentativa.email, window._loginTentativa.senha);
             window._loginTentativa = null;
         }
@@ -508,9 +547,9 @@
 
             if (window.AppInventor) {
                 window._recuperacaoTentativa = email;
-                enviarComando("BUSCAR_CONTA", "conta", {});
+                enviarComando("BUSCAR_CONTA", tagContaPorEmail(email), {});
             } else {
-                const conta = petcareObterConta();
+                const conta = petcareBuscarContaNoDiretorio(email);
                 processarVerificacaoEmail(conta, email);
             }
         }
@@ -530,12 +569,13 @@
             const novaSenha = document.getElementById('forgotNovaSenha').value;
             if (!novaSenha || novaSenha.length < 6) { aplicarErro('forgotNovaSenha', 'errForgotSenha'); return; }
 
-            const conta = petcareObterConta() || {};
+            const email = document.getElementById('forgotEmail').value.trim();
+            const conta = petcareBuscarContaNoDiretorio(email) || {};
             conta.senha = novaSenha;
-            petcareSalvarConta(conta);
+            petcareRegistrarContaNoDiretorio(email, conta);
 
             if (window.AppInventor) {
-                enviarComando("SALVAR_CONTA", "conta", conta);
+                enviarComando("SALVAR_CONTA", tagContaPorEmail(email), conta);
             }
 
             alert("Senha atualizada! Faça login com sua nova senha.");
@@ -551,6 +591,12 @@
 
         function validarLogin(conta, email, pass) {
             if (conta && conta.email === email && conta.senha === pass) {
+                // Define esta conta como "usuário atual" - a partir daqui, toda tela
+                // (pets, vacinas, consultas...) passa a puxar os dados dela.
+                petcareDefinirUsuarioAtual(email);
+                petcareSalvarConta(conta); // aquece o cache local já escopado por essa conta
+                petcareRegistrarContaNoDiretorio(email, conta); // mantém o diretório local em dia
+
                 // "Lembrar de mim": guarda uma sessão local pra pular o login da próxima vez
                 const lembrar = document.getElementById('remember').checked;
                 if (lembrar) {
@@ -559,10 +605,15 @@
                     petcareLimparSessao();
                 }
                 window.location.href = "home.html";
-            } else {
+            } else if (!conta) {
                 aplicarErro('loginEmail', 'errLoginEmail');
+                alert("Ainda não existe nenhuma conta com esse e-mail. Toque em \"Cadastre-se!\" pra criar a sua.");
+            } else if (conta.email !== email) {
+                aplicarErro('loginEmail', 'errLoginEmail');
+                alert("Não encontramos uma conta com esse e-mail.");
+            } else {
                 aplicarErro('loginPassword', 'errLoginPassword');
-                alert("E-mail ou senha incorretos, ou conta ainda não cadastrada.");
+                alert("Senha incorreta. Tente novamente ou toque em \"Esqueceu sua Senha?\".");
             }
         }
 
@@ -601,13 +652,51 @@
             if(temErro) return;
 
             const conta = { nome: nome, telefone: tel, nascimento: dataNasc, email: email, senha: senha };
-            petcareSalvarConta(conta);
 
             if (window.AppInventor) {
-                enviarComando("SALVAR_CONTA", "conta", conta);
-            }
+                const btn = document.querySelector('#stepRegister .btn-primary');
+                btn.disabled = true;
+                btn.innerText = "Verificando...";
 
-            window.location.href = "home.html";
+                // Antes de criar, checa se já existe uma conta com esse e-mail
+                window._cadastroTentativa = conta;
+                enviarComando("BUSCAR_CONTA", tagContaPorEmail(email), {});
+
+                clearTimeout(cadastroTimeoutId);
+                cadastroTimeoutId = setTimeout(() => {
+                    if (window._cadastroTentativa) {
+                        window._cadastroTentativa = null;
+                        btn.disabled = false;
+                        btn.innerText = "Continuar";
+                        alert("Não conseguimos verificar sua conta agora. Verifique sua conexão com a internet e tente novamente.");
+                    }
+                }, 6000);
+            } else {
+                // Fora do app (navegador): checa o diretório local de contas
+                const existente = petcareBuscarContaNoDiretorio(email);
+                if (existente) {
+                    aplicarErro('regEmail', 'errRegEmail');
+                    alert("Já existe uma conta com esse e-mail. Tente fazer login.");
+                    return;
+                }
+                criarContaDeVerdade(conta);
+            }
+        }
+
+        // Só roda depois de confirmado que o e-mail ainda não tem conta
+        function criarContaDeVerdade(conta) {
+            petcareDefinirUsuarioAtual(conta.email);
+            petcareSalvarConta(conta);
+            petcareRegistrarContaNoDiretorio(conta.email, conta);
+
+            if (window.AppInventor) {
+                enviarComando("SALVAR_CONTA", tagContaPorEmail(conta.email), conta);
+                // Pequena espera antes de trocar de tela - dá tempo do comando
+                // ser processado antes da página ser trocada (evita perder o comando).
+                setTimeout(() => { window.location.href = "home.html"; }, 600);
+            } else {
+                window.location.href = "home.html";
+            }
         }
     </script>
 

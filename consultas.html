@@ -218,8 +218,8 @@
         carregarConsultas(JSON.stringify(petcareObterConsultas()));
 
         if (window.AppInventor) {
-            enviarComando("BUSCAR_PETS", "pets", {});
-            enviarComando("BUSCAR_CONSULTAS", "consultas", {});
+            enviarComando("BUSCAR_PETS", tagUsuario("pets"), {});
+            enviarComando("BUSCAR_CONSULTAS", tagUsuario("consultas"), {});
         }
     });
 
@@ -452,7 +452,7 @@
 
         // Sincroniza com o banco de verdade (Firebase via App Inventor)
         if (window.AppInventor) {
-            enviarComando("SALVAR_CONSULTAS", "consultas", consultasCadastradas);
+            enviarComando("SALVAR_CONSULTAS", tagUsuario("consultas"), consultasCadastradas);
         }
 
         fecharModalAddConsulta();
@@ -465,7 +465,7 @@
         renderizarListaConsultas();
 
         if (window.AppInventor) {
-            enviarComando("SALVAR_CONSULTAS", "consultas", consultasCadastradas);
+            enviarComando("SALVAR_CONSULTAS", tagUsuario("consultas"), consultasCadastradas);
         }
     }
 
@@ -476,7 +476,7 @@
             renderizarListaConsultas();
 
             if (window.AppInventor) {
-                enviarComando("SALVAR_CONSULTAS", "consultas", consultasCadastradas);
+                enviarComando("SALVAR_CONSULTAS", tagUsuario("consultas"), consultasCadastradas);
             }
         }
     }

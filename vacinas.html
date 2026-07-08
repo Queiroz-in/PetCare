@@ -231,7 +231,7 @@
         }
 
         if (window.AppInventor) {
-            enviarComando("BUSCAR_PETS", "pets", {});
+            enviarComando("BUSCAR_PETS", tagUsuario("pets"), {});
         }
     });
 
@@ -290,7 +290,7 @@
         // Mostra na hora o que já está em cache local, e busca no banco se estiver no app
         carregarListaVacinasJSON(JSON.stringify(petcareObterVacinas(id)));
         if (window.AppInventor) {
-            enviarComando("BUSCAR_VACINAS", "vacinas_" + id, {});
+            enviarComando("BUSCAR_VACINAS", tagUsuario("vacinas_" + id), {});
         }
     }
 
@@ -466,7 +466,7 @@
 
         // Sincroniza com o banco de verdade (Firebase via App Inventor)
         if (window.AppInventor) {
-            enviarComando("SALVAR_VACINAS", "vacinas_" + petAtivoId, listaAtualizada);
+            enviarComando("SALVAR_VACINAS", tagUsuario("vacinas_" + petAtivoId), listaAtualizada);
         }
 
         fecharModalAddVacina();
