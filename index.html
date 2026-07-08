@@ -296,6 +296,23 @@
             <div id="stepRegister" class="form-step">
                 <h2>Quase lá!</h2>
                 <p class="subtitle">Precisaremos de mais informações sobre você</p>
+
+                <div class="input-group">
+                    <label>E-mail</label>
+                    <input type="email" id="regEmail" placeholder="usepetcare@gmail.com">
+                    <div class="error-text" id="errRegEmail">Por favor, insira um e-mail válido.</div>
+                </div>
+
+                <div class="input-group">
+                    <label>Senha</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="regSenha" placeholder="**********">
+                        <span class="password-toggle" onclick="togglePassword('regSenha', this)">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                        </span>
+                    </div>
+                    <div class="error-text" id="errRegSenha">A senha precisa ter pelo menos 6 caracteres.</div>
+                </div>
                 
                 <div class="input-group">
                     <label>Nome</label>
@@ -552,11 +569,22 @@
         // Validação e Envio de CADASTRO
         function finalizarCadastro() {
             limparErros();
+            var email = document.getElementById('regEmail').value.trim();
+            var senha = document.getElementById('regSenha').value;
             var nome = document.getElementById('regNome').value.trim();
             var tel = document.getElementById('regTelefone').value.trim();
             var dataNasc = document.getElementById('regData').value.trim();
             var temErro = false;
 
+            var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if(!emailRegex.test(email)) {
+                aplicarErro('regEmail', 'errRegEmail');
+                temErro = true;
+            }
+            if(senha.length < 6) {
+                aplicarErro('regSenha', 'errRegSenha');
+                temErro = true;
+            }
             if(nome.length < 3) {
                 aplicarErro('regNome', 'errRegNome');
                 temErro = true;
@@ -572,11 +600,7 @@
 
             if(temErro) return;
 
-            // Junta com o e-mail/senha digitados na etapa de login (mesma tela)
-            var email = document.getElementById('loginEmail').value.trim();
-            var pass = document.getElementById('loginPassword').value;
-
-            const conta = { nome: nome, telefone: tel, nascimento: dataNasc, email: email, senha: pass };
+            const conta = { nome: nome, telefone: tel, nascimento: dataNasc, email: email, senha: senha };
             petcareSalvarConta(conta);
 
             if (window.AppInventor) {
