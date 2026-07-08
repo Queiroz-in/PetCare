@@ -307,7 +307,12 @@ function petcareBuscarContaNoDiretorio(email) {
    ========================================================== */
 
 function enviarComando(comando, tag, dadosObjeto) {
-    const payload = comando + "|" + tag + "|" + JSON.stringify(dadosObjeto);
+    // O "nonce" no final garante que o texto NUNCA seja idêntico ao comando
+    // anterior - o App Inventor só dispara WebViewStringChange quando o valor
+    // muda de verdade, então sem isso, comandos repetidos (mesmo comando, mesma
+    // tag, mesmos dados) seriam ignorados silenciosamente.
+    const nonce = Date.now() + "_" + Math.random().toString(36).substring(2, 8);
+    const payload = comando + "|" + tag + "|" + JSON.stringify(dadosObjeto) + "|" + nonce;
     if (window.AppInventor && window.AppInventor.setWebViewString) {
         window.AppInventor.setWebViewString(payload);
     } else {

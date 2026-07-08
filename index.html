@@ -377,7 +377,7 @@
 
     </div>
 
-    <script src="petsdb.js?v=2"></script>
+    <script src="petsdb.js?v=3"></script>
     <script>
         // Animação de Entrada inicial
         window.addEventListener('DOMContentLoaded', function() {
@@ -659,9 +659,6 @@
                 btn.innerText = "Verificando...";
 
                 // Antes de criar, checa se já existe uma conta com esse e-mail
-                // DIAGNÓSTICO TEMPORÁRIO - remover depois de descobrir o problema
-                alert("DEBUG: prestes a mandar BUSCAR_CONTA com tag: " + tagContaPorEmail(email));
-
                 window._cadastroTentativa = conta;
                 enviarComando("BUSCAR_CONTA", tagContaPorEmail(email), {});
 
