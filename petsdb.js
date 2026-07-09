@@ -428,19 +428,10 @@ function receberDadosBanco(tag, valorRecebido) {
         base = base.split("::")[1].trim();
     }
 
-    // 🔧 DEBUG TEMPORÁRIO: mostra o valor cru (antes do JSON.parse) na tela,
-    // só pra tag "conta" - ajuda a achar se o problema é no dado ou na ponte.
-    if (base === "conta" && typeof mostrarDebugNaTela === "function") {
-        mostrarDebugNaTela("RECEBIDO CRU (tag=" + tag + "): [" + valorRecebido + "]");
-    }
-
     let dados = null;
     if (valorRecebido && valorRecebido !== "VAZIO") {
         try { dados = JSON.parse(valorRecebido); } catch (e) {
             console.error("Erro ao converter dados do banco (tag=" + tag + "):", e);
-            if (base === "conta" && typeof mostrarDebugNaTela === "function") {
-                mostrarDebugNaTela("ERRO NO JSON.parse: " + e.message);
-            }
         }
     }
 
@@ -498,20 +489,20 @@ function receberDadosBanco(tag, valorRecebido) {
         try {
             petcareSalvarConta(conta);
         } catch (e) {
-            if (typeof mostrarDebugNaTela === "function") mostrarDebugNaTela("ERRO em petcareSalvarConta: " + e.name + " - " + e.message);
+            console.error("Erro em petcareSalvarConta:", e);
         }
         if (typeof carregarDadosConta === "function") {
             try {
                 carregarDadosConta([conta.nome, conta.telefone, conta.email, conta.nascimento].join("|"));
             } catch (e) {
-                if (typeof mostrarDebugNaTela === "function") mostrarDebugNaTela("ERRO em carregarDadosConta: " + e.name + " - " + e.message);
+                console.error("Erro em carregarDadosConta:", e);
             }
         }
         if (typeof aoReceberContaLogin === "function") {
             try {
                 aoReceberContaLogin(conta);
             } catch (e) {
-                if (typeof mostrarDebugNaTela === "function") mostrarDebugNaTela("ERRO em aoReceberContaLogin: " + e.name + " - " + e.message);
+                console.error("Erro em aoReceberContaLogin:", e);
             }
         }
 
