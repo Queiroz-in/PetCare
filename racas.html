@@ -93,7 +93,6 @@
         <div class="filter-pill" data-i18n="raca_filtro_gatos" onclick="aplicarFiltro('Gatos', this)">Gatos</div>
         <div class="filter-pill" data-i18n="raca_filtro_peixes" onclick="aplicarFiltro('Peixes', this)">Peixes</div>
         <div class="filter-pill" data-i18n="raca_filtro_passaros" onclick="aplicarFiltro('Pássaros', this)">Pássaros</div>
-        <div class="filter-pill" data-i18n="raca_filtro_outros" onclick="aplicarFiltro('Outros', this)">Outros</div>
     </div>
 
     <main class="view-content" id="listaRacasContainer">
@@ -103,7 +102,7 @@
 </div>
 
 <script src="navbar.js?v=15"></script>
-<script src="petsdb.js?v=20"></script>
+<script src="petsdb.js?v=21"></script>
 <script src="i18n.js?v=15"></script>
 <script>
     window.addEventListener('DOMContentLoaded', () => {
@@ -217,7 +216,7 @@
 
         // 1. Filtra por Categoria e por Busca
         const listaFiltrada = racasDB.filter(raca => {
-            const matchCategoria = (raca.categoria === categoriaAtual) || (categoriaAtual === 'Outros' && !['Cães', 'Gatos', 'Pássaros', 'Peixes'].includes(raca.categoria));
+            const matchCategoria = raca.categoria === categoriaAtual;
             const matchBusca = raca.nome.toLowerCase().includes(termoBusca) || raca.temperamento.toLowerCase().includes(termoBusca);
             return matchCategoria && matchBusca;
         });

@@ -25,7 +25,9 @@ function carregarMenuInferior(abaAtiva) {
             transform: translateX(-50%);
             width: 100%;
             max-width: 390px;
-            height: 90px;
+            height: calc(90px + env(safe-area-inset-bottom, 0px));
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+            box-sizing: border-box;
             background-color: #FFFFFF;
             border-top-left-radius: 28px;
             border-top-right-radius: 28px;

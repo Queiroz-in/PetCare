@@ -80,6 +80,7 @@
         .pets-select-section {
             flex-shrink: 0;
             padding: 16px 20px 4px;
+            overflow: hidden;
         }
 
         .sos-badge {
@@ -239,6 +240,7 @@
             overflow-x: auto;
             padding: 4px 20px 24px 20px;
             -webkit-overflow-scrolling: touch;
+            touch-action: pan-x;
             cursor: grab;
         }
         .scroll-outer-wrapper::-webkit-scrollbar { display: none; }
@@ -650,6 +652,8 @@
                     <div><div class="title" data-i18n="config_titulo">Configurações</div><div class="desc" data-i18n="home_card_config_desc">Personalize e modifique</div></div>
                 </div>
 
+                <div style="width:6px; flex-shrink:0;"></div>
+
             </div>
         </div>
 
@@ -748,7 +752,7 @@
     </div>
 
     <script src="navbar.js?v=15"></script>
-    <script src="petsdb.js?v=20"></script>
+    <script src="petsdb.js?v=21"></script>
     <script src="i18n.js?v=15"></script>
     <script src="validacao.js?v=15"></script>
     <script>
@@ -1028,7 +1032,6 @@
             let posicaoYInicial;
             let rolagemEsquerdaInicial;
             let movendo = false;
-            let direcaoTravada = null; // 'horizontal' | 'vertical' | null (ainda não decidiu)
 
             // ---------- Mouse (desktop, pra testar no navegador) ----------
             elemento.addEventListener('mousedown', (e) => {
@@ -1049,36 +1052,25 @@
             });
 
             // ---------- Toque (celular de verdade) ----------
-            // Importante: só "trava" o gesto como horizontal (e bloqueia o scroll
-            // vertical da página) depois que o movimento já é claramente mais
-            // horizontal que vertical. Antes disso, deixa o navegador decidir
-            // livremente — assim um scroll vertical que começa em cima do
-            // carrossel nunca fica preso.
+            // Com "touch-action: pan-x" no CSS, o próprio navegador já cuida do
+            // arrasto horizontal (suave, com o "momentum" nativo) e já sabe
+            // deixar o scroll vertical da página passar quando o gesto for
+            // vertical - não precisamos mais simular isso na mão em JS.
+            // Aqui só medimos a distância percorrida, pra diferenciar um
+            // toque (clique) de um arrasto de verdade.
             elemento.addEventListener('touchstart', (e) => {
                 const t = e.touches[0];
                 posicaoXInicial = t.pageX;
                 posicaoYInicial = t.pageY;
-                rolagemEsquerdaInicial = elemento.scrollLeft;
                 movendo = false;
-                direcaoTravada = null;
             }, { passive: true });
 
             elemento.addEventListener('touchmove', (e) => {
                 const t = e.touches[0];
                 const deltaX = t.pageX - posicaoXInicial;
                 const deltaY = t.pageY - posicaoYInicial;
-
-                if (direcaoTravada === null && (Math.abs(deltaX) > 6 || Math.abs(deltaY) > 6)) {
-                    direcaoTravada = Math.abs(deltaX) > Math.abs(deltaY) ? 'horizontal' : 'vertical';
-                }
-
-                if (direcaoTravada === 'horizontal') {
-                    e.preventDefault(); // só bloqueia o scroll da página quando é MESMO um arrasto horizontal
-                    elemento.scrollLeft = rolagemEsquerdaInicial - deltaX;
-                    if (Math.abs(deltaX) > 3) movendo = true;
-                }
-                // se for 'vertical', não faz nada aqui — deixa o scroll normal da página acontecer
-            }, { passive: false });
+                if (Math.abs(deltaX) > 6 || Math.abs(deltaY) > 6) movendo = true;
+            }, { passive: true });
 
             // Evitar disparos involuntários de links/botões ao arrastar
             // + NAVEGAÇÃO REAL dos cards de Acesso Rápido (usa data-action)

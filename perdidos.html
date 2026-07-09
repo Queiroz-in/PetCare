@@ -8,7 +8,7 @@
     <style>
         html, body { touch-action: manipulation; overscroll-behavior: none; }
         :root {
-            --blue-header: #004D80;
+            --blue-header: #0076C4;
             --blue-action: #0076C4;
             --creme: #FFF9F1;
             --gray: #8E8E93;
@@ -68,7 +68,7 @@
         .empty-state { text-align: center; padding: 60px 20px; color: var(--gray); font-size: 13px; }
 
         /* Modal Reportar */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); display: none; align-items: flex-end; justify-content: center; z-index: 100; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); display: none; align-items: flex-end; justify-content: center; z-index: 99999; }
         .modal-overlay.aberto { display: flex; }
         .modal-box { background: var(--white); width: 100%; max-width: 390px; border-top-left-radius: 28px; border-top-right-radius: 28px; padding: 22px 20px; max-height: 88vh; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; box-sizing: border-box; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
@@ -88,7 +88,7 @@
         .btn-salvar-perdido { width: 100%; background: var(--blue-action); color: white; font-weight: 700; font-size: 15px; padding: 16px; border-radius: 14px; border: none; margin-top: 20px; cursor: pointer; }
 
         /* Modal Contato/Detalhe */
-        .contato-overlay { position: fixed; inset: 0; background: var(--blue-header); display: none; flex-direction: column; z-index: 200; }
+        .contato-overlay { position: fixed; inset: 0; background: var(--blue-header); display: none; flex-direction: column; z-index: 100000; }
         .contato-overlay.aberto { display: flex; }
         .contato-topo { padding: 48px 20px 24px; color: white; }
         .contato-voltar { background: rgba(255,255,255,0.2); border: none; width: 36px; height: 36px; border-radius: 12px; color: white; font-size: 18px; margin-bottom: 20px; cursor: pointer; }
@@ -220,7 +220,7 @@
 </div>
 
 <script src="navbar.js?v=15"></script>
-<script src="petsdb.js?v=20"></script>
+<script src="petsdb.js?v=21"></script>
 <script src="i18n.js?v=15"></script>
 <script src="validacao.js?v=15"></script>
 <script>
