@@ -14,7 +14,7 @@
    Duas responsabilidades, como antes:
    1) PERSISTÊNCIA LOCAL (localStorage): fallback pra quando a
       página abre fora do app (sem window.AppInventor).
-   2) PONTE COM O APP INVENTOR / FIREBASE / CLOUDDB: enviarComando
+   2) PONTE COM O APP INVENTOR / CLOUDDB: enviarComando
       e receberDadosBanco, no fim do arquivo.
    ========================================================== */
 
@@ -48,7 +48,7 @@ function chaveLocal(baseChave) {
     return usuario ? baseChave + "__" + usuario : baseChave;
 }
 
-// Tag remota (CloudDB/Firebase) isolada por conta. Formato: "usuario::base"
+// Tag remota (CloudDB) isolada por conta. Formato: "usuario::base"
 // O "::" nunca aparece nem no id do usuário nem nos nomes-base, então dá
 // pra separar os dois de volta com segurança (usado em receberDadosBanco).
 function tagUsuario(baseTag) {
@@ -289,7 +289,7 @@ function petcareBuscarContaNoDiretorio(email) {
 
 
 /* ==========================================================
-   6. PONTE COM O APP INVENTOR / FIREBASE / CLOUDDB
+   6. PONTE COM O APP INVENTOR / CLOUDDB
    ==========================================================
    Protocolo (sem mudança nenhuma nos blocos do App Inventor):
 

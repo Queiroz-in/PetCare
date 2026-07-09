@@ -120,6 +120,21 @@ function validarDataPassadaRecente(dataStr, { maxAnosNoPassado = 2 } = {}) {
     return { valido: true };
 }
 
+// E-mail — formato básico (usado em Configurações e Cadastro/Login)
+function validarEmail(emailStr) {
+    if (!emailStr || !emailStr.trim()) return { valido: false, mensagem: "Preencha o e-mail." };
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!regex.test(emailStr.trim())) return { valido: false, mensagem: "Insira um e-mail válido." };
+    return { valido: true };
+}
+
+// Senha — tamanho mínimo (usado em Configurações, Cadastro e Recuperação de Senha)
+function validarSenha(senhaStr, { min = 6 } = {}) {
+    if (!senhaStr) return { valido: false, mensagem: "Preencha a senha." };
+    if (senhaStr.length < min) return { valido: false, mensagem: `A senha precisa ter pelo menos ${min} caracteres.` };
+    return { valido: true };
+}
+
 // Telefone — checa se tem uma quantidade razoável de dígitos (10 ou 11, com DDD)
 function validarTelefone(telStr) {
     if (!telStr || !telStr.trim()) return { valido: false, mensagem: "Preencha o telefone." };

@@ -108,16 +108,16 @@
     <header class="header-perdidos">
         <h2>
             <svg viewBox="0 0 24 24"><path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0L12 5.34l-.77-.76a5.4 5.4 0 0 0-7.65 7.65L12 20.5l8.42-8.27a5.4 5.4 0 0 0 0-7.65z"/></svg>
-            Animais Perdidos
+            <span data-i18n="perd_titulo">Animais Perdidos</span>
         </h2>
-        <p>Mural de animais perdidos e contatos</p>
+        <p data-i18n="perd_subtitulo">Mural de animais perdidos e contatos</p>
     </header>
 
     <main class="view-content">
         <div class="search-row">
             <div class="search-box">
                 <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-                <input type="text" id="campoBusca" placeholder="Buscar por nome, raça..." oninput="renderizarPerdidos()">
+                <input type="text" id="campoBusca" placeholder="Buscar por nome, raça..." data-i18n-placeholder="perd_busca_placeholder" oninput="renderizarPerdidos()">
             </div>
             <div class="filter-btn" onclick="toggleFiltro()">
                 <svg viewBox="0 0 24 24"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>
@@ -125,16 +125,16 @@
         </div>
 
         <div class="filtro-especies" id="filtroEspecies" style="display:none;">
-            <div class="chip-especie active" data-especie="Todos" onclick="selecionarFiltro(this)">Todos</div>
-            <div class="chip-especie" data-especie="Cachorro" onclick="selecionarFiltro(this)">Cachorro</div>
-            <div class="chip-especie" data-especie="Gato" onclick="selecionarFiltro(this)">Gato</div>
-            <div class="chip-especie" data-especie="Pássaro" onclick="selecionarFiltro(this)">Pássaro</div>
-            <div class="chip-especie" data-especie="Outro" onclick="selecionarFiltro(this)">Outro</div>
+            <div class="chip-especie active" data-especie="Todos" data-i18n="perd_filtro_todos" onclick="selecionarFiltro(this)">Todos</div>
+            <div class="chip-especie" data-especie="Cachorro" data-i18n="perd_filtro_cachorro" onclick="selecionarFiltro(this)">Cachorro</div>
+            <div class="chip-especie" data-especie="Gato" data-i18n="perd_filtro_gato" onclick="selecionarFiltro(this)">Gato</div>
+            <div class="chip-especie" data-especie="Pássaro" data-i18n="perd_filtro_passaro" onclick="selecionarFiltro(this)">Pássaro</div>
+            <div class="chip-especie" data-especie="Outro" data-i18n="perd_filtro_outro" onclick="selecionarFiltro(this)">Outro</div>
         </div>
 
         <button class="btn-reportar" onclick="abrirModalReportar()">
             <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Reportar Animal Perdido
+            <span data-i18n="perd_reportar">Reportar Animal Perdido</span>
         </button>
 
         <div id="listaPerdidos"></div>
@@ -147,55 +147,55 @@
 <div class="modal-overlay" id="modalReportar">
     <div class="modal-box">
         <div class="modal-header">
-            <h3>Reportar Animal Perdido</h3>
+            <h3 data-i18n="perd_reportar">Reportar Animal Perdido</h3>
             <button class="modal-close" onclick="fecharModalReportar()">✕</button>
         </div>
 
-        <div class="campo-label">Tipo de Animal</div>
+        <div class="campo-label" data-i18n="perd_tipo_animal">Tipo de Animal</div>
         <div class="pills-row" id="grpTipoPerdido">
-            <div class="pill active" onclick="selecionarPill(this,'grpTipoPerdido')">Cachorro</div>
-            <div class="pill" onclick="selecionarPill(this,'grpTipoPerdido')">Gato</div>
-            <div class="pill" onclick="selecionarPill(this,'grpTipoPerdido')">Pássaro</div>
-            <div class="pill" onclick="selecionarPill(this,'grpTipoPerdido')">Hamster</div>
-            <div class="pill" onclick="selecionarPill(this,'grpTipoPerdido')">Coelho</div>
-            <div class="pill" onclick="selecionarPill(this,'grpTipoPerdido')">Outro</div>
+            <div class="pill active" data-i18n="perd_filtro_cachorro" onclick="selecionarPill(this,'grpTipoPerdido')">Cachorro</div>
+            <div class="pill" data-i18n="perd_filtro_gato" onclick="selecionarPill(this,'grpTipoPerdido')">Gato</div>
+            <div class="pill" data-i18n="perd_filtro_passaro" onclick="selecionarPill(this,'grpTipoPerdido')">Pássaro</div>
+            <div class="pill" data-i18n="perd_filtro_hamster" onclick="selecionarPill(this,'grpTipoPerdido')">Hamster</div>
+            <div class="pill" data-i18n="perd_filtro_coelho" onclick="selecionarPill(this,'grpTipoPerdido')">Coelho</div>
+            <div class="pill" data-i18n="perd_filtro_outro" onclick="selecionarPill(this,'grpTipoPerdido')">Outro</div>
         </div>
 
-        <div class="campo-label">Nome</div>
-        <input type="text" class="campo-input" id="perdidoNome" placeholder="Ex: Sol, Mel, Théo...">
+        <div class="campo-label" data-i18n="perd_nome">Nome</div>
+        <input type="text" class="campo-input" id="perdidoNome" placeholder="Ex: Sol, Mel, Théo..." data-i18n-placeholder="perd_nome_placeholder">
 
-        <div class="campo-label">Raça</div>
-        <input type="text" class="campo-input" id="perdidoRaca" placeholder="Ex: Vira-lata, Persa...">
+        <div class="campo-label" data-i18n="perd_raca">Raça</div>
+        <input type="text" class="campo-input" id="perdidoRaca" placeholder="Ex: Vira-lata, Persa..." data-i18n-placeholder="perd_raca_placeholder">
 
         <div class="campo-row">
             <div class="campo-col">
-                <div class="campo-label">Data da Perda</div>
+                <div class="campo-label" data-i18n="perd_data_perda">Data da Perda</div>
                 <input type="date" class="campo-input" id="perdidoData">
             </div>
             <div class="campo-col">
-                <div class="campo-label">Horário da Perda</div>
+                <div class="campo-label" data-i18n="perd_horario_perda">Horário da Perda</div>
                 <input type="time" class="campo-input" id="perdidoHorario">
             </div>
         </div>
 
-        <div class="campo-label">Característica/Descrição</div>
-        <textarea class="campo-input" id="perdidoDescricao" placeholder="Ex: Perdido próximo à Praça do Centro, coleira azul..."></textarea>
+        <div class="campo-label" data-i18n="perd_descricao_label">Característica/Descrição</div>
+        <textarea class="campo-input" id="perdidoDescricao" placeholder="Ex: Perdido próximo à Praça do Centro, coleira azul..." data-i18n-placeholder="perd_descricao_placeholder"></textarea>
 
-        <div class="campo-label">Local da Perda</div>
-        <input type="text" class="campo-input" id="perdidoLocal" placeholder="Ex: Vila Velha, ES">
+        <div class="campo-label" data-i18n="perd_local_label">Local da Perda</div>
+        <input type="text" class="campo-input" id="perdidoLocal" placeholder="Ex: Vila Velha, ES" data-i18n-placeholder="perd_local_placeholder">
 
         <div class="campo-row">
             <div class="campo-col">
-                <div class="campo-label">Seu Nome</div>
-                <input type="text" class="campo-input" id="perdidoSeuNome" placeholder="Seu nome">
+                <div class="campo-label" data-i18n="perd_seu_nome">Seu Nome</div>
+                <input type="text" class="campo-input" id="perdidoSeuNome" placeholder="Seu nome" data-i18n-placeholder="perd_seu_nome">
             </div>
             <div class="campo-col">
-                <div class="campo-label">Seu Telefone</div>
+                <div class="campo-label" data-i18n="perd_seu_telefone">Seu Telefone</div>
                 <input type="text" class="campo-input" id="perdidoSeuTelefone" placeholder="(11) 98765-4321">
             </div>
         </div>
 
-        <button class="btn-salvar-perdido" onclick="salvarPerdido()">Publicar no Mural</button>
+        <button class="btn-salvar-perdido" data-i18n="perd_publicar" onclick="salvarPerdido()">Publicar no Mural</button>
     </div>
 </div>
 
@@ -211,20 +211,20 @@
         <div class="contato-botoes">
             <button class="btn-contato-ligar" onclick="ligarContatoAtual()">
                 <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                Ligar
+                <span data-i18n="clin_ligar">Ligar</span>
             </button>
             <button class="btn-contato-msg" onclick="mensagemContatoAtual()">
                 <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                Mensagem
+                <span data-i18n="perd_mensagem">Mensagem</span>
             </button>
         </div>
     </div>
 </div>
 
-<script src="navbar.js"></script>
-<script src="petsdb.js?v=11"></script>
-<script src="i18n.js"></script>
-<script src="validacao.js"></script>
+<script src="navbar.js?v=15"></script>
+<script src="petsdb.js?v=15"></script>
+<script src="i18n.js?v=15"></script>
+<script src="validacao.js?v=15"></script>
 <script>
     let listaPerdidosAtual = [];
     let filtroAtivo = 'Todos';
@@ -314,12 +314,22 @@
         return partes[2] + "/" + partes[1] + "/" + partes[0];
     }
 
+    // Mapeia o valor salvo (sempre em português) pro texto traduzido exibido
+    const MAPA_TIPO_ANIMAL = {
+        "Cachorro": "perd_filtro_cachorro", "Gato": "perd_filtro_gato", "Pássaro": "perd_filtro_passaro",
+        "Hamster": "perd_filtro_hamster", "Coelho": "perd_filtro_coelho", "Outro": "perd_filtro_outro"
+    };
+    function tipoAnimalTraduzido(tipo) {
+        const chave = MAPA_TIPO_ANIMAL[tipo];
+        return chave ? t(chave) : tipo;
+    }
+
     function renderizarPerdidos() {
         const container = document.getElementById('listaPerdidos');
         const lista = listaFiltradaOrdenada();
 
         if (lista.length === 0) {
-            container.innerHTML = `<div class="empty-state">Nenhum animal perdido encontrado por aqui.<br>Seja o primeiro a ajudar publicando um caso.</div>`;
+            container.innerHTML = `<div class="empty-state">${t('perd_empty_html')}</div>`;
             return;
         }
 
@@ -331,25 +341,25 @@
                     </div>
                     <div class="card-info">
                         <div class="card-nome">${p.nome}</div>
-                        <div class="card-raca">${p.tipo}${p.raca ? ' • ' + p.raca : ''}</div>
+                        <div class="card-raca">${tipoAnimalTraduzido(p.tipo)}${p.raca ? ' • ' + p.raca : ''}</div>
                         <div class="card-reporter">
                             <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                            ${p.seuNome || 'Anônimo'}
+                            ${p.seuNome || t('perd_anonimo')}
                         </div>
                     </div>
                     ${p._distanciaMetros != null ? `<div class="card-distancia">${formatarDistancia(p._distanciaMetros)}</div>` : ''}
                 </div>
-                <div class="card-detalhe"><b>Local:</b> ${p.local || '-'}</div>
-                <div class="card-detalhe"><b>Data:</b> ${calcularTempoAtras(p.data)}${p.horario ? ' - ' + p.horario : ''}</div>
-                ${p.descricao ? `<div class="card-detalhe"><b>Info:</b> ${p.descricao}</div>` : ''}
+                <div class="card-detalhe"><b>${t('perd_local_prefix')}:</b> ${p.local || '-'}</div>
+                <div class="card-detalhe"><b>${t('perd_data_prefix')}:</b> ${calcularTempoAtras(p.data)}${p.horario ? ' - ' + p.horario : ''}</div>
+                ${p.descricao ? `<div class="card-detalhe"><b>${t('perd_info_prefix')}:</b> ${p.descricao}</div>` : ''}
                 <div class="card-actions">
                     <button class="btn-ligar-card" onclick="event.stopPropagation(); fazerLigacaoPerdido('${(p.seuTelefone || '').replace(/\D/g,'')}')">
                         <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                        Ligar
+                        ${t('clin_ligar')}
                     </button>
                     <button class="btn-mapa-card" onclick="event.stopPropagation(); verNoMapa(${p.lat || 'null'}, ${p.lng || 'null'}, '${encodeURIComponent(p.local || '')}')">
                         <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                        Ver no Mapa
+                        ${t('perd_ver_no_mapa')}
                     </button>
                 </div>
             </div>
@@ -389,9 +399,9 @@
         if (!vDescricao.valido) { alert(vDescricao.mensagem); return; }
 
         const vLocal = validarNome(local, { min: 3, max: 100 });
-        if (!vLocal.valido) { alert("Preencha o local da perda corretamente."); return; }
+        if (!vLocal.valido) { alert(t('perd_erro_local')); return; }
 
-        const vSeuNome = validarNome(seuNome || "Anônimo", { min: 2, max: 40 });
+        const vSeuNome = validarNome(seuNome || t('perd_anonimo'), { min: 2, max: 40 });
         if (seuNome && !vSeuNome.valido) { alert(vSeuNome.mensagem); return; }
 
         const vTelefone = validarTelefone(seuTelefone);
@@ -414,7 +424,7 @@
         petcareSalvarPerdidos(listaPerdidosAtual);
         renderizarPerdidos();
 
-        // Sincroniza com o banco de verdade (Firebase/CloudDB via App Inventor)
+        // Sincroniza com o banco de verdade (CloudDB via App Inventor)
         if (window.AppInventor) {
             enviarComando("SALVAR_PERDIDOS", "perdidos", listaPerdidosAtual);
         }
@@ -448,7 +458,7 @@
         if (!contatoSelecionado) return;
 
         document.getElementById('contatoNome').innerText = contatoSelecionado.nome;
-        document.getElementById('contatoReporter').innerText = contatoSelecionado.seuNome || 'Anônimo';
+        document.getElementById('contatoReporter').innerText = contatoSelecionado.seuNome || t('perd_anonimo');
         document.getElementById('contatoTelefone').innerText = contatoSelecionado.seuTelefone || '-';
         document.getElementById('overlayContato').classList.add('aberto');
     }
@@ -462,12 +472,12 @@
     }
 
     function mensagemContatoAtual() {
-        alert("Sistema de mensagens ainda não disponível — por enquanto, use o botão Ligar.");
+        alert(t('perd_msg_indisponivel'));
     }
 
     // ---------- Ações utilitárias ----------
     function fazerLigacaoPerdido(numero) {
-        if (!numero) { alert("Telefone não informado."); return; }
+        if (!numero) { alert(t('perd_erro_telefone_nao_informado')); return; }
         if (window.AppInventor) {
             window.AppInventor.setWebViewString("CALL|" + numero);
         } else {
@@ -482,7 +492,7 @@
         } else if (localCodificado) {
             url = "https://www.google.com/maps/search/?api=1&query=" + localCodificado;
         } else {
-            alert("Local não informado.");
+            alert(t('perd_erro_local_nao_informado'));
             return;
         }
         if (window.AppInventor) {

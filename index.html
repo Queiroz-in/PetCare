@@ -397,7 +397,8 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-    <script src="petsdb.js?v=14"></script>
+    <script src="petsdb.js?v=15"></script>
+    <script src="validacao.js?v=15"></script>
     <script>
         // Animação de Entrada inicial
         window.addEventListener('DOMContentLoaded', function() {
@@ -452,9 +453,13 @@
         }
 
         // OTIMIZAÇÃO: Mostrar erro em campo específico
-        function aplicarErro(inputId, errorId) {
+        // mensagemCustom (opcional): sobrescreve o texto fixo do HTML com a
+        // mensagem específica vinda do validacao.js (ex: "Peso muito alto...")
+        function aplicarErro(inputId, errorId, mensagemCustom) {
             document.getElementById(inputId).classList.add('input-error');
-            document.getElementById(errorId).style.display = 'block';
+            const errEl = document.getElementById(errorId);
+            if (mensagemCustom) errEl.innerText = mensagemCustom;
+            errEl.style.display = 'block';
         }
 
         // Alternar visualização entre Login, Cadastro e Recuperação de Senha
@@ -483,11 +488,9 @@
             var pass = document.getElementById('loginPassword').value;
             var temErro = false;
 
-            // Regex simples e funcional para validar e-mail
-            var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-            if(!emailRegex.test(email)) {
-                aplicarErro('loginEmail', 'errLoginEmail');
+            const vEmailLogin = validarEmail(email);
+            if (!vEmailLogin.valido) {
+                aplicarErro('loginEmail', 'errLoginEmail', vEmailLogin.mensagem);
                 temErro = true;
             }
             if(pass === "") {
@@ -574,8 +577,8 @@
         function enviarCodigoRecuperacao() {
             limparErros();
             const email = document.getElementById('forgotEmail').value.trim();
-            var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) { aplicarErro('forgotEmail', 'errForgotEmail'); return; }
+            const vEmailForgot = validarEmail(email);
+            if (!vEmailForgot.valido) { aplicarErro('forgotEmail', 'errForgotEmail', vEmailForgot.mensagem); return; }
 
             const btn = document.getElementById('btnEnviarCodigo');
             btn.disabled = true;
@@ -661,7 +664,8 @@
         function salvarNovaSenha() {
             limparErros();
             const novaSenha = document.getElementById('forgotNovaSenha').value;
-            if (!novaSenha || novaSenha.length < 6) { aplicarErro('forgotNovaSenha', 'errForgotSenha'); return; }
+            const vNovaSenha = validarSenha(novaSenha, { min: 6 });
+            if (!vNovaSenha.valido) { aplicarErro('forgotNovaSenha', 'errForgotSenha', vNovaSenha.mensagem); return; }
 
             const email = document.getElementById('forgotEmail').value.trim();
             const conta = window._contaRecuperada || {};
@@ -725,25 +729,30 @@
             var dataNasc = document.getElementById('regData').value.trim();
             var temErro = false;
 
-            var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if(!emailRegex.test(email)) {
-                aplicarErro('regEmail', 'errRegEmail');
+            const vEmailReg = validarEmail(email);
+            if (!vEmailReg.valido) {
+                aplicarErro('regEmail', 'errRegEmail', vEmailReg.mensagem);
                 temErro = true;
             }
-            if(senha.length < 6) {
-                aplicarErro('regSenha', 'errRegSenha');
+            const vSenhaReg = validarSenha(senha, { min: 6 });
+            if (!vSenhaReg.valido) {
+                aplicarErro('regSenha', 'errRegSenha', vSenhaReg.mensagem);
                 temErro = true;
             }
-            if(nome.length < 3) {
-                aplicarErro('regNome', 'errRegNome');
+            const vNomeReg = validarNome(nome, { min: 3, max: 60 });
+            if (!vNomeReg.valido) {
+                aplicarErro('regNome', 'errRegNome', vNomeReg.mensagem);
                 temErro = true;
             }
-            if(tel.length < 14) { // Garante o preenchimento mínimo do celular com DDD
-                aplicarErro('regTelefone', 'errRegTelefone');
+            const vTelReg = validarTelefone(tel);
+            if (!vTelReg.valido) {
+                aplicarErro('regTelefone', 'errRegTelefone', vTelReg.mensagem);
                 temErro = true;
             }
-            if(dataNasc.length < 10) { // Garante formato DD/MM/AAAA completo
-                aplicarErro('regData', 'errRegData');
+            // validarDataNascimento trata campo vazio como opcional — aqui é obrigatório
+            const vDataReg = dataNasc ? validarDataNascimento(dataNasc, { idadeMaximaAnos: 35 }) : { valido: false, mensagem: "Preencha a data de nascimento." };
+            if (!vDataReg.valido) {
+                aplicarErro('regData', 'errRegData', vDataReg.mensagem);
                 temErro = true;
             }
 

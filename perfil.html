@@ -175,16 +175,16 @@
     <main class="view-content">
 
         <div class="stats-grid">
-            <div class="stat-box"><span class="stat-val" id="statIdade">-</span><span class="stat-label">Idade</span></div>
-            <div class="stat-box"><span class="stat-val" id="statPeso">-</span><span class="stat-label">Peso</span></div>
-            <div class="stat-box"><span class="stat-val" id="statSexo">-</span><span class="stat-label">Sexo</span></div>
-            <div class="stat-box"><span class="stat-val" id="statCastrado">-</span><span class="stat-label">Castrado</span></div>
+            <div class="stat-box"><span class="stat-val" id="statIdade">-</span><span class="stat-label" data-i18n="perf_idade">Idade</span></div>
+            <div class="stat-box"><span class="stat-val" id="statPeso">-</span><span class="stat-label" data-i18n="perf_peso">Peso</span></div>
+            <div class="stat-box"><span class="stat-val" id="statSexo">-</span><span class="stat-label" data-i18n="perf_sexo">Sexo</span></div>
+            <div class="stat-box"><span class="stat-val" id="statCastrado">-</span><span class="stat-label" data-i18n="perf_castrado">Castrado</span></div>
         </div>
 
         <div class="tabs-row">
-            <div class="tab-btn active" id="tabBtnInfo" onclick="mudarAba('info')">Informações</div>
-            <div class="tab-btn" id="tabBtnVacinas" onclick="mudarAba('vacinas')">Vacinas</div>
-            <div class="tab-btn" id="tabBtnHistorico" onclick="mudarAba('historico')">Histórico</div>
+            <div class="tab-btn active" id="tabBtnInfo" data-i18n="perf_tab_info" onclick="mudarAba('info')">Informações</div>
+            <div class="tab-btn" id="tabBtnVacinas" data-i18n="vac_registradas_titulo" onclick="mudarAba('vacinas')">Vacinas</div>
+            <div class="tab-btn" id="tabBtnHistorico" data-i18n="perf_tab_historico" onclick="mudarAba('historico')">Histórico</div>
         </div>
 
         <!-- ABA: INFORMAÇÕES -->
@@ -192,31 +192,31 @@
             <div class="card">
                 <div class="card-title">
                     <svg viewBox="0 0 24 24"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/></svg>
-                    Dados do Pet
+                    <span data-i18n="perf_dados_pet">Dados do Pet</span>
                 </div>
-                <div class="info-row"><span class="info-label">Data de Nascimento</span><span class="info-value" id="infoNascimento">-</span></div>
-                <div class="info-row"><span class="info-label">Pelagem / Cor</span><span class="info-value" id="infoCor">-</span></div>
-                <div class="info-row"><span class="info-label">Tipo Sanguíneo</span><span class="info-value" id="infoTipoSanguineo">-</span></div>
-                <div class="info-row"><span class="info-label">Alergias</span><span class="info-value" id="infoAlergias">Nenhuma conhecida</span></div>
+                <div class="info-row"><span class="info-label" data-i18n="perf_data_nascimento">Data de Nascimento</span><span class="info-value" id="infoNascimento">-</span></div>
+                <div class="info-row"><span class="info-label" data-i18n="perf_pelagem_cor">Pelagem / Cor</span><span class="info-value" id="infoCor">-</span></div>
+                <div class="info-row"><span class="info-label" data-i18n="perf_tipo_sanguineo">Tipo Sanguíneo</span><span class="info-value" id="infoTipoSanguineo">-</span></div>
+                <div class="info-row"><span class="info-label" data-i18n="perf_alergias">Alergias</span><span class="info-value" id="infoAlergias" data-i18n="perf_nenhuma_conhecida">Nenhuma conhecida</span></div>
             </div>
 
             <div class="card">
                 <div class="card-title">
                     <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="16" r="1.5"/><path d="M7 11V8a5 5 0 0 1 10 0v3"/></svg>
-                    Microchip
+                    <span data-i18n="perf_microchip">Microchip</span>
                 </div>
-                <div class="microchip-num" id="infoMicrochip">Não cadastrado</div>
+                <div class="microchip-num" id="infoMicrochip" data-i18n="perf_nao_cadastrado">Não cadastrado</div>
             </div>
 
             <div class="card">
                 <div class="card-title">
                     <svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-                    Resumo de Saúde
+                    <span data-i18n="perf_resumo_saude">Resumo de Saúde</span>
                 </div>
                 <div class="resumo-pills">
-                    <div class="resumo-pill pill-vacinas"><b id="resumoVacinas">0</b><span>Vacinas</span></div>
-                    <div class="resumo-pill pill-consultas"><b id="resumoConsultas">0</b><span>Consultas</span></div>
-                    <div class="resumo-pill pill-ocorrencias"><b id="resumoOcorrencias">0</b><span>Ocorrências</span></div>
+                    <div class="resumo-pill pill-vacinas"><b id="resumoVacinas">0</b><span data-i18n="vac_registradas_titulo">Vacinas</span></div>
+                    <div class="resumo-pill pill-consultas"><b id="resumoConsultas">0</b><span data-i18n="cons_titulo">Consultas</span></div>
+                    <div class="resumo-pill pill-ocorrencias"><b id="resumoOcorrencias">0</b><span data-i18n="perf_ocorrencias">Ocorrências</span></div>
                 </div>
             </div>
         </div>
@@ -224,10 +224,10 @@
         <!-- ABA: VACINAS -->
         <div class="tab-content" id="tabVacinas">
             <div class="list-header">
-                <h3>Carteira de Vacinas</h3>
+                <h3 data-i18n="perf_carteira_vacinas">Carteira de Vacinas</h3>
                 <button class="btn-add-mini" onclick="irParaVacinas()">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-                    Adicionar
+                    <span data-i18n="vac_adicionar">Adicionar</span>
                 </button>
             </div>
             <div id="listaVacinasPerfil"></div>
@@ -236,10 +236,10 @@
         <!-- ABA: HISTÓRICO -->
         <div class="tab-content" id="tabHistorico">
             <div class="list-header">
-                <h3>Histórico de Saúde</h3>
+                <h3 data-i18n="perf_historico_saude">Histórico de Saúde</h3>
                 <button class="btn-add-mini" onclick="abrirModalHistorico()">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-                    Adicionar
+                    <span data-i18n="vac_adicionar">Adicionar</span>
                 </button>
             </div>
             <div id="listaHistoricoPerfil"></div>
@@ -254,32 +254,34 @@
 <div id="modalHistorico" class="modal-overlay">
     <div class="modal-content">
         <div class="modal-header">
-            <h3>Novo Registro</h3>
+            <h3 data-i18n="perf_novo_registro">Novo Registro</h3>
             <button class="close-btn" onclick="fecharModalHistorico()">✕</button>
         </div>
 
-        <label class="form-label">Tipo</label>
+        <label class="form-label" data-i18n="perf_tipo">Tipo</label>
         <div class="pill-group" id="grpTipoHistorico">
-            <span class="pill active" onclick="selecionarPillHistorico(this,'grpTipoHistorico')">Sintoma</span>
-            <span class="pill" onclick="selecionarPillHistorico(this,'grpTipoHistorico')">Tratamento</span>
+            <span class="pill active" data-valor="Sintoma" data-i18n="perf_sintoma" onclick="selecionarPillHistorico(this,'grpTipoHistorico')">Sintoma</span>
+            <span class="pill" data-valor="Tratamento" data-i18n="perf_tratamento" onclick="selecionarPillHistorico(this,'grpTipoHistorico')">Tratamento</span>
         </div>
 
-        <label class="form-label">Gravidade</label>
+        <label class="form-label" data-i18n="perf_gravidade">Gravidade</label>
         <div class="pill-group" id="grpGravidadeHistorico">
-            <span class="pill active" onclick="selecionarPillHistorico(this,'grpGravidadeHistorico')">Leve</span>
-            <span class="pill" onclick="selecionarPillHistorico(this,'grpGravidadeHistorico')">Moderado</span>
-            <span class="pill" onclick="selecionarPillHistorico(this,'grpGravidadeHistorico')">Grave</span>
+            <span class="pill active" data-valor="Leve" data-i18n="perf_leve" onclick="selecionarPillHistorico(this,'grpGravidadeHistorico')">Leve</span>
+            <span class="pill" data-valor="Moderado" data-i18n="perf_moderado" onclick="selecionarPillHistorico(this,'grpGravidadeHistorico')">Moderado</span>
+            <span class="pill" data-valor="Grave" data-i18n="perf_grave" onclick="selecionarPillHistorico(this,'grpGravidadeHistorico')">Grave</span>
         </div>
 
-        <label class="form-label">Descrição</label>
-        <textarea id="histDescricao" class="form-input" rows="4" placeholder="Ex: Vômito após ingestão de grama..."></textarea>
+        <label class="form-label" data-i18n="perf_descricao">Descrição</label>
+        <textarea id="histDescricao" class="form-input" rows="4" placeholder="Ex: Vômito após ingestão de grama..." data-i18n-placeholder="perf_desc_placeholder"></textarea>
 
-        <button class="btn-salvar" onclick="salvarNovoHistorico()">Salvar Registro</button>
+        <button class="btn-salvar" data-i18n="vac_salvar_registro" onclick="salvarNovoHistorico()">Salvar Registro</button>
     </div>
 </div>
 
-<script src="navbar.js"></script>
-<script src="petsdb.js?v=11"></script>
+<script src="navbar.js?v=15"></script>
+<script src="petsdb.js?v=15"></script>
+<script src="i18n.js?v=15"></script>
+<script src="validacao.js?v=15"></script>
 <script>
     let petAtual = null;
 
@@ -289,6 +291,7 @@
 
     window.addEventListener('DOMContentLoaded', () => {
         carregarMenuInferior('home');
+        if (typeof aplicarTraducoes === "function") aplicarTraducoes();
 
         const petId = getPetIdDaUrl();
 
@@ -297,8 +300,8 @@
         if (pet) {
             carregarPerfilPet(JSON.stringify(pet));
         } else {
-            document.getElementById('perfilNome').innerText = "Nenhum pet encontrado";
-            document.getElementById('perfilSubtitulo').innerText = "Volte e cadastre um pet primeiro";
+            document.getElementById('perfilNome').innerText = t('perf_nenhum_pet_encontrado');
+            document.getElementById('perfilSubtitulo').innerText = t('perf_volte_cadastre');
         }
 
         // Busca os dados reais no banco, se estiver rodando dentro do app
@@ -338,9 +341,9 @@
 
         document.getElementById('infoNascimento').innerText = p.nascimento || '-';
         document.getElementById('infoCor').innerText = p.cor || '-';
-        document.getElementById('infoTipoSanguineo').innerText = p.tipoSanguineo || 'Não informado';
-        document.getElementById('infoAlergias').innerText = p.alergias || 'Nenhuma conhecida';
-        document.getElementById('infoMicrochip').innerText = p.microchip || 'Não cadastrado';
+        document.getElementById('infoTipoSanguineo').innerText = p.tipoSanguineo || t('perf_nao_informado');
+        document.getElementById('infoAlergias').innerText = p.alergias || t('perf_nenhuma_conhecida');
+        document.getElementById('infoMicrochip').innerText = p.microchip || t('perf_nao_cadastrado');
 
         carregarResumoEListas(p.id);
     }
@@ -397,18 +400,18 @@
 
     function statusVacinaPerfil(proximaStr) {
         const proxima = converterDataPerfil(proximaStr);
-        if (!proxima) return { classe: 'ok', texto: 'Em dia' };
+        if (!proxima) return { classe: 'ok', texto: t('vac_stat_em_dia') };
         const hoje = new Date(); hoje.setHours(0,0,0,0);
         const dias = Math.ceil((proxima - hoje) / (1000 * 60 * 60 * 24));
-        if (dias < 0) return { classe: 'exp', texto: `Vencida há ${Math.abs(dias)}d` };
-        if (dias <= 30) return { classe: 'warn', texto: `Vence em ${dias}d` };
-        return { classe: 'ok', texto: 'Em dia' };
+        if (dias < 0) return { classe: 'exp', texto: `${t('vac_vencida_ha')} ${Math.abs(dias)}d` };
+        if (dias <= 30) return { classe: 'warn', texto: `${t('vac_vence_em')} ${dias}d` };
+        return { classe: 'ok', texto: t('vac_stat_em_dia') };
     }
 
     function renderizarVacinas(lista) {
         const container = document.getElementById('listaVacinasPerfil');
         if (!lista || lista.length === 0) {
-            container.innerHTML = `<div class="empty-msg">Nenhuma vacina registrada para este pet ainda.</div>`;
+            container.innerHTML = `<div class="empty-msg">${t('vac_nenhuma_vacina')}</div>`;
             return;
         }
         container.innerHTML = lista.map(v => {
@@ -419,17 +422,20 @@
                         <strong>${v.nome}</strong>
                         <span class="badge ${s.classe}">${s.texto}</span>
                     </div>
-                    <div class="vaccine-sub">Aplicação: ${v.aplicacao || '-'} • Próxima: ${v.proxima || '-'}</div>
+                    <div class="vaccine-sub">${t('perf_aplicacao')}: ${v.aplicacao || '-'} • ${t('perf_proxima')}: ${v.proxima || '-'}</div>
                     ${v.clinica ? `<div class="vaccine-sub">${v.clinica}</div>` : ''}
                 </div>
             `;
         }).join('');
     }
 
+    const MAPA_TIPO_HISTORICO = { "Sintoma": "perf_sintoma", "Tratamento": "perf_tratamento" };
+    const MAPA_GRAVIDADE = { "Leve": "perf_leve", "Moderado": "perf_moderado", "Grave": "perf_grave" };
+
     function renderizarHistorico(lista) {
         const container = document.getElementById('listaHistoricoPerfil');
         if (!lista || lista.length === 0) {
-            container.innerHTML = `<div class="empty-msg">Nenhum registro de saúde ainda. Sintomas e tratamentos aparecerão aqui.</div>`;
+            container.innerHTML = `<div class="empty-msg">${t('perf_nenhum_historico')}</div>`;
             return;
         }
         const tagGravidade = { 'Leve': 'tag-leve', 'Moderado': 'tag-moderado', 'Grave': 'tag-grave' };
@@ -437,8 +443,8 @@
             <div class="historico-card">
                 <div class="historico-top">
                     <div class="historico-tags">
-                        <span class="tag tag-tipo">${h.tipo || 'Sintoma'}</span>
-                        <span class="tag ${tagGravidade[h.gravidade] || 'tag-leve'}">${h.gravidade || 'Leve'}</span>
+                        <span class="tag tag-tipo">${t(MAPA_TIPO_HISTORICO[h.tipo] || 'perf_sintoma')}</span>
+                        <span class="tag ${tagGravidade[h.gravidade] || 'tag-leve'}">${t(MAPA_GRAVIDADE[h.gravidade] || 'perf_leve')}</span>
                     </div>
                     <span class="historico-date">${h.data || ''}</span>
                 </div>
@@ -482,11 +488,12 @@
     function salvarNovoHistorico() {
         if (!petAtual) return;
         let tipo = "Sintoma", gravidade = "Leve";
-        document.querySelectorAll('#grpTipoHistorico .pill').forEach(el => { if (el.classList.contains('active')) tipo = el.innerText; });
-        document.querySelectorAll('#grpGravidadeHistorico .pill').forEach(el => { if (el.classList.contains('active')) gravidade = el.innerText; });
+        document.querySelectorAll('#grpTipoHistorico .pill').forEach(el => { if (el.classList.contains('active')) tipo = el.dataset.valor || el.innerText; });
+        document.querySelectorAll('#grpGravidadeHistorico .pill').forEach(el => { if (el.classList.contains('active')) gravidade = el.dataset.valor || el.innerText; });
         const descricao = document.getElementById('histDescricao').value.trim();
 
-        if (!descricao) { alert("Descreva o que aconteceu antes de salvar."); return; }
+        const vDescricao = validarTextoLivre(descricao, { max: 300, obrigatorio: true });
+        if (!vDescricao.valido) { alert(vDescricao.mensagem); return; }
 
         const hoje = new Date();
         const dataFormatada = String(hoje.getDate()).padStart(2,'0') + '/' + String(hoje.getMonth()+1).padStart(2,'0') + '/' + hoje.getFullYear();
@@ -497,7 +504,7 @@
         document.getElementById('resumoOcorrencias').innerText = listaAtualizada.length;
         renderizarHistorico(listaAtualizada);
 
-        // Sincroniza com o banco de verdade (Firebase via App Inventor)
+        // Sincroniza com o banco de verdade (CloudDB via App Inventor)
         if (window.AppInventor) {
             enviarComando("SALVAR_HISTORICO", tagUsuario("historico_" + petAtual.id), listaAtualizada);
         }
@@ -508,7 +515,7 @@
     // Exclui o pet atual (botão de lixeira no topo) e volta pra Home
     function excluirPetAtual() {
         if (!petAtual) return;
-        if (!confirm(`Tem certeza que deseja excluir ${petAtual.nome}? Essa ação não pode ser desfeita.`)) return;
+        if (!confirm(`${t('perf_confirmar_exclusao_prefix')} ${petAtual.nome}? ${t('perf_confirmar_exclusao_suffix')}`)) return;
 
         const listaAtualizada = petcareExcluirPet(petAtual.id);
 

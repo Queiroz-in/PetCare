@@ -687,10 +687,10 @@
         </div>
     </div>
 
-    <script src="navbar.js"></script>
-    <script src="petsdb.js?v=11"></script>
-    <script src="i18n.js"></script>
-    <script src="validacao.js"></script>
+    <script src="navbar.js?v=15"></script>
+    <script src="petsdb.js?v=15"></script>
+    <script src="i18n.js?v=15"></script>
+    <script src="validacao.js?v=15"></script>
     <script>
         let petAtivoId = null;
 
@@ -858,7 +858,7 @@
             const pets = petcareObterPets();
             atualizarDadosDosPets(petcareFormatoHome([...pets].reverse()));
 
-            // Sincroniza com o banco de verdade (Firebase via App Inventor)
+            // Sincroniza com o banco de verdade (CloudDB via App Inventor)
             if (window.AppInventor) {
                 enviarComando("SALVAR_PETS", tagUsuario("pets"), pets);
             }

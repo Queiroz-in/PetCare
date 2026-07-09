@@ -74,21 +74,21 @@
 <div class="app-container">
     
     <header class="header-green">
-        <h2>Informações sobre Raças</h2>
-        <p>Conheça as características e cuidados</p>
+        <h2 data-i18n="raca_titulo">Informações sobre Raças</h2>
+        <p data-i18n="raca_subtitulo">Conheça as características e cuidados</p>
         
         <div class="search-container">
             <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input type="text" id="searchInput" class="search-input" placeholder="Buscar raça..." onkeyup="filtrarPorBusca()">
+            <input type="text" id="searchInput" class="search-input" placeholder="Buscar raça..." data-i18n-placeholder="raca_busca_placeholder" onkeyup="filtrarPorBusca()">
         </div>
     </header>
 
     <div class="filters-container">
-        <div class="filter-pill active" onclick="aplicarFiltro('Cães', this)">Cães</div>
-        <div class="filter-pill" onclick="aplicarFiltro('Gatos', this)">Gatos</div>
-        <div class="filter-pill" onclick="aplicarFiltro('Peixes', this)">Peixes</div>
-        <div class="filter-pill" onclick="aplicarFiltro('Pássaros', this)">Pássaros</div>
-        <div class="filter-pill" onclick="aplicarFiltro('Outros', this)">Outros</div>
+        <div class="filter-pill active" data-i18n="raca_filtro_caes" onclick="aplicarFiltro('Cães', this)">Cães</div>
+        <div class="filter-pill" data-i18n="raca_filtro_gatos" onclick="aplicarFiltro('Gatos', this)">Gatos</div>
+        <div class="filter-pill" data-i18n="raca_filtro_peixes" onclick="aplicarFiltro('Peixes', this)">Peixes</div>
+        <div class="filter-pill" data-i18n="raca_filtro_passaros" onclick="aplicarFiltro('Pássaros', this)">Pássaros</div>
+        <div class="filter-pill" data-i18n="raca_filtro_outros" onclick="aplicarFiltro('Outros', this)">Outros</div>
     </div>
 
     <main class="view-content" id="listaRacasContainer">
@@ -97,12 +97,14 @@
     <div id="menu-inferior-container"></div>
 </div>
 
-<script src="navbar.js"></script>
+<script src="navbar.js?v=15"></script>
+<script src="i18n.js?v=15"></script>
 <script>
     window.addEventListener('DOMContentLoaded', () => {
         if(typeof carregarMenuInferior === "function") {
             carregarMenuInferior(''); // Menu não destaca nenhuma aba primária
         }
+        if (typeof aplicarTraducoes === "function") aplicarTraducoes();
         renderizarRacas();
     });
 
@@ -183,7 +185,7 @@
 
         // 2. Estado Vazio
         if (listaFiltrada.length === 0) {
-            container.innerHTML = `<div class="empty-msg">Nenhuma raça encontrada para <b>"${termoBusca || categoriaAtual}"</b>. Tente buscar por outro nome.</div>`;
+            container.innerHTML = `<div class="empty-msg">${t('raca_empty_prefix')} <b>"${termoBusca || categoriaAtual}"</b>. ${t('raca_empty_suffix')}</div>`;
             return;
         }
 
@@ -206,20 +208,20 @@
                 <div class="breed-info">
                     <div class="info-row">
                         <svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-                        <span><span class="info-label">Porte:</span> ${raca.porte}</span>
+                        <span><span class="info-label">${t('raca_porte')}:</span> ${raca.porte}</span>
                     </div>
                     <div class="info-row">
                         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
-                        <span><span class="info-label">Temperamento:</span> ${raca.temperamento}</span>
+                        <span><span class="info-label">${t('raca_temperamento')}:</span> ${raca.temperamento}</span>
                     </div>
                     <div class="info-row">
                         <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                        <span><span class="info-label">Cuidados:</span> ${raca.cuidados}</span>
+                        <span><span class="info-label">${t('raca_cuidados')}:</span> ${raca.cuidados}</span>
                     </div>
                 </div>
 
                 <div class="alert-box">
-                    <h5>Predisposições a doenças:</h5>
+                    <h5>${t('raca_predisposicoes')}</h5>
                     <ul>
                         ${doencasList}
                     </ul>

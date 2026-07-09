@@ -62,8 +62,8 @@
 
 <div class="app-container">
     <header class="header-pink">
-        <h2>Verificador de Saúde</h2>
-        <p>Identifique possíveis problemas no seu pet</p>
+        <h2 data-i18n="saude_titulo">Verificador de Saúde</h2>
+        <p data-i18n="saude_subtitulo">Identifique possíveis problemas no seu pet</p>
         <div class="progress-container">
             <div id="dot1" class="step-dot active">1</div><div class="step-line"></div>
             <div id="dot2" class="step-dot">2</div><div class="step-line"></div>
@@ -74,24 +74,24 @@
     <main class="view-content">
         <!-- ETAPA 1: PETS -->
         <div id="v1" class="view active">
-            <h3 style="margin-bottom: 20px;">Qual Pet está com sintomas?</h3>
+            <h3 style="margin-bottom: 20px;" data-i18n="saude_etapa1_titulo">Qual Pet está com sintomas?</h3>
             
             <div id="listaPetsContainer">
                 <div class="empty-pets-msg">
-                    Aguardando sincronização com o banco de dados...<br>
-                    <small>Os pets aparecerão aqui.</small>
+                    <span data-i18n="saude_aguardando_sync">Aguardando sincronização com o banco de dados...</span><br>
+                    <small data-i18n="saude_pets_aparecerao">Os pets aparecerão aqui.</small>
                 </div>
             </div>
 
-            <button id="btnContinuarPet" class="btn-main" onclick="changeView(2)" disabled>Continuar</button>
+            <button id="btnContinuarPet" class="btn-main" data-i18n="saude_continuar" onclick="changeView(2)" disabled>Continuar</button>
         </div>
 
         <!-- ETAPA 2: SINTOMAS -->
         <div id="v2" class="view">
-            <h3 style="margin-bottom: 5px;">Quais sintomas observou?</h3>
-            <p style="color:var(--gray); font-size: 12px; margin-bottom: 20px;">Selecione todos que se aplicam:</p>
+            <h3 style="margin-bottom: 5px;" data-i18n="saude_etapa2_titulo">Quais sintomas observou?</h3>
+            <p style="color:var(--gray); font-size: 12px; margin-bottom: 20px;" data-i18n="saude_etapa2_subtitulo">Selecione todos que se aplicam:</p>
             <div id="sintomasArea"></div>
-            <button class="btn-main" onclick="analisarDiagnostico()">Analisar Saúde</button>
+            <button class="btn-main" data-i18n="saude_analisar" onclick="analisarDiagnostico()">Analisar Saúde</button>
         </div>
 
         <!-- ETAPA 3: RESULTADO -->
@@ -99,15 +99,15 @@
             <div id="alertaUrgencia" class="alert-card"></div>
             
             <div class="diagnostic-card">
-                <p style="font-size: 12px; color: var(--gray); text-transform: uppercase; font-weight: 700; margin-bottom: 5px;">Diagnósticos Prováveis:</p>
+                <p style="font-size: 12px; color: var(--gray); text-transform: uppercase; font-weight: 700; margin-bottom: 5px;" data-i18n="saude_diagnosticos_provaveis">Diagnósticos Prováveis:</p>
                 <h3 id="resDoencas" style="color: #333; margin-bottom: 15px;"></h3>
                 
-                <p style="font-size: 12px; color: var(--gray); text-transform: uppercase; font-weight: 700; margin-bottom: 5px;">Recomendação:</p>
+                <p style="font-size: 12px; color: var(--gray); text-transform: uppercase; font-weight: 700; margin-bottom: 5px;" data-i18n="saude_recomendacao">Recomendação:</p>
                 <p id="resRec" style="font-size:14px; line-height: 1.6; color: #333;"></p>
             </div>
             
-            <button id="btnSalvarHistorico" class="btn-main" onclick="salvarHistoricoDoPet()">Salvar no histórico do Pet</button>
-            <button class="btn-outline" onclick="location.reload()">Nova verificação</button>
+            <button id="btnSalvarHistorico" class="btn-main" data-i18n="saude_salvar_historico" onclick="salvarHistoricoDoPet()">Salvar no histórico do Pet</button>
+            <button class="btn-outline" data-i18n="saude_nova_verificacao" onclick="location.reload()">Nova verificação</button>
         </div>
     </main>
 
@@ -116,14 +116,16 @@
 </div>
 
 <!-- CHAMA A NAVBAR MODULAR -->
-<script src="navbar.js"></script>
-<script src="petsdb.js?v=11"></script>
+<script src="navbar.js?v=15"></script>
+<script src="petsdb.js?v=15"></script>
+<script src="i18n.js?v=15"></script>
 <script>
     // Inicializa a Navbar Modular e acende a aba da Saúde
     window.addEventListener('DOMContentLoaded', () => {
         if(typeof carregarMenuInferior === "function") {
             carregarMenuInferior('saude');
         }
+        if (typeof aplicarTraducoes === "function") aplicarTraducoes();
         // Mostra na hora o que já está em cache local
         carregarPetsDoBanco(petcareFormatoSaude(petcareObterPets()));
         if (window.AppInventor) {
@@ -142,7 +144,7 @@
         container.innerHTML = ""; 
 
         if (!dadosString || dadosString === "") {
-            container.innerHTML = `<div class="empty-pets-msg">Você ainda não possui pets cadastrados.</div>`;
+            container.innerHTML = `<div class="empty-pets-msg">${t('saude_nenhum_pet')}</div>`;
             return;
         }
 
@@ -277,7 +279,7 @@
         let marcados = Array.from(document.querySelectorAll('.sintoma-btn.selected')).map(el => el.innerText);
         
         if(marcados.length === 0) {
-            alert("Selecione pelo menos um sintoma.");
+            alert(t('saude_erro_sintoma'));
             return;
         }
 
@@ -303,23 +305,23 @@
         if (nivelMax === 4) {
             alertaBox.style.background = "#FFEBEE";
             alertaBox.style.color = "#C62828";
-            alertaBox.innerHTML = "<span>🚨</span> <div><b>EMERGÊNCIA VETERINÁRIA:</b> Risco iminente à vida. Vá imediatamente a um hospital veterinário 24h.</div>";
-            recBox.innerText = "Não perca tempo com tratamentos caseiros. O pet precisa de estabilização médica urgente.";
+            alertaBox.innerHTML = `<span>🚨</span> <div><b>${t('saude_emergencia_titulo')}</b> ${t('saude_emergencia_desc')}</div>`;
+            recBox.innerText = t('saude_emergencia_rec');
         } else if (nivelMax === 3) {
             alertaBox.style.background = "#FFF3E0";
             alertaBox.style.color = "#E65100";
-            alertaBox.innerHTML = "<span>⚠️</span> <div><b>ALTA URGÊNCIA:</b> Quadro clínico preocupante. Procure um veterinário o mais rápido possível hoje.</div>";
-            recBox.innerText = "Evite medicar o animal por conta própria. Mantenha-o calmo e confortável até o atendimento.";
+            alertaBox.innerHTML = `<span>⚠️</span> <div><b>${t('saude_alta_titulo')}</b> ${t('saude_alta_desc')}</div>`;
+            recBox.innerText = t('saude_alta_rec');
         } else if (nivelMax === 2) {
             alertaBox.style.background = "#FFF9F1";
             alertaBox.style.color = "#F57C00";
-            alertaBox.innerHTML = "<span>ℹ️</span> <div><b>URGÊNCIA MÉDIA:</b> Recomenda-se agendar uma consulta veterinária em breve.</div>";
-            recBox.innerText = "Observe o pet de perto. Se os sintomas piorarem ou não passarem em 24h, busque ajuda profissional.";
+            alertaBox.innerHTML = `<span>ℹ️</span> <div><b>${t('saude_media_titulo')}</b> ${t('saude_media_desc')}</div>`;
+            recBox.innerText = t('saude_media_rec');
         } else {
             alertaBox.style.background = "#E8F5E9";
             alertaBox.style.color = "#2E7D32";
-            alertaBox.innerHTML = "<span>✅</span> <div><b>BAIXA URGÊNCIA:</b> Condição aparentemente branda.</div>";
-            recBox.innerText = "Mantenha a observação. Muitas vezes resolve-se com manejo simples em casa, mas fique atento à evolução.";
+            alertaBox.innerHTML = `<span>✅</span> <div><b>${t('saude_baixa_titulo')}</b> ${t('saude_baixa_desc')}</div>`;
+            recBox.innerText = t('saude_baixa_rec');
         }
 
         let topDoencas = provaveis.slice(0, 4).join(" <br>• ");
@@ -331,27 +333,23 @@
         ultimoDiagnostico = {
             tipo: "Sintoma",
             gravidade: gravidadeTexto,
-            descricao: "Sintomas: " + marcados.join(', ') + ". Diagnóstico provável: " + provaveis.slice(0, 4).join(', ') + ". " + recBox.innerText,
+            descricao: t('saude_prefixo_sintomas') + ": " + marcados.join(', ') + ". " + t('saude_prefixo_diagnostico') + ": " + provaveis.slice(0, 4).join(', ') + ". " + recBox.innerText,
             data: new Date().toLocaleDateString('pt-BR')
         };
-
-        if (window.AppInventor) {
-            window.AppInventor.setWebViewString("DIAGNOSTICO|" + petSelecionado + "|" + provaveis[0] + "|" + nivelMax);
-        }
 
         changeView(3);
     }
 
     // Salva o diagnóstico atual no histórico de saúde do pet selecionado
     function salvarHistoricoDoPet() {
-        if (!petSelecionado) { alert("Selecione um pet primeiro!"); return; }
-        if (!ultimoDiagnostico) { alert("Nenhuma análise feita ainda."); return; }
+        if (!petSelecionado) { alert(t('saude_erro_selecione_pet')); return; }
+        if (!ultimoDiagnostico) { alert(t('saude_erro_sem_analise')); return; }
 
         // Atualiza local (cache otimista)
         petcareAdicionarHistorico(petSelecionado, ultimoDiagnostico);
         const listaAtualizada = petcareObterHistorico(petSelecionado);
 
-        // Sincroniza com o banco de verdade (Firebase via App Inventor)
+        // Sincroniza com o banco de verdade (CloudDB via App Inventor)
         if (window.AppInventor) {
             enviarComando("SALVAR_HISTORICO", tagUsuario("historico_" + petSelecionado), listaAtualizada);
         }
@@ -360,7 +358,7 @@
         const btn = document.getElementById('btnSalvarHistorico');
         const textoOriginal = btn.innerText;
         btn.classList.add('salvo');
-        btn.innerText = "Salvo no histórico ✓";
+        btn.innerText = t('saude_salvo_historico');
         setTimeout(() => {
             btn.classList.remove('salvo');
             btn.innerText = textoOriginal;

@@ -131,29 +131,29 @@
         <button class="btn-add-header" onclick="abrirModalAddLembrete()">
             <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         </button>
-        <h2>Lembretes</h2>
-        <p>Medicamentos, banhos e mais</p>
+        <h2 data-i18n="lemb_titulo">Lembretes</h2>
+        <p data-i18n="lemb_subtitulo">Medicamentos, banhos e mais</p>
         
         <div class="stats-orange">
             <div class="stat-orange-box">
                 <b id="statAtivos">0</b>
-                <span>Ativos</span>
+                <span data-i18n="lemb_stat_ativos">Ativos</span>
             </div>
             <div class="stat-orange-box">
                 <b id="statPausados">0</b>
-                <span>Pausados</span>
+                <span data-i18n="lemb_stat_pausados">Pausados</span>
             </div>
             <div class="stat-orange-box">
                 <b id="statTotal">0</b>
-                <span>Total</span>
+                <span data-i18n="lemb_stat_total">Total</span>
             </div>
         </div>
     </header>
 
     <div class="tabs-container">
-        <div class="tab-btn active" onclick="filtrarLembretes('Todas', this)">Todos</div>
-        <div class="tab-btn" onclick="filtrarLembretes('Ativos', this)">Ativos</div>
-        <div class="tab-btn" onclick="filtrarLembretes('Pausados', this)">Pausados</div>
+        <div class="tab-btn active" data-i18n="lemb_tab_todos" onclick="filtrarLembretes('Todas', this)">Todos</div>
+        <div class="tab-btn" data-i18n="lemb_stat_ativos" onclick="filtrarLembretes('Ativos', this)">Ativos</div>
+        <div class="tab-btn" data-i18n="lemb_stat_pausados" onclick="filtrarLembretes('Pausados', this)">Pausados</div>
     </div>
 
     <main class="view-content" id="listaLembretesContainer">
@@ -165,75 +165,76 @@
 <div id="modalAddLembrete" class="modal-overlay">
     <div class="modal-content">
         <div class="modal-header">
-            <h3>Novo Lembrete</h3>
+            <h3 data-i18n="lemb_modal_titulo">Novo Lembrete</h3>
             <button class="close-btn" onclick="fecharModalAddLembrete()">✕</button>
         </div>
 
-        <label class="form-label" style="margin-top:0;">Pet</label>
+        <label class="form-label" style="margin-top:0;" data-i18n="cons_pet_label">Pet</label>
         <div class="pets-selector" id="petsModalContainer">
-            <span style="font-size:12px; color:var(--gray);">Carregando pets...</span>
+            <span style="font-size:12px; color:var(--gray);" data-i18n="cons_carregando_pets">Carregando pets...</span>
         </div>
 
-        <label class="form-label">Tipo de Lembrete</label>
+        <label class="form-label" data-i18n="lemb_tipo_lembrete">Tipo de Lembrete</label>
         <div class="type-grid" id="grpTipoLembrete">
             <div class="type-btn active" onclick="selecionarTipoModal(this, 'Medicamento', 'ic-med')">
                 <svg viewBox="0 0 24 24"><path d="M10.5 20.5l-6-6a4.95 4.95 0 117-7l6 6a4.95 4.95 0 11-7 7z"/><path d="M8.5 8.5l7 7"/></svg>
-                <span>Medicamento</span>
+                <span data-i18n="lemb_tipo_medicamento">Medicamento</span>
             </div>
             <div class="type-btn" onclick="selecionarTipoModal(this, 'Vacina', 'ic-vac')">
                 <svg viewBox="0 0 24 24"><path d="M3 21l6-6 M14 6l-7 7a2.82 2.82 0 0 0 4 4l7-7Z M12 8l2 2 M9 11l2 2 M16 8l3-3 M17 3l4 4"/></svg>
-                <span>Vacina</span>
+                <span data-i18n="lemb_tipo_vacina">Vacina</span>
             </div>
             <div class="type-btn" onclick="selecionarTipoModal(this, 'Banho', 'ic-ban')">
                 <svg viewBox="0 0 24 24"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg>
-                <span>Banho</span>
+                <span data-i18n="lemb_tipo_banho">Banho</span>
             </div>
             <div class="type-btn" onclick="selecionarTipoModal(this, 'Alimentação', 'ic-ali')">
                 <svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 2v20M21 2a5 5 0 0 0-5 5v3h10V7a5 5 0 0 0-5-5z"/></svg>
-                <span>Alimentação</span>
+                <span data-i18n="lemb_tipo_alimentacao">Alimentação</span>
             </div>
             <div class="type-btn" onclick="selecionarTipoModal(this, 'Veterinário', 'ic-vet')">
                 <svg viewBox="0 0 24 24"><path d="M12 2v20M2 12h20"/></svg>
-                <span>Veterinário</span>
+                <span data-i18n="lemb_tipo_veterinario">Veterinário</span>
             </div>
             <div class="type-btn" onclick="selecionarTipoModal(this, 'Outro', 'ic-out')">
                 <svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
-                <span>Outro</span>
+                <span data-i18n="lemb_tipo_outro">Outro</span>
             </div>
         </div>
 
-        <label class="form-label">Título</label>
-        <input type="text" id="lemTitulo" class="form-input" placeholder="Ex: Antiparasitário, Ração...">
+        <label class="form-label" data-i18n="lemb_titulo_label">Título</label>
+        <input type="text" id="lemTitulo" class="form-input" placeholder="Ex: Antiparasitário, Ração..." data-i18n-placeholder="lemb_titulo_placeholder">
 
-        <label class="form-label">Descrição</label>
-        <input type="text" id="lemDesc" class="form-input" placeholder="Ex: Nexgard - 1 comprimido">
+        <label class="form-label" data-i18n="lemb_descricao">Descrição</label>
+        <input type="text" id="lemDesc" class="form-input" placeholder="Ex: Nexgard - 1 comprimido" data-i18n-placeholder="lemb_desc_placeholder">
 
-        <label class="form-label">Frequência</label>
+        <label class="form-label" data-i18n="lemb_frequencia">Frequência</label>
         <div class="pill-group" id="grpFrequencia">
-            <span class="pill" onclick="selecionarFrequencia(this, 'Diário')">Diário</span>
-            <span class="pill" onclick="selecionarFrequencia(this, 'Semanal')">Semanal</span>
-            <span class="pill active" onclick="selecionarFrequencia(this, 'Mensal')">Mensal</span>
-            <span class="pill" onclick="selecionarFrequencia(this, 'Uma vez')">Uma vez</span>
+            <span class="pill" data-i18n="lemb_freq_diario" onclick="selecionarFrequencia(this, 'Diário')">Diário</span>
+            <span class="pill" data-i18n="lemb_freq_semanal" onclick="selecionarFrequencia(this, 'Semanal')">Semanal</span>
+            <span class="pill active" data-i18n="lemb_freq_mensal" onclick="selecionarFrequencia(this, 'Mensal')">Mensal</span>
+            <span class="pill" data-i18n="lemb_freq_uma_vez" onclick="selecionarFrequencia(this, 'Uma vez')">Uma vez</span>
         </div>
 
         <div class="form-grid">
             <div>
-                <label class="form-label">Horário</label>
+                <label class="form-label" data-i18n="cons_horario">Horário</label>
                 <input type="text" id="lemHora" class="form-input" placeholder="08:00" inputmode="numeric" maxlength="5">
             </div>
             <div>
-                <label class="form-label">Próxima Data</label>
-                <input type="text" id="lemData" class="form-input" placeholder="dd/mm/aaaa" inputmode="numeric" maxlength="10">
+                <label class="form-label" data-i18n="lemb_proxima_data">Próxima Data</label>
+                <input type="text" id="lemData" class="form-input" placeholder="dd/mm/aaaa" data-i18n-placeholder="vac_data_placeholder" inputmode="numeric" maxlength="10">
             </div>
         </div>
 
-        <button class="btn-salvar" onclick="salvarNovoLembrete()">Salvar Lembrete</button>
+        <button class="btn-salvar" data-i18n="lemb_salvar" onclick="salvarNovoLembrete()">Salvar Lembrete</button>
     </div>
 </div>
 
-<script src="navbar.js"></script>
-<script src="petsdb.js?v=11"></script>
-<script src="validacao.js"></script>
+<script src="navbar.js?v=15"></script>
+<script src="petsdb.js?v=15"></script>
+<script src="i18n.js?v=15"></script>
+<script src="validacao.js?v=15"></script>
 <script>
     let petsCadastrados = [];
     let lembretesCadastrados = []; 
@@ -247,6 +248,7 @@
         if(typeof carregarMenuInferior === "function") {
             carregarMenuInferior('lembretes'); 
         }
+        if (typeof aplicarTraducoes === "function") aplicarTraducoes();
         
         // Mostra na hora o que já está em cache local
         carregarPetsLembretes(petcareFormatoSimples(petcareObterPets()));
@@ -267,7 +269,7 @@
         petsCadastrados = [];
 
         if (!dadosString || dadosString === "") {
-            container.innerHTML = `<span style="font-size:12px; color:var(--red);">Nenhum pet cadastrado. Adicione um na Home.</span>`;
+            container.innerHTML = `<span style="font-size:12px; color:var(--red);">${t('cons_nenhum_pet')}</span>`;
             return;
         }
 
@@ -342,6 +344,13 @@
         }
     }
 
+    // Mapeia o valor salvo (sempre em português) pro texto traduzido exibido
+    const MAPA_FREQ = { "Diário": "lemb_freq_diario", "Semanal": "lemb_freq_semanal", "Mensal": "lemb_freq_mensal", "Uma vez": "lemb_freq_uma_vez" };
+    function freqTraduzida(freq) {
+        const chave = MAPA_FREQ[freq];
+        return chave ? t(chave) : freq;
+    }
+
     function renderizarListaLembretes() {
         const container = document.getElementById('listaLembretesContainer');
         container.innerHTML = "";
@@ -365,7 +374,10 @@
         });
 
         if (listaFiltrada.length === 0) {
-            container.innerHTML = `<div class="empty-msg">Nenhum lembrete ${filtroAtual === 'Todas' ? 'registrado' : filtroAtual.toLowerCase()} no momento.<br><br>Clique no <b>+</b> no topo da tela para criar um.</div>`;
+            const msgFiltro = filtroAtual === 'Ativos' ? t('lemb_empty_ativos')
+                : filtroAtual === 'Pausados' ? t('lemb_empty_pausados')
+                : t('lemb_empty_todas');
+            container.innerHTML = `<div class="empty-msg">${msgFiltro}<br><br>${t('lemb_empty_suffix_html')}</div>`;
             return;
         }
 
@@ -402,12 +414,12 @@
                     <div class="reminder-tags">
                         <span class="tag-pill">${petRelacionado.nome}</span>
                         <span class="tag-pill">${l.hora}</span>
-                        <span class="tag-pill">${l.freq}</span>
+                        <span class="tag-pill">${freqTraduzida(l.freq)}</span>
                     </div>
 
                     <div class="reminder-footer">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                        Próximo: ${l.data}
+                        ${t('lemb_proximo')}: ${l.data}
                     </div>
                 </div>
             `;
@@ -419,7 +431,7 @@
     // 4. AÇÕES (ADICIONAR, PAUSAR, EXCLUIR)
     // ==========================================
     function abrirModalAddLembrete() {
-        if(petsCadastrados.length === 0) { alert("Cadastre um pet primeiro na tela Início!"); return; }
+        if(petsCadastrados.length === 0) { alert(t('cons_erro_precisa_pet')); return; }
         
         document.getElementById('lemTitulo').value = "";
         document.getElementById('lemDesc').value = "";
@@ -453,7 +465,7 @@
         const hora = document.getElementById('lemHora').value.trim();
         const data = document.getElementById('lemData').value.trim();
 
-        if(!titulo || !hora || !data) { alert("Atenção: Título, Horário e Próxima Data são obrigatórios."); return; }
+        if(!titulo || !hora || !data) { alert(t('lemb_erro_obrigatorios')); return; }
 
         // ---------- Validação ----------
         const vTitulo = validarTextoLivre(titulo, { max: 60, obrigatorio: true });
@@ -503,7 +515,7 @@
     }
 
     function excluirLembrete(idLembrete) {
-        if(confirm("Tem certeza que deseja apagar este lembrete?")) {
+        if(confirm(t('lemb_confirm_excluir'))) {
             lembretesCadastrados = lembretesCadastrados.filter(l => l.id !== idLembrete);
             petcareSalvarLembretes(lembretesCadastrados);
             renderizarListaLembretes();
