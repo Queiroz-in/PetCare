@@ -815,7 +815,9 @@
                 window.AppInventor.setWebViewString("MENU|" + nomeFuncao + "|" + petAtivoId);
             } else {
                 // Fora do app (testando no navegador): navega direto pra página
-                window.location.href = mapaPaginasFuncao[nomeFuncao] || (nomeFuncao + ".html");
+                const destino = mapaPaginasFuncao[nomeFuncao] || (nomeFuncao + ".html");
+                if (typeof petcareNavegarComTransicao === "function") petcareNavegarComTransicao(destino);
+                else window.location.href = destino;
             }
         }
 
@@ -823,6 +825,8 @@
         function irParaEmergencia() {
             if (window.AppInventor && window.AppInventor.setWebViewString) {
                 window.AppInventor.setWebViewString("NAV|emergencia");
+            } else if (typeof petcareNavegarComTransicao === "function") {
+                petcareNavegarComTransicao("emergencia.html");
             } else {
                 window.location.href = "emergencia.html";
             }
@@ -834,6 +838,8 @@
             }
             if (window.AppInventor && window.AppInventor.setWebViewString) {
                 window.AppInventor.setWebViewString("PET|PERFIL|" + petAtivoId);
+            } else if (typeof petcareNavegarComTransicao === "function") {
+                petcareNavegarComTransicao("perfil.html?id=" + petAtivoId);
             } else {
                 window.location.href = "perfil.html?id=" + petAtivoId;
             }
@@ -1010,19 +1016,20 @@
             if (!elemento) return; // Segurança caso o elemento não exista ainda
             let estaClicado = false;
             let posicaoXInicial;
+            let posicaoYInicial;
             let rolagemEsquerdaInicial;
             let movendo = false;
+            let direcaoTravada = null; // 'horizontal' | 'vertical' | null (ainda não decidiu)
 
+            // ---------- Mouse (desktop, pra testar no navegador) ----------
             elemento.addEventListener('mousedown', (e) => {
                 estaClicado = true;
                 movendo = false;
                 posicaoXInicial = e.pageX - elemento.offsetLeft;
                 rolagemEsquerdaInicial = elemento.scrollLeft;
             });
-
             elemento.addEventListener('mouseleave', () => { estaClicado = false; });
             elemento.addEventListener('mouseup', () => { estaClicado = false; });
-
             elemento.addEventListener('mousemove', (e) => {
                 if (!estaClicado) return;
                 e.preventDefault();
@@ -1031,6 +1038,38 @@
                 elemento.scrollLeft = rolagemEsquerdaInicial - deslocamento;
                 if (Math.abs(deslocamento) > 3) movendo = true;
             });
+
+            // ---------- Toque (celular de verdade) ----------
+            // Importante: só "trava" o gesto como horizontal (e bloqueia o scroll
+            // vertical da página) depois que o movimento já é claramente mais
+            // horizontal que vertical. Antes disso, deixa o navegador decidir
+            // livremente — assim um scroll vertical que começa em cima do
+            // carrossel nunca fica preso.
+            elemento.addEventListener('touchstart', (e) => {
+                const t = e.touches[0];
+                posicaoXInicial = t.pageX;
+                posicaoYInicial = t.pageY;
+                rolagemEsquerdaInicial = elemento.scrollLeft;
+                movendo = false;
+                direcaoTravada = null;
+            }, { passive: true });
+
+            elemento.addEventListener('touchmove', (e) => {
+                const t = e.touches[0];
+                const deltaX = t.pageX - posicaoXInicial;
+                const deltaY = t.pageY - posicaoYInicial;
+
+                if (direcaoTravada === null && (Math.abs(deltaX) > 6 || Math.abs(deltaY) > 6)) {
+                    direcaoTravada = Math.abs(deltaX) > Math.abs(deltaY) ? 'horizontal' : 'vertical';
+                }
+
+                if (direcaoTravada === 'horizontal') {
+                    e.preventDefault(); // só bloqueia o scroll da página quando é MESMO um arrasto horizontal
+                    elemento.scrollLeft = rolagemEsquerdaInicial - deltaX;
+                    if (Math.abs(deltaX) > 3) movendo = true;
+                }
+                // se for 'vertical', não faz nada aqui — deixa o scroll normal da página acontecer
+            }, { passive: false });
 
             // Evitar disparos involuntários de links/botões ao arrastar
             // + NAVEGAÇÃO REAL dos cards de Acesso Rápido (usa data-action)

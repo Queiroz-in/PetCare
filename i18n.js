@@ -269,6 +269,9 @@ const TRADUCOES = {
     clin_tag_bem_avaliada: { pt: "Bem Avaliada", en: "Highly Rated" },
     clin_ligar:            { pt: "Ligar", en: "Call" },
     clin_ver_rota:         { pt: "Ver Rota", en: "View Route" },
+    clin_buscar_local:     { pt: "Buscar por bairro ou cidade...", en: "Search by neighborhood or city..." },
+    clin_local_nao_encontrado: { pt: "Não encontramos esse local. Tente ser mais específico (ex: bairro, cidade).", en: "We couldn't find that place. Try being more specific (e.g., neighborhood, city)." },
+    clin_buscando_local:   { pt: "Procurando esse local...", en: "Looking up that place..." },
 
     // ---------- Animais Perdidos ----------
     perd_titulo:           { pt: "Animais Perdidos", en: "Lost Pets" },

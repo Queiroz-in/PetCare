@@ -150,6 +150,8 @@ function carregarMenuInferior(abaAtiva) {
 function navegarAbasGlobal(aba) {
     if (window.AppInventor && window.AppInventor.setWebViewString) {
         window.AppInventor.setWebViewString("NAV|" + aba);
+    } else if (typeof petcareNavegarComTransicao === "function") {
+        petcareNavegarComTransicao(aba + ".html");
     } else {
         window.location.href = aba + ".html";
     }

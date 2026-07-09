@@ -464,3 +464,34 @@ function petcareComprimirImagem(file, callback, tamanhoMax = 240, qualidade = 0.
     leitor.onerror = function () { callback(null); };
     leitor.readAsDataURL(file);
 }
+
+/* ==========================================================
+   8. TRANSIÇÃO SIMULADA ENTRE TELAS
+   Como cada tela é um recarregamento de página completo (não é
+   uma SPA), a "transição" é simulada em duas pontas:
+   - Ao carregar: a página nasce com opacity:0 e some suavemente
+     pro normal (fade-in).
+   - Ao sair: em vez de trocar a URL na hora, a página esmaece
+     primeiro (fade-out) e só troca de URL depois — assim não
+     fica um corte seco entre uma tela e outra.
+   Chame petcareIniciarTransicoes() uma vez no início de cada
+   página, e use petcareNavegarComTransicao(url) no lugar de
+   "window.location.href = url" nas navegações internas.
+   ========================================================== */
+function petcareIniciarTransicoes() {
+    if (document.getElementById('petcare-transicao-style')) return;
+    const style = document.createElement('style');
+    style.id = 'petcare-transicao-style';
+    style.innerHTML = `
+        body { opacity: 0; animation: petcareFadeIn 0.28s ease forwards; }
+        @keyframes petcareFadeIn { to { opacity: 1; } }
+        .petcare-saindo { opacity: 0 !important; transition: opacity 0.18s ease !important; }
+    `;
+    document.head.appendChild(style);
+}
+petcareIniciarTransicoes(); // roda na hora, assim que esse arquivo é carregado — sem precisar chamar em cada tela
+
+function petcareNavegarComTransicao(url) {
+    document.body.classList.add('petcare-saindo');
+    setTimeout(() => { window.location.href = url; }, 170);
+}

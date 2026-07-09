@@ -40,7 +40,8 @@
         .btn-reportar svg { width: 16px; height: 16px; stroke: white; fill: none; stroke-width: 2.5; }
         .btn-reportar:active { transform: scale(0.98); }
 
-        .filtro-especies { display: flex; gap: 8px; margin-bottom: 14px; overflow-x: auto; }
+        .filtro-especies { display: flex; gap: 8px; margin-bottom: 0; overflow-x: hidden; max-height: 0; opacity: 0; transition: max-height 0.28s ease, opacity 0.22s ease, margin-bottom 0.28s ease; }
+        .filtro-especies.aberto { max-height: 60px; opacity: 1; margin-bottom: 14px; overflow-x: auto; }
         .filtro-especies::-webkit-scrollbar { display: none; }
         .chip-especie { flex-shrink: 0; padding: 7px 14px; border-radius: 20px; background: var(--white); border: 1px solid #ECECEC; font-size: 12px; font-weight: 600; color: var(--gray); cursor: pointer; }
         .chip-especie.active { background: var(--blue-header); color: white; border-color: var(--blue-header); }
@@ -124,7 +125,7 @@
             </div>
         </div>
 
-        <div class="filtro-especies" id="filtroEspecies" style="display:none;">
+        <div class="filtro-especies" id="filtroEspecies">
             <div class="chip-especie active" data-especie="Todos" data-i18n="perd_filtro_todos" onclick="selecionarFiltro(this)">Todos</div>
             <div class="chip-especie" data-especie="Cachorro" data-i18n="perd_filtro_cachorro" onclick="selecionarFiltro(this)">Cachorro</div>
             <div class="chip-especie" data-especie="Gato" data-i18n="perd_filtro_gato" onclick="selecionarFiltro(this)">Gato</div>
@@ -314,8 +315,7 @@
     }
 
     function toggleFiltro() {
-        const el = document.getElementById('filtroEspecies');
-        el.style.display = (el.style.display === 'none') ? 'flex' : 'none';
+        document.getElementById('filtroEspecies').classList.toggle('aberto');
     }
 
     function selecionarFiltro(el) {
