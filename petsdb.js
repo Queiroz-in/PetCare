@@ -356,10 +356,19 @@ function receberDadosBanco(tag, valorRecebido) {
         base = base.split("::")[1].trim();
     }
 
+    // 🔧 DEBUG TEMPORÁRIO: mostra o valor cru (antes do JSON.parse) na tela,
+    // só pra tag "conta" - ajuda a achar se o problema é no dado ou na ponte.
+    if (base === "conta" && typeof mostrarDebugNaTela === "function") {
+        mostrarDebugNaTela("RECEBIDO CRU (tag=" + tag + "): [" + valorRecebido + "]");
+    }
+
     let dados = null;
     if (valorRecebido && valorRecebido !== "VAZIO") {
         try { dados = JSON.parse(valorRecebido); } catch (e) {
             console.error("Erro ao converter dados do banco (tag=" + tag + "):", e);
+            if (base === "conta" && typeof mostrarDebugNaTela === "function") {
+                mostrarDebugNaTela("ERRO NO JSON.parse: " + e.message);
+            }
         }
     }
 
