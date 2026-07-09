@@ -349,9 +349,9 @@ function receberDadosBanco(tag, valorRecebido) {
     if (!tag) { console.warn("receberDadosBanco chamado sem tag."); return; }
 
     // Separa "usuario::base" de volta em duas partes (quando aplicável)
-    let base = tag;
-    if (tag.indexOf("::") !== -1) {
-        base = tag.split("::")[1];
+    let base = tag.trim();
+    if (base.indexOf("::") !== -1) {
+        base = base.split("::")[1].trim();
     }
     mostrarAviso("DEBUG2b: base = '" + base + "' (tamanho=" + base.length + ")", "#EC4899");
 
