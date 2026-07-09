@@ -377,7 +377,7 @@
 
     </div>
 
-    <script src="petsdb.js?v=5"></script>
+    <script src="petsdb.js?v=6"></script>
     <script>
         // Animação de Entrada inicial
         window.addEventListener('DOMContentLoaded', function() {
@@ -508,6 +508,7 @@
         // volta do banco - decide qual fluxo pendente ela pertence (login, recuperação
         // de senha, ou checagem de e-mail já existente no cadastro).
         function aoReceberContaLogin(conta) {
+            mostrarAviso("DEBUG: aoReceberContaLogin chamado! conta=" + JSON.stringify(conta), "#8B5CF6");
             if (window._recuperacaoTentativa) {
                 const email = window._recuperacaoTentativa;
                 window._recuperacaoTentativa = null;
@@ -685,6 +686,7 @@
 
         // Só roda depois de confirmado que o e-mail ainda não tem conta
         function criarContaDeVerdade(conta) {
+            mostrarAviso("DEBUG: criarContaDeVerdade chamado! email=" + conta.email, "#34C759");
             petcareDefinirUsuarioAtual(conta.email);
             petcareSalvarConta(conta);
             petcareRegistrarContaNoDiretorio(conta.email, conta);

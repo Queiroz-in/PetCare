@@ -340,6 +340,9 @@ function enviarComando(comando, tag, dadosObjeto) {
 }
 
 function receberDadosBanco(tag, valorRecebido) {
+    // DIAGNÓSTICO TEMPORÁRIO nº 2 - usa o mostrarAviso() novo (sem alert)
+    mostrarAviso("DEBUG2: receberDadosBanco rodando! tag=" + tag + " valor=" + valorRecebido, "#0076C4");
+
     if (!tag) { console.warn("receberDadosBanco chamado sem tag."); return; }
 
     // Separa "usuario::base" de volta em duas partes (quando aplicável)
