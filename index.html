@@ -377,7 +377,7 @@
 
     </div>
 
-    <script src="petsdb.js?v=4"></script>
+    <script src="petsdb.js?v=5"></script>
     <script>
         // Animação de Entrada inicial
         window.addEventListener('DOMContentLoaded', function() {
@@ -524,7 +524,7 @@
 
                 if (conta && conta.email === novaConta.email) {
                     aplicarErro('regEmail', 'errRegEmail');
-                    alert("Já existe uma conta com esse e-mail. Tente fazer login.");
+                    mostrarAviso("Já existe uma conta com esse e-mail. Tente fazer login.", "#FF3B30");
                     return;
                 }
                 criarContaDeVerdade(novaConta);
@@ -607,13 +607,13 @@
                 window.location.href = "home.html";
             } else if (!conta) {
                 aplicarErro('loginEmail', 'errLoginEmail');
-                alert("Ainda não existe nenhuma conta com esse e-mail. Toque em \"Cadastre-se!\" pra criar a sua.");
+                mostrarAviso("Ainda não existe nenhuma conta com esse e-mail. Toque em \"Cadastre-se!\" pra criar a sua.", "#FF3B30");
             } else if (conta.email !== email) {
                 aplicarErro('loginEmail', 'errLoginEmail');
-                alert("Não encontramos uma conta com esse e-mail.");
+                mostrarAviso("Não encontramos uma conta com esse e-mail.", "#FF3B30");
             } else {
                 aplicarErro('loginPassword', 'errLoginPassword');
-                alert("Senha incorreta. Tente novamente ou toque em \"Esqueceu sua Senha?\".");
+                mostrarAviso("Senha incorreta. Tente novamente ou toque em \"Esqueceu sua Senha?\".", "#FF3B30");
             }
         }
 

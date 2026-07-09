@@ -306,6 +306,24 @@ function petcareBuscarContaNoDiretorio(email) {
    eles, é só um texto de tag qualquer, não importa o formato.
    ========================================================== */
 
+/* ---------- Aviso seguro (substitui alert() em código que roda via RunJavaScript) ----------
+   O alert() do navegador pode não funcionar (e travar a função inteira) quando o
+   código é executado pelo App Inventor via RunJavaScript, em vez de por um clique
+   direto do usuário. Esta função mostra um aviso na tela sem depender de alert(). */
+function mostrarAviso(mensagem, corFundo) {
+    try {
+        var aviso = document.createElement('div');
+        aviso.innerText = mensagem;
+        aviso.style.cssText = 'position:fixed;top:16px;left:16px;right:16px;background:' +
+            (corFundo || '#1F2937') + ';color:white;padding:14px 16px;border-radius:12px;' +
+            'font-family:Inter,sans-serif;font-size:13px;z-index:999999;box-shadow:0 4px 16px rgba(0,0,0,0.2);';
+        document.body.appendChild(aviso);
+        setTimeout(() => { aviso.remove(); }, 4500);
+    } catch (e) {
+        console.error("Erro ao mostrar aviso:", e);
+    }
+}
+
 function enviarComando(comando, tag, dadosObjeto) {
     // O "nonce" no final garante que o texto NUNCA seja idêntico ao comando
     // anterior - o App Inventor só dispara WebViewStringChange quando o valor
@@ -322,9 +340,6 @@ function enviarComando(comando, tag, dadosObjeto) {
 }
 
 function receberDadosBanco(tag, valorRecebido) {
-    // DIAGNÓSTICO TEMPORÁRIO - remover depois de descobrir o problema
-    alert("DEBUG: receberDadosBanco chamado!\ntag: " + tag + "\nvalor: " + valorRecebido);
-
     if (!tag) { console.warn("receberDadosBanco chamado sem tag."); return; }
 
     // Separa "usuario::base" de volta em duas partes (quando aplicável)
