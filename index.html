@@ -398,13 +398,22 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-    <script src="petsdb.js?v=16_debug"></script>
+    <script src="petsdb.js?v=17_debug"></script>
     <script src="i18n.js?v=15"></script>
     <script src="validacao.js?v=15"></script>
     <script>
         // Animação de Entrada inicial
         window.addEventListener('DOMContentLoaded', function() {
             mostrarDebugNaTela("ARQUIVO NOVO CARREGOU OK - versão de teste v2");
+
+            // 🔧 TESTE DIRETO DO localStorage
+            try {
+                localStorage.setItem('petcare_teste_storage', 'ok');
+                const leitura = localStorage.getItem('petcare_teste_storage');
+                mostrarDebugNaTela("TESTE localStorage: escreveu e leu de volta = [" + leitura + "]");
+            } catch (e) {
+                mostrarDebugNaTela("TESTE localStorage FALHOU: " + e.name + " - " + e.message);
+            }
 
             if (typeof aplicarTraducoes === "function") aplicarTraducoes();
 

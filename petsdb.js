@@ -423,12 +423,24 @@ function receberDadosBanco(tag, valorRecebido) {
 
     } else if (base === "conta") {
         const conta = dados || {};
-        petcareSalvarConta(conta);
+        try {
+            petcareSalvarConta(conta);
+        } catch (e) {
+            if (typeof mostrarDebugNaTela === "function") mostrarDebugNaTela("ERRO em petcareSalvarConta: " + e.name + " - " + e.message);
+        }
         if (typeof carregarDadosConta === "function") {
-            carregarDadosConta([conta.nome, conta.telefone, conta.email, conta.nascimento].join("|"));
+            try {
+                carregarDadosConta([conta.nome, conta.telefone, conta.email, conta.nascimento].join("|"));
+            } catch (e) {
+                if (typeof mostrarDebugNaTela === "function") mostrarDebugNaTela("ERRO em carregarDadosConta: " + e.name + " - " + e.message);
+            }
         }
         if (typeof aoReceberContaLogin === "function") {
-            aoReceberContaLogin(conta);
+            try {
+                aoReceberContaLogin(conta);
+            } catch (e) {
+                if (typeof mostrarDebugNaTela === "function") mostrarDebugNaTela("ERRO em aoReceberContaLogin: " + e.name + " - " + e.message);
+            }
         }
 
     } else if (base === "preferencias") {
