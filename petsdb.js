@@ -23,6 +23,34 @@
    0. USUÁRIO ATUAL (conta logada)
    ========================================================== */
 
+// Alguns WebViews (principalmente em Android mais desatualizado, ou com
+// "DOM Storage" desabilitado) não têm localStorage disponível de verdade -
+// ele existe como `null`. Sem isso, o app inteiro não funciona (login,
+// pets, tudo depende disso). Checamos uma vez e avisamos com clareza,
+// em vez de deixar cada função falhar em silêncio em pontos diferentes.
+const PETCARE_STORAGE_OK = (function () {
+    try {
+        if (!window.localStorage) return false;
+        localStorage.setItem('__petcare_check__', '1');
+        localStorage.removeItem('__petcare_check__');
+        return true;
+    } catch (e) {
+        return false;
+    }
+})();
+
+if (!PETCARE_STORAGE_OK) {
+    window.addEventListener('DOMContentLoaded', function () {
+        const aviso = document.createElement('div');
+        aviso.style.cssText = 'position:fixed; inset:0; background:#FFF9F1; z-index:999999; display:flex; align-items:center; justify-content:center; padding:24px; text-align:center; font-family:Arial,sans-serif;';
+        aviso.innerHTML = '<div style="max-width:340px;"><div style="font-size:40px; margin-bottom:12px;">⚠️</div>' +
+            '<h2 style="color:#1F2937; margin-bottom:10px; font-size:18px;">Este aparelho precisa de uma atualização</h2>' +
+            '<p style="color:#6B7280; font-size:14px; line-height:1.5;">O app usa um recurso do navegador (armazenamento local) que não está disponível neste dispositivo. ' +
+            'Atualize o <b>Android System WebView</b> e o <b>MIT AI2 Companion</b> pela Play Store e tente novamente.</p></div>';
+        document.body.appendChild(aviso);
+    });
+}
+
 // Transforma um e-mail num identificador seguro pra usar em tags/chaves
 // (só letras minúsculas, números e "_")
 function sanitizarEmailParaId(email) {
