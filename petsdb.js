@@ -23,24 +23,68 @@
    0. USUÁRIO ATUAL (conta logada)
    ========================================================== */
 
-// Alguns WebViews (principalmente em Android mais desatualizado, ou com
-// "DOM Storage" desabilitado) não têm localStorage disponível de verdade -
-// ele existe como `null`. Sem isso, o app inteiro não funciona (login,
-// pets, tudo depende disso). Checamos uma vez e avisamos com clareza,
-// em vez de deixar cada função falhar em silêncio em pontos diferentes.
-const PETCARE_STORAGE_OK = (function () {
+// Alguns WebViews (é um problema conhecido e documentado do próprio
+// componente WebViewer do App Inventor em certos Android/fabricantes)
+// têm o localStorage desabilitado - ele existe como `null`. Em vez de
+// deixar o app inteiro quebrar, criamos um substituto por cookies,
+// que costuma ser controlado por uma configuração diferente do WebView
+// e tende a continuar funcionando mesmo quando o DOM Storage está
+// desligado. O resto do código (que só usa getItem/setItem/removeItem)
+// nem percebe a diferença.
+let PETCARE_STORAGE_OK = true;
+(function () {
     try {
-        if (!window.localStorage) return false;
+        if (!window.localStorage) throw new Error("localStorage indisponível");
         localStorage.setItem('__petcare_check__', '1');
         localStorage.removeItem('__petcare_check__');
-        return true;
     } catch (e) {
-        return false;
+        PETCARE_STORAGE_OK = false;
+
+        // Polyfill simples de localStorage usando cookies
+        const cookiePolyfill = {
+            getItem: function (chave) {
+                const nome = "pc_" + chave + "=";
+                const partes = document.cookie.split(';');
+                for (let p of partes) {
+                    p = p.trim();
+                    if (p.indexOf(nome) === 0) return decodeURIComponent(p.substring(nome.length));
+                }
+                return null;
+            },
+            setItem: function (chave, valor) {
+                // 1 ano de validade, path=/ pra funcionar em todas as páginas
+                document.cookie = "pc_" + chave + "=" + encodeURIComponent(valor) + "; max-age=31536000; path=/";
+            },
+            removeItem: function (chave) {
+                document.cookie = "pc_" + chave + "=; max-age=0; path=/";
+            }
+        };
+
+        try {
+            Object.defineProperty(window, 'localStorage', { value: cookiePolyfill, writable: false, configurable: true });
+        } catch (e2) {
+            window.localStorage = cookiePolyfill;
+        }
     }
 })();
 
 if (!PETCARE_STORAGE_OK) {
     window.addEventListener('DOMContentLoaded', function () {
+        // Testa se o substituto por cookies realmente funcionou;
+        // só mostra o aviso se nem isso deu certo.
+        let cookieFunciona = true;
+        try {
+            localStorage.setItem('__petcare_check2__', '1');
+            cookieFunciona = localStorage.getItem('__petcare_check2__') === '1';
+            localStorage.removeItem('__petcare_check2__');
+        } catch (e) {
+            cookieFunciona = false;
+        }
+        if (cookieFunciona) {
+            console.warn("localStorage indisponível neste WebView - usando substituto por cookies com sucesso.");
+            return;
+        }
+
         const aviso = document.createElement('div');
         aviso.style.cssText = 'position:fixed; inset:0; background:#FFF9F1; z-index:999999; display:flex; align-items:center; justify-content:center; padding:24px; text-align:center; font-family:Arial,sans-serif;';
         aviso.innerHTML = '<div style="max-width:340px;"><div style="font-size:40px; margin-bottom:12px;">⚠️</div>' +
