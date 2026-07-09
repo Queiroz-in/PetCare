@@ -310,15 +310,18 @@ function petcareBuscarContaNoDiretorio(email) {
    O alert() do navegador pode não funcionar (e travar a função inteira) quando o
    código é executado pelo App Inventor via RunJavaScript, em vez de por um clique
    direto do usuário. Esta função mostra um aviso na tela sem depender de alert(). */
+let _contadorAvisos = 0;
 function mostrarAviso(mensagem, corFundo) {
     try {
+        const topo = 16 + (_contadorAvisos * 60);
+        _contadorAvisos++;
         var aviso = document.createElement('div');
         aviso.innerText = mensagem;
-        aviso.style.cssText = 'position:fixed;top:16px;left:16px;right:16px;background:' +
+        aviso.style.cssText = 'position:fixed;top:' + topo + 'px;left:16px;right:16px;background:' +
             (corFundo || '#1F2937') + ';color:white;padding:14px 16px;border-radius:12px;' +
-            'font-family:Inter,sans-serif;font-size:13px;z-index:999999;box-shadow:0 4px 16px rgba(0,0,0,0.2);';
+            'font-family:Inter,sans-serif;font-size:12px;z-index:999999;box-shadow:0 4px 16px rgba(0,0,0,0.2);';
         document.body.appendChild(aviso);
-        setTimeout(() => { aviso.remove(); }, 4500);
+        setTimeout(() => { aviso.remove(); _contadorAvisos--; }, 8000);
     } catch (e) {
         console.error("Erro ao mostrar aviso:", e);
     }
@@ -408,11 +411,15 @@ function receberDadosBanco(tag, valorRecebido) {
         if (typeof carregarPerdidosJSON === "function") carregarPerdidosJSON(JSON.stringify(lista));
 
     } else if (base === "conta") {
+        mostrarAviso("DEBUG3: entrou no branch 'conta'", "#F59E0B");
         const conta = dados || {};
+        mostrarAviso("DEBUG3: conta = " + JSON.stringify(conta), "#F59E0B");
         petcareSalvarConta(conta);
+        mostrarAviso("DEBUG3: petcareSalvarConta ok", "#F59E0B");
         if (typeof carregarDadosConta === "function") {
             carregarDadosConta([conta.nome, conta.telefone, conta.email, conta.nascimento].join("|"));
         }
+        mostrarAviso("DEBUG3: prestes a checar aoReceberContaLogin, typeof=" + typeof aoReceberContaLogin, "#F59E0B");
         if (typeof aoReceberContaLogin === "function") {
             aoReceberContaLogin(conta);
         }
