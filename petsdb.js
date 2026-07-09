@@ -322,6 +322,9 @@ function enviarComando(comando, tag, dadosObjeto) {
 }
 
 function receberDadosBanco(tag, valorRecebido) {
+    // DIAGNÓSTICO TEMPORÁRIO - remover depois de descobrir o problema
+    alert("DEBUG: receberDadosBanco chamado!\ntag: " + tag + "\nvalor: " + valorRecebido);
+
     if (!tag) { console.warn("receberDadosBanco chamado sem tag."); return; }
 
     // Separa "usuario::base" de volta em duas partes (quando aplicável)
