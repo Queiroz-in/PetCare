@@ -353,6 +353,7 @@ function receberDadosBanco(tag, valorRecebido) {
     if (tag.indexOf("::") !== -1) {
         base = tag.split("::")[1];
     }
+    mostrarAviso("DEBUG2b: base = '" + base + "' (tamanho=" + base.length + ")", "#EC4899");
 
     let dados = null;
     if (valorRecebido && valorRecebido !== "VAZIO") {
@@ -433,6 +434,7 @@ function receberDadosBanco(tag, valorRecebido) {
         }
 
     } else {
+        mostrarAviso("DEBUG2c: caiu no ELSE final - nenhuma rota bateu pra base='" + base + "'", "#EF4444");
         console.warn("Nenhum roteamento definido ainda para a tag:", tag, "(base:", base, ")");
     }
 }
