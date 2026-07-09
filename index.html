@@ -398,17 +398,20 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-    <script src="petsdb.js?v=15"></script>
+    <script src="petsdb.js?v=16_debug"></script>
     <script src="i18n.js?v=15"></script>
     <script src="validacao.js?v=15"></script>
     <script>
         // Animação de Entrada inicial
         window.addEventListener('DOMContentLoaded', function() {
+            mostrarDebugNaTela("ARQUIVO NOVO CARREGOU OK - versão de teste v2");
+
             if (typeof aplicarTraducoes === "function") aplicarTraducoes();
 
             // "Lembrar de mim": se já tem uma sessão salva, pula direto pra Home
             const sessao = (typeof petcareObterSessao === "function") ? petcareObterSessao() : null;
             if (sessao && sessao.ativa) {
+                mostrarDebugNaTela("Tem sessão salva ativa pro e-mail: " + sessao.email + " - indo pra home.html");
                 window.location.href = "home.html";
                 return;
             }
