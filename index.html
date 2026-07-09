@@ -250,8 +250,6 @@
 </head>
 <body>
 
-<button onclick="enviarComando('BUSCAR_TESTE', 'teste_direto_debug', {})" style="position:fixed;bottom:10px;left:10px;z-index:999999;padding:10px;background:orange;">TESTE DIRETO</button>
-
     <div id="logo" class="logo-container">
         <img src="logopetcare.png" alt="PetCare Logo" onerror="this.src='https://placehold.co/150x150/FFF9F1/5E2EBF?text=petcare'">
     </div>
@@ -379,7 +377,7 @@
 
     </div>
 
-    <script src="petsdb.js?v=10"></script>
+    <script src="petsdb.js?v=11"></script>
     <script>
         // Animação de Entrada inicial
         window.addEventListener('DOMContentLoaded', function() {
@@ -510,7 +508,6 @@
         // volta do banco - decide qual fluxo pendente ela pertence (login, recuperação
         // de senha, ou checagem de e-mail já existente no cadastro).
         function aoReceberContaLogin(conta) {
-            mostrarAviso("DEBUG: aoReceberContaLogin chamado! conta=" + JSON.stringify(conta), "#8B5CF6");
             if (window._recuperacaoTentativa) {
                 const email = window._recuperacaoTentativa;
                 window._recuperacaoTentativa = null;
@@ -688,7 +685,6 @@
 
         // Só roda depois de confirmado que o e-mail ainda não tem conta
         function criarContaDeVerdade(conta) {
-            mostrarAviso("DEBUG: criarContaDeVerdade chamado! email=" + conta.email, "#34C759");
             petcareDefinirUsuarioAtual(conta.email);
             petcareSalvarConta(conta);
             petcareRegistrarContaNoDiretorio(conta.email, conta);

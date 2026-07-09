@@ -343,9 +343,6 @@ function enviarComando(comando, tag, dadosObjeto) {
 }
 
 function receberDadosBanco(tag, valorRecebido) {
-    // DIAGNÓSTICO TEMPORÁRIO nº 2 - usa o mostrarAviso() novo (sem alert)
-    mostrarAviso("DEBUG2: receberDadosBanco rodando! tag=" + tag + " valor=" + valorRecebido, "#0076C4");
-
     if (!tag) { console.warn("receberDadosBanco chamado sem tag."); return; }
 
     // Separa "usuario::base" de volta em duas partes (quando aplicável)
@@ -353,7 +350,6 @@ function receberDadosBanco(tag, valorRecebido) {
     if (base.indexOf("::") !== -1) {
         base = base.split("::")[1].trim();
     }
-    mostrarAviso("DEBUG2b: base = '" + base + "' (tamanho=" + base.length + ")", "#EC4899");
 
     let dados = null;
     if (valorRecebido && valorRecebido !== "VAZIO") {
@@ -412,15 +408,11 @@ function receberDadosBanco(tag, valorRecebido) {
         if (typeof carregarPerdidosJSON === "function") carregarPerdidosJSON(JSON.stringify(lista));
 
     } else if (base === "conta") {
-        mostrarAviso("DEBUG3: entrou no branch 'conta'", "#F59E0B");
         const conta = dados || {};
-        mostrarAviso("DEBUG3: conta = " + JSON.stringify(conta), "#F59E0B");
         petcareSalvarConta(conta);
-        mostrarAviso("DEBUG3: petcareSalvarConta ok", "#F59E0B");
         if (typeof carregarDadosConta === "function") {
             carregarDadosConta([conta.nome, conta.telefone, conta.email, conta.nascimento].join("|"));
         }
-        mostrarAviso("DEBUG3: prestes a checar aoReceberContaLogin, typeof=" + typeof aoReceberContaLogin, "#F59E0B");
         if (typeof aoReceberContaLogin === "function") {
             aoReceberContaLogin(conta);
         }
@@ -434,7 +426,6 @@ function receberDadosBanco(tag, valorRecebido) {
         }
 
     } else {
-        mostrarAviso("DEBUG2c: caiu no ELSE final - nenhuma rota bateu pra base='" + base + "'", "#EF4444");
         console.warn("Nenhum roteamento definido ainda para a tag:", tag, "(base:", base, ")");
     }
 }
