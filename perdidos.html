@@ -2,10 +2,11 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
     <title>Animais Perdidos - PetCare</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
     <style>
+        html, body { touch-action: manipulation; overscroll-behavior: none; }
         :root {
             --blue-header: #16305A;
             --blue-action: #0076C4;
@@ -20,7 +21,7 @@
         body { background-color: var(--creme); font-family: 'Inter', sans-serif; height: 100dvh; display: flex; justify-content: center; overflow: hidden; }
         .app-container { width: 100%; max-width: 390px; height: 100%; display: flex; flex-direction: column; background-color: var(--creme); position: relative; }
 
-        .header-perdidos { background: var(--blue-header); padding: 40px 20px 24px; color: white; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; flex-shrink: 0; z-index: 10; }
+        .header-perdidos { background: var(--blue-header); padding: 40px 20px 24px; color: white; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; flex-shrink: 0; z-index: 10; padding-top: max(48px, calc(env(safe-area-inset-top) + 20px)); }
         .header-perdidos h2 { font-family: 'Poppins', sans-serif; font-size: 22px; margin-bottom: 4px; display: flex; align-items: center; gap: 10px; }
         .header-perdidos h2 svg { width: 22px; height: 22px; stroke: white; fill: none; stroke-width: 2.2; }
         .header-perdidos p { font-size: 13px; opacity: 0.85; }
@@ -69,16 +70,16 @@
         /* Modal Reportar */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); display: none; align-items: flex-end; justify-content: center; z-index: 100; }
         .modal-overlay.aberto { display: flex; }
-        .modal-box { background: var(--white); width: 100%; max-width: 390px; border-top-left-radius: 28px; border-top-right-radius: 28px; padding: 22px 20px; max-height: 88vh; overflow-y: auto; }
+        .modal-box { background: var(--white); width: 100%; max-width: 390px; border-top-left-radius: 28px; border-top-right-radius: 28px; padding: 22px 20px; max-height: 88vh; overflow-y: auto; overflow-x: hidden; box-sizing: border-box; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
         .modal-header h3 { font-family: 'Poppins', sans-serif; font-size: 17px; color: var(--text-dark); }
-        .modal-close { background: var(--gray-light); border: none; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; color: var(--gray); }
+        .modal-close { background: var(--gray-light); border: none; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; color: var(--gray); flex-shrink: 0; }
 
         .campo-label { font-size: 12px; font-weight: 600; color: var(--gray); margin: 14px 0 6px; }
-        .campo-input { width: 100%; padding: 12px 14px; border: 1px solid #E5E7EB; border-radius: 12px; font-size: 13px; font-family: 'Inter', sans-serif; outline: none; }
+        .campo-input { width: 100%; min-width: 0; padding: 12px 14px; border: 1px solid #E5E7EB; border-radius: 12px; font-size: 13px; font-family: 'Inter', sans-serif; outline: none; }
         textarea.campo-input { resize: none; min-height: 70px; }
-        .campo-row { display: flex; gap: 10px; }
-        .campo-row .campo-col { flex: 1; }
+        .campo-row { display: flex; gap: 10px; min-width: 0; }
+        .campo-row .campo-col { flex: 1; min-width: 0; }
 
         .pills-row { display: flex; gap: 8px; flex-wrap: wrap; }
         .pill { padding: 9px 16px; border-radius: 20px; border: 1px solid #E5E7EB; font-size: 12.5px; font-weight: 600; color: var(--gray); cursor: pointer; }

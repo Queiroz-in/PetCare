@@ -2,10 +2,11 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
     <title>Info de Raças - PetCare</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
     <style>
+        html, body { touch-action: manipulation; overscroll-behavior: none; }
         :root { 
             --green: #34C759; 
             --green-light: #EBF9EE;
@@ -25,7 +26,7 @@
         .app-container { width: 100%; max-width: 390px; height: 100%; display: flex; flex-direction: column; background-color: var(--creme); position: relative; }
 
         /* HEADER GREEN COM SEARCH */
-        .header-green { background: var(--green); padding: 40px 20px 20px; color: white; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; flex-shrink: 0; z-index: 10; position: relative; }
+        .header-green { background: var(--green); padding: 40px 20px 20px; color: white; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; flex-shrink: 0; z-index: 10; position: relative; padding-top: max(48px, calc(env(safe-area-inset-top) + 20px)); }
         
         .header-green h2 { font-family: 'Poppins', sans-serif; font-size: 24px; margin-bottom: 4px; }
         .header-green p { font-size: 13px; opacity: 0.9; margin-bottom: 20px; }

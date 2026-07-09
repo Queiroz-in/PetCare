@@ -2,10 +2,11 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
     <title>Carteira de Vacina - PetCare</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
     <style>
+        html, body { touch-action: manipulation; overscroll-behavior: none; }
         :root { 
             --teal: #00CBB0; 
             --teal-light: #E5F9F6;
@@ -28,7 +29,7 @@
         .app-container { width: 100%; max-width: 390px; height: 100%; display: flex; flex-direction: column; background-color: var(--creme); position: relative; }
 
         /* HEADER TEAL */
-        .header-teal { background: var(--teal); padding: 48px 20px 24px; color: white; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; flex-shrink: 0; z-index: 10;}
+        .header-teal { background: var(--teal); padding: 48px 20px 24px; color: white; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; flex-shrink: 0; z-index: 10; padding-top: max(48px, calc(env(safe-area-inset-top) + 20px)); }
         .header-teal h2 { font-family: 'Poppins', sans-serif; font-size: 24px; margin-bottom: 4px; }
         .header-teal p { font-size: 13px; opacity: 0.9; }
 
@@ -91,7 +92,7 @@
         /* MODAL ADICIONAR VACINA (BOTTOM SHEET) */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.5); z-index: 99999; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        .modal-content { background-color: #FFFFFF; width: 100%; max-width: 390px; height: 85vh; border-radius: 28px 28px 0 0; padding: 24px 20px; overflow-y: auto; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1); }
+        .modal-content { background-color: #FFFFFF; width: 100%; max-width: 390px; height: 85vh; border-radius: 28px 28px 0 0; padding: 24px 20px; overflow-y: auto; overflow-x: hidden; box-sizing: border-box; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1); }
         .modal-overlay.active .modal-content { transform: translateY(0); }
         
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; position: sticky; top: 0; background: white; padding-bottom: 10px; z-index: 10; }
@@ -99,9 +100,10 @@
         .close-btn { background-color: var(--gray-light); border: none; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-dark); font-weight: bold; font-size: 14px; }
 
         .form-label { font-size: 13px; font-weight: 700; margin-bottom: 8px; margin-top: 20px; display: block; color: var(--text-dark); }
-        .form-input { width: 100%; background-color: var(--gray-light); border: 1px solid #E5E7EB; border-radius: 12px; padding: 14px; font-size: 14px; font-family: 'Inter', sans-serif; outline: none; color: var(--text-dark); transition: 0.2s; }
+        .form-input { width: 100%; min-width: 0; background-color: var(--gray-light); border: 1px solid #E5E7EB; border-radius: 12px; padding: 14px; font-size: 14px; font-family: 'Inter', sans-serif; outline: none; color: var(--text-dark); transition: 0.2s; }
         .form-input:focus { border-color: var(--teal); background-color: white; }
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; min-width: 0; }
+        .form-grid > div { min-width: 0; }
 
         .pill-group { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
         .pill { padding: 8px 14px; border: 1px solid #E5E7EB; border-radius: 20px; font-size: 12px; font-weight: 600; color: var(--gray); cursor: pointer; background-color: var(--white); transition: all 0.2s; }

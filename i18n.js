@@ -370,6 +370,12 @@ const TRADUCOES = {
     perf_proxima:          { pt: "Próxima", en: "Next" },
     perf_confirmar_exclusao_prefix: { pt: "Tem certeza que deseja excluir", en: "Are you sure you want to delete" },
     perf_confirmar_exclusao_suffix: { pt: "Essa ação não pode ser desfeita.", en: "This action cannot be undone." },
+    perf_editar_pet:       { pt: "Editar Pet", en: "Edit Pet" },
+    perf_tipo_animal:      { pt: "Tipo de Animal", en: "Animal Type" },
+    perf_nome_pet:         { pt: "Nome", en: "Name" },
+    perf_raca:             { pt: "Raça", en: "Breed" },
+    perf_peso_kg:          { pt: "Peso (kg)", en: "Weight (kg)" },
+    perf_salvar_alteracoes:{ pt: "Salvar Alterações", en: "Save Changes" },
 };
 
 // Idioma atual (lido das preferências salvas; padrão pt-BR)

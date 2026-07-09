@@ -2,10 +2,11 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
     <title>Perfil do Pet - PetCare</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
     <style>
+        html, body { touch-action: manipulation; overscroll-behavior: none; }
         :root {
             --orange: #FF7A00;
             --orange-light: #FFF2E6;
@@ -62,6 +63,7 @@
         }
         .foto-banner .btn-voltar { left: 16px; }
         .foto-banner .btn-excluir { right: 16px; }
+        .foto-banner .btn-editar { right: 64px; }
         .foto-banner svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round; }
 
         .foto-banner .info-overlay {
@@ -142,7 +144,7 @@
         /* MODAL (bottom sheet) usado para adicionar registro de histórico */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.5); z-index: 99999; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        .modal-content { background: #FFFFFF; width: 100%; max-width: 390px; border-radius: 28px 28px 0 0; padding: 24px 20px; overflow-y: auto; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.25,1,0.5,1); }
+        .modal-content { background: #FFFFFF; width: 100%; max-width: 390px; border-radius: 28px 28px 0 0; padding: 24px 20px; overflow-y: auto; overflow-x: hidden; box-sizing: border-box; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.25,1,0.5,1); }
         .modal-overlay.active .modal-content { transform: translateY(0); }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .modal-header h3 { font-family: 'Poppins', sans-serif; font-size: 18px; font-weight: 700; }
@@ -162,6 +164,9 @@
     <div class="foto-banner" id="fotoBanner">
         <button class="icon-btn btn-voltar" onclick="window.history.back()">
             <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button class="icon-btn btn-editar" title="Editar pet" onclick="abrirModalEditarPet()">
+            <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>
         </button>
         <button class="icon-btn btn-excluir" title="Excluir pet" onclick="excluirPetAtual()">
             <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
@@ -183,7 +188,7 @@
 
         <div class="tabs-row">
             <div class="tab-btn active" id="tabBtnInfo" data-i18n="perf_tab_info" onclick="mudarAba('info')">Informações</div>
-            <div class="tab-btn" id="tabBtnVacinas" data-i18n="vac_registradas_titulo" onclick="mudarAba('vacinas')">Vacinas</div>
+            <div class="tab-btn" id="tabBtnVacinas" data-i18n="nav_vacinas" onclick="mudarAba('vacinas')">Vacinas</div>
             <div class="tab-btn" id="tabBtnHistorico" data-i18n="perf_tab_historico" onclick="mudarAba('historico')">Histórico</div>
         </div>
 
@@ -214,7 +219,7 @@
                     <span data-i18n="perf_resumo_saude">Resumo de Saúde</span>
                 </div>
                 <div class="resumo-pills">
-                    <div class="resumo-pill pill-vacinas"><b id="resumoVacinas">0</b><span data-i18n="vac_registradas_titulo">Vacinas</span></div>
+                    <div class="resumo-pill pill-vacinas"><b id="resumoVacinas">0</b><span data-i18n="nav_vacinas">Vacinas</span></div>
                     <div class="resumo-pill pill-consultas"><b id="resumoConsultas">0</b><span data-i18n="cons_titulo">Consultas</span></div>
                     <div class="resumo-pill pill-ocorrencias"><b id="resumoOcorrencias">0</b><span data-i18n="perf_ocorrencias">Ocorrências</span></div>
                 </div>
@@ -248,6 +253,74 @@
     </main>
 
     <div id="menu-inferior-container"></div>
+</div>
+
+<!-- MODAL: EDITAR PET -->
+<div id="modalEditarPet" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 data-i18n="perf_editar_pet">Editar Pet</h3>
+            <button class="close-btn" onclick="fecharModalEditarPet()">✕</button>
+        </div>
+
+        <label class="form-label" data-i18n="perf_tipo_animal">Tipo de Animal</label>
+        <div class="pill-group" id="grpTipoEditar">
+            <span class="pill" data-valor="Cachorro" onclick="selecionarPillHistorico(this,'grpTipoEditar')">Cachorro</span>
+            <span class="pill" data-valor="Gato" onclick="selecionarPillHistorico(this,'grpTipoEditar')">Gato</span>
+            <span class="pill" data-valor="Pássaro" onclick="selecionarPillHistorico(this,'grpTipoEditar')">Pássaro</span>
+            <span class="pill" data-valor="Coelho" onclick="selecionarPillHistorico(this,'grpTipoEditar')">Coelho</span>
+            <span class="pill" data-valor="Peixe" onclick="selecionarPillHistorico(this,'grpTipoEditar')">Peixe</span>
+            <span class="pill" data-valor="Outro" onclick="selecionarPillHistorico(this,'grpTipoEditar')">Outro</span>
+        </div>
+
+        <label class="form-label" data-i18n="perf_nome_pet">Nome</label>
+        <input type="text" id="editNome" class="form-input" placeholder="Ex: Thor, Luna, Pipoca">
+
+        <label class="form-label" data-i18n="perf_sexo">Sexo</label>
+        <div class="pill-group" id="grpSexoEditar">
+            <span class="pill" data-valor="Macho" onclick="selecionarPillHistorico(this,'grpSexoEditar')">Macho</span>
+            <span class="pill" data-valor="Fêmea" onclick="selecionarPillHistorico(this,'grpSexoEditar')">Fêmea</span>
+        </div>
+
+        <div class="form-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:12px; min-width:0;">
+            <div style="min-width:0;">
+                <label class="form-label" data-i18n="perf_raca">Raça</label>
+                <input type="text" id="editRaca" class="form-input" placeholder="Ex: Pinscher, Persa">
+            </div>
+            <div style="min-width:0;">
+                <label class="form-label" data-i18n="perf_data_nascimento">Nascimento</label>
+                <input type="text" id="editNasc" class="form-input" placeholder="dd/mm/aaaa" inputmode="numeric" maxlength="10">
+            </div>
+        </div>
+
+        <div class="form-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:12px; min-width:0;">
+            <div style="min-width:0;">
+                <label class="form-label" data-i18n="perf_peso_kg">Peso (kg)</label>
+                <input type="number" id="editPeso" class="form-input" placeholder="0.0" step="0.1" min="0">
+            </div>
+            <div style="min-width:0;">
+                <label class="form-label" data-i18n="perf_pelagem_cor">Pelagem/Cor</label>
+                <input type="text" id="editCor" class="form-input" placeholder="Ex: Dourado">
+            </div>
+        </div>
+
+        <label class="form-label" data-i18n="perf_castrado">Castrado(a)</label>
+        <div class="pill-group" id="grpCastradoEditar">
+            <span class="pill" data-valor="Sim" onclick="selecionarPillHistorico(this,'grpCastradoEditar')">Sim</span>
+            <span class="pill" data-valor="Não" onclick="selecionarPillHistorico(this,'grpCastradoEditar')">Não</span>
+        </div>
+
+        <label class="form-label" data-i18n="perf_tipo_sanguineo">Tipo Sanguíneo</label>
+        <input type="text" id="editTipoSanguineo" class="form-input" placeholder="Opcional">
+
+        <label class="form-label" data-i18n="perf_microchip">Nº do Microchip</label>
+        <input type="text" id="editMicrochip" class="form-input" placeholder="Opcional">
+
+        <label class="form-label" data-i18n="perf_alergias">Alergias conhecidas</label>
+        <input type="text" id="editAlergias" class="form-input" placeholder="Opcional">
+
+        <button class="btn-salvar" data-i18n="perf_salvar_alteracoes" onclick="salvarEdicaoPet()">Salvar Alterações</button>
+    </div>
 </div>
 
 <!-- MODAL: NOVO REGISTRO DE HISTÓRICO -->
@@ -467,6 +540,93 @@
         } else {
             window.location.href = "vacinas.html";
         }
+    }
+
+    // ---------- Modal de Editar Pet ----------
+    function marcarPillAtivo(idGrupo, valor) {
+        const grupo = document.getElementById(idGrupo);
+        Array.from(grupo.children).forEach(el => {
+            el.classList.toggle('active', el.dataset.valor === valor);
+        });
+    }
+
+    function abrirModalEditarPet() {
+        if (!petAtual) return;
+        const p = petAtual;
+        document.getElementById('editNome').value = p.nome || '';
+        document.getElementById('editRaca').value = p.raca || '';
+        document.getElementById('editNasc').value = p.nascimento || '';
+        document.getElementById('editPeso').value = p.peso || '';
+        document.getElementById('editCor').value = p.cor || '';
+        document.getElementById('editTipoSanguineo').value = p.tipoSanguineo || '';
+        document.getElementById('editMicrochip').value = p.microchip || '';
+        document.getElementById('editAlergias').value = p.alergias || '';
+
+        marcarPillAtivo('grpTipoEditar', p.tipo || 'Cachorro');
+        marcarPillAtivo('grpSexoEditar', p.sexo || 'Macho');
+        marcarPillAtivo('grpCastradoEditar', p.castrado || 'Não');
+
+        document.getElementById('modalEditarPet').classList.add('active');
+    }
+    function fecharModalEditarPet() {
+        document.getElementById('modalEditarPet').classList.remove('active');
+    }
+
+    function valorAtivo(idGrupo, padrao) {
+        const grupo = document.getElementById(idGrupo);
+        const ativo = grupo.querySelector('.pill.active');
+        return ativo ? ativo.dataset.valor : padrao;
+    }
+
+    function salvarEdicaoPet() {
+        if (!petAtual) return;
+
+        const nome = document.getElementById('editNome').value.trim();
+        const raca = document.getElementById('editRaca').value.trim();
+        const nascimento = document.getElementById('editNasc').value.trim();
+        const peso = document.getElementById('editPeso').value.trim();
+        const cor = document.getElementById('editCor').value.trim();
+        const tipoSanguineo = document.getElementById('editTipoSanguineo').value.trim();
+        const microchip = document.getElementById('editMicrochip').value.trim();
+        const alergias = document.getElementById('editAlergias').value.trim();
+
+        // ---------- Validação ----------
+        const vNome = validarNome(nome);
+        if (!vNome.valido) { alert(vNome.mensagem); return; }
+
+        const vRaca = validarTextoLivre(raca, { max: 40 });
+        if (!vRaca.valido) { alert(vRaca.mensagem); return; }
+
+        const vNasc = validarDataNascimento(nascimento);
+        if (!vNasc.valido) { alert(vNasc.mensagem); return; }
+
+        const vPeso = validarPeso(peso);
+        if (!vPeso.valido) { alert(vPeso.mensagem); return; }
+
+        const vCor = validarTextoLivre(cor, { max: 40 });
+        if (!vCor.valido) { alert(vCor.mensagem); return; }
+
+        const vAlergias = validarTextoLivre(alergias, { max: 150 });
+        if (!vAlergias.valido) { alert(vAlergias.mensagem); return; }
+
+        // Atualiza o pet dentro da lista completa e persiste
+        const listaAtualizada = petcareObterPets().map(p => {
+            if (String(p.id) !== String(petAtual.id)) return p;
+            return Object.assign({}, p, {
+                nome, raca, nascimento, peso, cor, tipoSanguineo, microchip, alergias,
+                tipo: valorAtivo('grpTipoEditar', p.tipo || 'Cachorro'),
+                sexo: valorAtivo('grpSexoEditar', p.sexo || 'Macho'),
+                castrado: valorAtivo('grpCastradoEditar', p.castrado || 'Não'),
+            });
+        });
+        petcareSalvarPets(listaAtualizada);
+        carregarPerfilPet(JSON.stringify(listaAtualizada.find(p => String(p.id) === String(petAtual.id))));
+
+        if (window.AppInventor) {
+            enviarComando("SALVAR_PETS", tagUsuario("pets"), listaAtualizada);
+        }
+
+        fecharModalEditarPet();
     }
 
     // ---------- Modal de Histórico ----------
