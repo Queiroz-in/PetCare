@@ -32,10 +32,10 @@
         .header-clinics p { font-size: 13px; opacity: 0.9; margin-bottom: 24px; }
 
         /* FILTROS */
-        .filters-container { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; }
+        .filters-container { display: flex; gap: 10px; overflow-x: auto; padding: 16px 20px 14px; flex-shrink: 0; }
         .filters-container::-webkit-scrollbar { display: none; }
-        .filter-pill { padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: 0.2s; background: rgba(255, 255, 255, 0.2); color: white; border: 1px solid rgba(255, 255, 255, 0.1); }
-        .filter-pill.active { background: var(--white); color: var(--pink-alt); border-color: var(--white); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .filter-pill { padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: 0.2s; background: var(--white); color: var(--gray); border: 1px solid #E5E7EB; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .filter-pill.active { background: var(--pink-alt); color: var(--white); border-color: var(--pink-alt); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
 
         /* CONTEÚDO ROLÁVEL */
         .view-content { flex: 1; overflow-y: auto; padding: 20px 20px 110px 20px; -webkit-overflow-scrolling: touch; }
@@ -90,14 +90,14 @@
     <header class="header-clinics">
         <h2 data-i18n="clin_titulo">Clínicas Próximas</h2>
         <p data-i18n="clin_subtitulo">Encontre atendimento veterinário rápido</p>
-
-        <div class="filters-container">
-            <div class="filter-pill active" data-i18n="clin_filtro_todas" onclick="aplicarFiltro('Todas', this)">Todas</div>
-            <div class="filter-pill" data-i18n="clin_filtro_proximas" onclick="aplicarFiltro('Mais Próximas', this)">Mais Próximas</div>
-            <div class="filter-pill" data-i18n="clin_filtro_avaliadas" onclick="aplicarFiltro('Melhor Avaliadas', this)">Melhor Avaliadas</div>
-            <div class="filter-pill" data-i18n="clin_filtro_abertas" onclick="aplicarFiltro('Abertas Agora', this)">Abertas Agora</div>
-        </div>
     </header>
+
+    <div class="filters-container">
+        <div class="filter-pill active" data-i18n="clin_filtro_todas" onclick="aplicarFiltro('Todas', this)">Todas</div>
+        <div class="filter-pill" data-i18n="clin_filtro_proximas" onclick="aplicarFiltro('Mais Próximas', this)">Mais Próximas</div>
+        <div class="filter-pill" data-i18n="clin_filtro_avaliadas" onclick="aplicarFiltro('Melhor Avaliadas', this)">Melhor Avaliadas</div>
+        <div class="filter-pill" data-i18n="clin_filtro_abertas" onclick="aplicarFiltro('Abertas Agora', this)">Abertas Agora</div>
+    </div>
 
     <main class="view-content">
         <div id="errorLocation" class="error-msg"></div>

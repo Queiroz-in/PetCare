@@ -61,11 +61,10 @@
             justify-content: space-between;
             align-items: flex-start;
             color: #FFFFFF;
-            margin-bottom: 24px;
         }
 
         .header-top span {
-            font-size: 15px;
+            font-size: 13px;
             font-weight: 500;
             opacity: 0.9;
         }
@@ -77,6 +76,12 @@
             letter-spacing: -0.5px;
         }
 
+        /* Seção do seletor de pets, logo abaixo do cabeçalho (fundo creme) */
+        .pets-select-section {
+            flex-shrink: 0;
+            padding: 16px 20px 4px;
+        }
+
         .sos-badge {
             background-color: rgba(255, 255, 255, 0.2);
             color: #FFFFFF;
@@ -85,6 +90,7 @@
             padding: 6px 14px;
             border-radius: 20px;
             cursor: pointer;
+            flex-shrink: 0;
         }
 
         /* Seleção Dinâmica de Pets */
@@ -105,7 +111,7 @@
             position: sticky;
             left: 0;
             z-index: 3;
-            background-color: #FF7A00;
+            background-color: #FFF9F1;
             padding-right: 6px;
         }
 
@@ -114,7 +120,7 @@
             flex-direction: column;
             align-items: center;
             gap: 6px;
-            color: #FFFFFF;
+            color: var(--text-dark, #1F2937);
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
@@ -125,9 +131,9 @@
             width: 66px;
             height: 66px;
             border-radius: 20px;
-            border: 2px solid #FFFFFF;
+            border: 2px solid #FF7A00;
             overflow: hidden;
-            background-color: rgba(255, 255, 255, 0.3);
+            background-color: #FFF2E6;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -140,8 +146,9 @@
         }
 
         .pet-img-box.add-btn {
-            border: 2px dashed rgba(255, 255, 255, 0.8);
+            border: 2px dashed #FF7A00;
             background: transparent;
+            color: #FF7A00;
             font-size: 24px;
         }
 
@@ -546,7 +553,9 @@
                 </div>
                 <div class="sos-badge" onclick="irParaEmergencia()">SOS</div>
             </div>
+        </div>
 
+        <div class="pets-select-section">
             <div id="petsRow" class="pets-select-row">
                 <div class="pet-selector-item item-fixo" onclick="abrirModalAddPet()">
                     <div class="pet-img-box add-btn">+</div>

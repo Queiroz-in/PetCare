@@ -39,7 +39,8 @@
         .search-input::placeholder { color: #9CA3AF; }
 
         /* FILTROS (TABS) */
-        .filters-container { display: flex; gap: 8px; overflow-x: auto; padding: 20px; padding-bottom: 10px; }
+        .filters-container { display: flex; gap: 8px; overflow-x: auto; padding: 0 20px 14px; }
+        .search-filtros-wrap { flex-shrink: 0; padding: 16px 20px 12px; }
         .filters-container::-webkit-scrollbar { display: none; }
         .filter-pill { padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: 0.2s; background: var(--white); color: var(--gray); border: 1px solid #E5E7EB; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
         .filter-pill.active { background: var(--green); color: var(--white); border-color: var(--green); box-shadow: 0 4px 10px rgba(52, 199, 89, 0.2); }
@@ -78,12 +79,14 @@
     <header class="header-green">
         <h2 data-i18n="raca_titulo">Informações sobre Raças</h2>
         <p data-i18n="raca_subtitulo">Conheça as características e cuidados</p>
-        
+    </header>
+
+    <div class="search-filtros-wrap">
         <div class="search-container">
             <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             <input type="text" id="searchInput" class="search-input" placeholder="Buscar raça..." data-i18n-placeholder="raca_busca_placeholder" onkeyup="filtrarPorBusca()">
         </div>
-    </header>
+    </div>
 
     <div class="filters-container">
         <div class="filter-pill active" data-i18n="raca_filtro_caes" onclick="aplicarFiltro('Cães', this)">Cães</div>

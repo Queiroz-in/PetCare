@@ -28,15 +28,16 @@
         .header-orange h2 { font-family: 'Poppins', sans-serif; font-size: 24px; margin-bottom: 4px; }
         .header-orange p { font-size: 13px; opacity: 0.9; }
         
-        .btn-add-header { position: absolute; top: 48px; right: 20px; width: 40px; height: 40px; background: rgba(255,255,255,0.25); border-radius: 14px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.4); cursor: pointer; color: white; transition: 0.2s; }
-        .btn-add-header:disabled { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.15); color: rgba(255,255,255,0.4); cursor: not-allowed; }
-        .btn-add-header:active { transform: scale(0.9); background: rgba(255,255,255,0.4); }
+        .summary-card-lemb { position: relative; background: var(--white); border-radius: 24px; padding: 20px 16px 16px; margin: 16px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); flex-shrink: 0; }
+        .btn-add-header { position: absolute; top: 16px; right: 16px; width: 36px; height: 36px; background: var(--orange-light); border-radius: 12px; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; color: var(--orange); transition: 0.2s; }
+        .btn-add-header:disabled { background: #F3F4F6; color: #C9C9C9; cursor: not-allowed; }
+        .btn-add-header:active { transform: scale(0.9); }
         .btn-add-header svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
 
-        .stats-orange { display: flex; gap: 10px; margin-top: 24px; }
-        .stat-orange-box { flex: 1; background: rgba(255,255,255,0.2); border-radius: 16px; padding: 14px 5px; text-align: center; }
-        .stat-orange-box b { font-size: 20px; font-family: 'Poppins', sans-serif; display: block; line-height: 1.1; }
-        .stat-orange-box span { font-size: 11px; font-weight: 500; opacity: 0.9; }
+        .stats-orange { display: flex; gap: 10px; }
+        .stat-orange-box { flex: 1; background: var(--orange-light); border-radius: 16px; padding: 14px 5px; text-align: center; }
+        .stat-orange-box b { font-size: 20px; font-family: 'Poppins', sans-serif; display: block; line-height: 1.1; color: var(--orange); }
+        .stat-orange-box span { font-size: 11px; font-weight: 600; color: var(--text-dark); opacity: 0.8; }
 
         /* ABAS (TABS) */
         .tabs-container { display: flex; justify-content: space-between; padding: 20px; background: transparent; }
@@ -131,12 +132,14 @@
 <div class="app-container">
     
     <header class="header-orange">
+        <h2 data-i18n="lemb_titulo">Lembretes</h2>
+        <p data-i18n="lemb_subtitulo">Medicamentos, banhos e mais</p>
+    </header>
+
+    <div class="summary-card-lemb">
         <button class="btn-add-header" id="btnAddLembreteHeader" onclick="abrirModalAddLembrete()" disabled>
             <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         </button>
-        <h2 data-i18n="lemb_titulo">Lembretes</h2>
-        <p data-i18n="lemb_subtitulo">Medicamentos, banhos e mais</p>
-        
         <div class="stats-orange">
             <div class="stat-orange-box">
                 <b id="statAtivos">0</b>
@@ -151,7 +154,7 @@
                 <span data-i18n="lemb_stat_total">Total</span>
             </div>
         </div>
-    </header>
+    </div>
 
     <div class="tabs-container">
         <div class="tab-btn active" data-i18n="lemb_tab_todos" onclick="filtrarLembretes('Todas', this)">Todos</div>
