@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Info de Raças - PetCare</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
     <style>
@@ -54,7 +54,8 @@
         .breed-card { background: var(--white); border-radius: 24px; padding: 20px; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid #F0F0F0; }
         
         .breed-header { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
-        .breed-avatar { width: 48px; height: 48px; border-radius: 14px; object-fit: cover; background: var(--green-light); display: flex; align-items: center; justify-content: center; color: var(--green); font-weight: bold; font-size: 20px; flex-shrink: 0; border: 1px solid #D1F2D9;}
+        .breed-avatar { width: 48px; height: 48px; border-radius: 14px; object-fit: cover; background: var(--green-light); display: flex; align-items: center; justify-content: center; color: var(--green); font-weight: bold; font-size: 20px; flex-shrink: 0; border: 1px solid #D1F2D9; overflow: hidden;}
+        .breed-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .breed-header h4 { font-size: 16px; font-weight: 700; color: var(--text-dark); }
 
         .breed-info { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; font-size: 12px; color: var(--text-dark); font-weight: 500; line-height: 1.4; }
@@ -99,6 +100,7 @@
 </div>
 
 <script src="navbar.js?v=15"></script>
+<script src="petsdb.js?v=15"></script>
 <script src="i18n.js?v=15"></script>
 <script>
     window.addEventListener('DOMContentLoaded', () => {
@@ -173,6 +175,39 @@
     // ==========================================
     // 3. RENDERIZAÇÃO
     // ==========================================
+    // Mapa de raça -> slug da Dog CEO API (fotos reais, gratuita e sem chave).
+    // Só cobre "Cães" por enquanto — outras categorias continuam com o avatar de letra.
+    const MAPA_FOTO_RACA = {
+        "Pastor Alemão": "germanshepherd",
+        "Golden Retriever": "retriever/golden",
+        "Bulldog Francês": "bulldog/french",
+        "Border Collie": "collie/border",
+        "Pug": "pug",
+        "Shih Tzu": "shihtzu",
+        "Beagle": "beagle",
+        "Husky Siberiano": "husky"
+    };
+    const cacheFotoRaca = {};
+
+    function carregarFotoRaca(nomeRaca, avatarEl) {
+        const slug = MAPA_FOTO_RACA[nomeRaca];
+        if (!slug) return; // categoria sem foto mapeada, mantém o avatar de letra
+
+        if (cacheFotoRaca[slug]) {
+            avatarEl.innerHTML = `<img src="${cacheFotoRaca[slug]}" alt="${nomeRaca}">`;
+            return;
+        }
+        fetch(`https://dog.ceo/api/breed/${slug}/images/random`)
+            .then(r => r.json())
+            .then(dados => {
+                if (dados && dados.status === "success" && dados.message) {
+                    cacheFotoRaca[slug] = dados.message;
+                    avatarEl.innerHTML = `<img src="${dados.message}" alt="${nomeRaca}">`;
+                }
+            })
+            .catch(() => { /* sem internet ou API fora: mantém o avatar de letra, sem quebrar nada */ });
+    }
+
     function renderizarRacas() {
         const container = document.getElementById('listaRacasContainer');
         container.innerHTML = "";
@@ -192,8 +227,11 @@
 
         // 3. Desenha os Cards
         listaFiltrada.forEach(raca => {
-            // Formata a lista de doenças separando por vírgula em <li>
-            const doencasList = raca.doencas.split(',').map(d => `<li>${d.trim()}</li>`).join('');
+            // Formata a lista de doenças separando por vírgula em <li> (com a primeira letra maiúscula em cada item)
+            const doencasList = raca.doencas.split(',').map(d => {
+                const texto = d.trim();
+                return `<li>${texto.charAt(0).toUpperCase() + texto.slice(1)}</li>`;
+            }).join('');
 
             // Pega a primeira letra pro avatar
             const letra = raca.nome.charAt(0).toUpperCase();
@@ -202,7 +240,7 @@
             card.className = "breed-card";
             card.innerHTML = `
                 <div class="breed-header">
-                    <div class="breed-avatar">${letra}</div>
+                    <div class="breed-avatar" data-raca="${raca.nome}">${letra}</div>
                     <h4>${raca.nome}</h4>
                 </div>
 
@@ -229,6 +267,7 @@
                 </div>
             `;
             container.appendChild(card);
+            carregarFotoRaca(raca.nome, card.querySelector('.breed-avatar'));
         });
     }
 </script>

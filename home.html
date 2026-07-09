@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>PetCare - Painel Principal</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -173,6 +173,9 @@
             font-weight: 700;
             text-decoration: none;
         }
+        .ver-perfil-link.desabilitado {
+            color: #C9C9C9;
+        }
 
         .pet-stats-grid {
             display: grid;
@@ -305,6 +308,25 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.01);
         }
 
+        .reminder-item-home {
+            background-color: #FFFFFF;
+            border-radius: 16px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.01);
+            cursor: pointer;
+        }
+        .reminder-item-home .bolinha {
+            width: 8px; height: 8px; border-radius: 50%; background: #FFB300; flex-shrink: 0;
+        }
+        .reminder-item-home .info { flex: 1; min-width: 0; }
+        .reminder-item-home .info strong { font-size: 13px; color: #1F2937; display: block; }
+        .reminder-item-home .info span { font-size: 12px; color: #8E8E93; }
+        .reminder-item-home .hora { font-size: 13px; font-weight: 700; color: #FF7A00; flex-shrink: 0; }
+
         /* =========================================
            MODAL "ADICIONAR PET" (BOTTOM SHEET)
            ========================================= */
@@ -397,6 +419,13 @@
             grid-template-columns: 1fr 1fr;
             gap: 16px;
         }
+
+        .foto-picker-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 8px; }
+        .foto-picker { width: 88px; height: 88px; border-radius: 50%; background: var(--gray-light, #F3F4F6); border: 2px dashed #D1D5DB; display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; flex-shrink: 0; }
+        .foto-picker svg { width: 30px; height: 30px; stroke: #9CA3AF; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+        .foto-picker img { width: 100%; height: 100%; object-fit: cover; }
+        .foto-picker.tem-foto { border-style: solid; border-color: var(--orange, #FF7A00); }
+        .foto-picker-label { font-size: 12px; color: var(--gray, #8E8E93); font-weight: 500; }
 
         .pill-group {
             display: flex;
@@ -536,21 +565,21 @@
             
             <div class="pet-stats-grid">
                 <div class="stat-box">
-                    <span class="stat-label">Idade</span>
+                    <span class="stat-label" data-i18n="home_idade">Idade</span>
                     <span class="stat-val" id="valIdade">-</span>
                 </div>
                 <div class="stat-box">
-                    <span class="stat-label">Peso</span>
+                    <span class="stat-label" data-i18n="home_peso">Peso</span>
                     <span class="stat-val" id="valPeso">-</span>
                 </div>
                 <div class="stat-box">
-                    <span class="stat-label">Raça</span>
+                    <span class="stat-label" data-i18n="home_raca">Raça</span>
                     <span class="stat-val" id="valRaca">-</span>
                 </div>
             </div>
 
             <div class="alert-bar" id="alertBar" style="display: none;" onclick="abrirFuncao('vacinas')">
-                <span id="txtAlerta">Tudo em dia!</span>
+                <span id="txtAlerta" data-i18n="home_tudo_em_dia">Tudo em dia!</span>
                 <span>Ver ❯</span>
             </div>
         </div>
@@ -564,52 +593,52 @@
                 
                 <div class="quick-card c-saude" data-action="saude">
                     <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                    <div><div class="title">Verificar Saúde</div><div class="desc">Identificar sintomas</div></div>
+                    <div><div class="title" data-i18n="home_card_saude_titulo">Verificar Saúde</div><div class="desc" data-i18n="home_card_saude_desc">Identificar sintomas</div></div>
                 </div>
 
                 <div class="quick-card c-consultas" data-action="consultas">
                     <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                    <div><div class="title">Consultas</div><div class="desc">Agendar / Ver</div></div>
+                    <div><div class="title" data-i18n="cons_titulo">Consultas</div><div class="desc" data-i18n="home_card_consultas_desc">Agendar / Ver</div></div>
                 </div>
 
                 <div class="quick-card c-vacina" data-action="vacinas">
                     <svg viewBox="0 0 24 24"><path d="M3 21l6-6 M14 6l-7 7a2.82 2.82 0 0 0 4 4l7-7Z M12 8l2 2 M9 11l2 2 M16 8l3-3 M17 3l4 4"/></svg>
-                    <div><div class="title">Carteira de Vacina</div><div class="desc">Ver registros</div></div>
+                    <div><div class="title" data-i18n="vac_titulo">Carteira de Vacina</div><div class="desc" data-i18n="home_card_vacinas_desc">Ver registros</div></div>
                 </div>
 
                 <div class="quick-card c-lembretes" data-action="lembretes">
                     <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-                    <div><div class="title">Lembretes</div><div class="desc">Medicamentos e mais</div></div>
+                    <div><div class="title" data-i18n="nav_lembretes">Lembretes</div><div class="desc" data-i18n="home_card_lembretes_desc">Medicamentos e mais</div></div>
                 </div>
 
                 <div class="quick-card c-clinicas" data-action="clinicas">
                     <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    <div><div class="title">Clínicas Próximas</div><div class="desc">Encontre veterinários</div></div>
+                    <div><div class="title" data-i18n="clin_titulo">Clínicas Próximas</div><div class="desc" data-i18n="home_card_clinicas_desc">Encontre veterinários</div></div>
                 </div>
 
                 <div class="quick-card c-racas" data-action="racas">
                     <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zm20 0h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-                    <div><div class="title">Info de Raças</div><div class="desc">Conheça seu Pet</div></div>
+                    <div><div class="title" data-i18n="home_card_racas_titulo">Info de Raças</div><div class="desc" data-i18n="home_card_racas_desc">Conheça seu Pet</div></div>
                 </div>
 
                 <div class="quick-card c-perdidos" data-action="perdidos">
                     <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                    <div><div class="title">Animais Perdidos</div><div class="desc">Mural e contatos</div></div>
+                    <div><div class="title" data-i18n="perd_titulo">Animais Perdidos</div><div class="desc" data-i18n="home_card_perdidos_desc">Mural e contatos</div></div>
                 </div>
 
                 <div class="quick-card c-resgate" data-action="resgate">
                     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
-                    <div><div class="title">Guia de Resgate</div><div class="desc">Como ajudar</div></div>
+                    <div><div class="title" data-i18n="resg_titulo">Guia de Resgate</div><div class="desc" data-i18n="home_card_resgate_desc">Como ajudar</div></div>
                 </div>
 
                 <div class="quick-card c-somos" data-action="quem-somos">
                     <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                    <div><div class="title">Quem Somos?</div><div class="desc">Origem do PetCare</div></div>
+                    <div><div class="title" data-i18n="somos_titulo">Quem Somos?</div><div class="desc" data-i18n="home_card_somos_desc">Origem do PetCare</div></div>
                 </div>
 
                 <div class="quick-card c-config" data-action="config">
                     <svg viewBox="0 0 24 24"><path d="M15 4v5 M15 15h5 M9 15v5 M4 9h5 M9 5v0.1 M19 9v0.1 M15 19v0.1 M5 15v0.1"/></svg>
-                    <div><div class="title">Configurações</div><div class="desc">Personalize e modifique</div></div>
+                    <div><div class="title" data-i18n="config_titulo">Configurações</div><div class="desc" data-i18n="home_card_config_desc">Personalize e modifique</div></div>
                 </div>
 
             </div>
@@ -636,55 +665,62 @@
     <div id="modalAddPet" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Adicionar Pet</h3>
+                <h3 data-i18n="home_modal_add_pet">Adicionar Pet</h3>
                 <button class="close-btn" onclick="fecharModalAddPet()">✕</button>
             </div>
 
-            <label class="form-label">Tipo de animal</label>
-            <div class="pill-group" id="grpTipo">
-                <span class="pill active" onclick="selecionarPill(this, 'grpTipo')">Cachorro</span>
-                <span class="pill" onclick="selecionarPill(this, 'grpTipo')">Gato</span>
-                <span class="pill" onclick="selecionarPill(this, 'grpTipo')">Pássaro</span>
-                <span class="pill" onclick="selecionarPill(this, 'grpTipo')">Coelho</span>
-                <span class="pill" onclick="selecionarPill(this, 'grpTipo')">Peixe</span>
-                <span class="pill" onclick="selecionarPill(this, 'grpTipo')">Outro</span>
+            <div class="foto-picker-wrap">
+                <div class="foto-picker" id="addFotoPreview" onclick="document.getElementById('addFotoInput').click()">
+                    <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                </div>
+                <input type="file" id="addFotoInput" accept="image/*" style="display:none;" onchange="onEscolherFotoPet(this, 'addFotoPreview')">
+                <span class="foto-picker-label" data-i18n="home_foto_toque">Toque pra adicionar uma foto</span>
             </div>
 
-            <label class="form-label">Nome</label>
+            <label class="form-label" data-i18n="home_tipo_animal">Tipo de animal</label>
+            <div class="pill-group" id="grpTipo">
+                <span class="pill active" data-i18n="home_pill_cachorro" onclick="selecionarPill(this, 'grpTipo')">Cachorro</span>
+                <span class="pill" data-i18n="home_pill_gato" onclick="selecionarPill(this, 'grpTipo')">Gato</span>
+                <span class="pill" data-i18n="home_pill_passaro" onclick="selecionarPill(this, 'grpTipo')">Pássaro</span>
+                <span class="pill" data-i18n="home_pill_coelho" onclick="selecionarPill(this, 'grpTipo')">Coelho</span>
+                <span class="pill" data-i18n="home_pill_peixe" onclick="selecionarPill(this, 'grpTipo')">Peixe</span>
+            </div>
+
+            <label class="form-label" data-i18n="perf_nome_pet">Nome</label>
             <input type="text" id="addNome" class="form-input" placeholder="Ex: Thor, Luna, Pipoca">
 
-            <label class="form-label">Sexo</label>
+            <label class="form-label" data-i18n="home_sexo">Sexo</label>
             <div class="sex-group" id="grpSexo">
-                <div class="sex-btn" onclick="selecionarPill(this, 'grpSexo')">Macho</div>
-                <div class="sex-btn active" onclick="selecionarPill(this, 'grpSexo')">Fêmea</div>
+                <div class="sex-btn" data-i18n="home_macho" onclick="selecionarPill(this, 'grpSexo')">Macho</div>
+                <div class="sex-btn active" data-i18n="home_femea" onclick="selecionarPill(this, 'grpSexo')">Fêmea</div>
             </div>
 
             <div class="form-grid">
                 <div>
-                    <label class="form-label">Raça</label>
+                    <label class="form-label" data-i18n="perf_raca">Raça</label>
                     <input type="text" id="addRaca" class="form-input" placeholder="Ex: Pinscher, Persa">
                 </div>
                 <div>
-                    <label class="form-label">Nascimento</label>
+                    <label class="form-label" data-i18n="home_nascimento">Nascimento</label>
                     <input type="text" id="addNasc" class="form-input" placeholder="dd/mm/aaaa" inputmode="numeric" maxlength="10">
                 </div>
             </div>
 
             <div class="form-grid">
                 <div>
-                    <label class="form-label">Peso (kg)</label>
-                    <input type="number" id="addPeso" class="form-input" placeholder="0.0" step="0.1">
+                    <label class="form-label" data-i18n="perf_peso_kg">Peso (kg)</label>
+                    <input type="number" id="addPeso" class="form-input" placeholder="0.0" step="0.1" min="0" inputmode="decimal" onkeypress="return /[0-9.,]/.test(event.key)" oninput="this.value = this.value.replace(/[^0-9.,]/g, '')">
                 </div>
                 <div>
-                    <label class="form-label">Pelagem/Cor</label>
+                    <label class="form-label" data-i18n="perf_pelagem_cor">Pelagem/Cor</label>
                     <input type="text" id="addCor" class="form-input" placeholder="Ex: Dourado">
                 </div>
             </div>
 
             <div class="switch-box">
                 <div class="switch-text">
-                    <strong>Castrado(a)</strong>
-                    <small>O pet é castrado?</small>
+                    <strong data-i18n="home_castrado_titulo">Castrado(a)</strong>
+                    <small data-i18n="home_castrado_desc">O pet é castrado?</small>
                 </div>
                 <label class="switch">
                     <input type="checkbox" id="addCastrado" checked>
@@ -692,13 +728,13 @@
                 </label>
             </div>
 
-            <label class="form-label">Nº do Microchip</label>
+            <label class="form-label" data-i18n="home_microchip">Nº do Microchip</label>
             <input type="text" id="addMicrochip" class="form-input" placeholder="Opcional">
 
-            <label class="form-label">Alergias conhecidas</label>
+            <label class="form-label" data-i18n="home_alergias">Alergias conhecidas</label>
             <input type="text" id="addAlergias" class="form-input" placeholder="Opcional">
 
-            <button class="btn-salvar-pet" onclick="salvarNovoPet()">Adicionar</button>
+            <button class="btn-salvar-pet" data-i18n="home_adicionar_btn" onclick="salvarNovoPet()">Adicionar</button>
         </div>
     </div>
 
@@ -723,12 +759,14 @@
                 const info = petRaw.split(",");
                 const id = info[0];
                 const nome = info[1];
+                const fotoBase64 = info[6];
+                const srcFoto = fotoBase64 ? `data:image/jpeg;base64,${fotoBase64}` : `https://placehold.co/100x100/FF7A00/FFFFFF?text=${nome.charAt(0)}`;
                 const item = document.createElement("div");
                 item.className = "pet-selector-item";
                 item.onclick = () => carregarEstatisticasPet(info);
                 item.innerHTML = `
                     <div class="pet-img-box">
-                        <img src="https://placehold.co/100x100/FF7A00/FFFFFF?text=${nome.charAt(0)}" alt="${nome}">
+                        <img src="${srcFoto}" alt="${nome}">
                     </div>
                     <span>${nome}</span>
                 `;
@@ -746,6 +784,8 @@
             document.getElementById("valIdade").innerText = info[2];
             document.getElementById("valPeso").innerText = info[3];
             document.getElementById("valRaca").innerText = info[4];
+            const linkPerfil = document.querySelector('.ver-perfil-link');
+            if (linkPerfil) linkPerfil.classList.remove('desabilitado');
             const alerta = info[5];
             const alertBar = document.getElementById("alertBar");
             if (alerta && alerta !== "0" && alerta !== "") {
@@ -757,11 +797,14 @@
         }
 
         function mostrarEstadoVazio() {
-            document.getElementById("placeholderNome").innerText = "Cadastre um Pet";
+            document.getElementById("placeholderNome").innerText = t('home_cadastre_pet');
             document.getElementById("valIdade").innerText = "-";
             document.getElementById("valPeso").innerText = "-";
             document.getElementById("valRaca").innerText = "-";
             document.getElementById("alertBar").style.display = "none";
+            petAtivoId = null;
+            const linkPerfil = document.querySelector('.ver-perfil-link');
+            if (linkPerfil) linkPerfil.classList.add('desabilitado');
         }
 
         // Mapa de exceções: nome lógico da função -> arquivo real (quando é diferente)
@@ -785,7 +828,10 @@
             }
         }
         function abrirPerfilAtual() {
-            if (!petAtivoId) return;
+            if (!petAtivoId) {
+                if (typeof mostrarAviso === "function") mostrarAviso(t('home_precisa_cadastrar_pet'), "#FF7A00");
+                return;
+            }
             if (window.AppInventor && window.AppInventor.setWebViewString) {
                 window.AppInventor.setWebViewString("PET|PERFIL|" + petAtivoId);
             } else {
@@ -814,10 +860,64 @@
             // Inicializa a Navbar Modular e acende a aba da Home
             carregarMenuInferior('home');
             if (typeof aplicarTraducoes === "function") aplicarTraducoes();
+            renderizarLembretesAtivosHome();
         });
 
-        function abrirModalAddPet() { document.getElementById('modalAddPet').classList.add('active'); }
-        function fecharModalAddPet() { document.getElementById('modalAddPet').classList.remove('active'); }
+        function renderizarLembretesAtivosHome() {
+            const container = document.getElementById('listaLembretes');
+            const pets = petcareObterPets();
+            const lembretes = (typeof petcareObterLembretes === "function") ? petcareObterLembretes() : [];
+            const ativos = lembretes.filter(l => l.status === "Ativo").slice(0, 3);
+
+            if (ativos.length === 0) {
+                container.innerHTML = `<div class="empty-reminders"><span data-i18n="home_nenhum_lembrete">${t('home_nenhum_lembrete')}</span></div>`;
+                return;
+            }
+
+            container.innerHTML = ativos.map(l => {
+                const pet = pets.find(p => String(p.id) === String(l.idPet));
+                return `
+                    <div class="reminder-item-home" onclick="abrirFuncao('lembretes')">
+                        <div class="bolinha"></div>
+                        <div class="info">
+                            <strong>${l.titulo}</strong>
+                            <span>${pet ? pet.nome : ''}</span>
+                        </div>
+                        <div class="hora">${l.hora || ''}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        let fotoSelecionadaAddPet = null;
+
+        function onEscolherFotoPet(inputEl, previewId) {
+            const file = inputEl.files && inputEl.files[0];
+            if (!file) return;
+            petcareComprimirImagem(file, (dataUrl) => {
+                if (!dataUrl) { if (typeof mostrarAviso === "function") mostrarAviso("Não foi possível carregar essa imagem.", "#FF3B30"); return; }
+                fotoSelecionadaAddPet = dataUrl;
+                const preview = document.getElementById(previewId);
+                preview.classList.add('tem-foto');
+                preview.innerHTML = `<img src="${dataUrl}" alt="Foto do pet">`;
+            });
+        }
+
+        function abrirModalAddPet() {
+            document.getElementById('modalAddPet').classList.add('active');
+        }
+        function fecharModalAddPet() {
+            document.getElementById('modalAddPet').classList.remove('active');
+            // Reseta o seletor de foto pra próxima vez que abrir o modal
+            fotoSelecionadaAddPet = null;
+            const preview = document.getElementById('addFotoPreview');
+            if (preview) {
+                preview.classList.remove('tem-foto');
+                preview.innerHTML = `<svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>`;
+            }
+            const input = document.getElementById('addFotoInput');
+            if (input) input.value = '';
+        }
 
         function selecionarPill(elemento, idGrupo) {
             const grupo = document.getElementById(idGrupo);
@@ -869,7 +969,7 @@
             if (!vPeso.valido) { alert(vPeso.mensagem); return; }
 
             // Atualiza local (cache otimista) e mostra na hora
-            petcareAdicionarPet({ tipo, nome, sexo, raca, nascimento: nasc, peso, cor, castrado, microchip, alergias });
+            petcareAdicionarPet({ tipo, nome, sexo, raca, nascimento: nasc, peso, cor, castrado, microchip, alergias, foto: fotoSelecionadaAddPet });
             const pets = petcareObterPets();
             atualizarDadosDosPets(petcareFormatoHome([...pets].reverse()));
 

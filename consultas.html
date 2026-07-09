@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Consultas - PetCare</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
     <style>
@@ -32,6 +32,7 @@
         .header-purple p { font-size: 13px; opacity: 0.9; }
         
         .btn-add-header { position: absolute; top: 48px; right: 20px; width: 40px; height: 40px; background: rgba(255,255,255,0.25); border-radius: 14px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.4); cursor: pointer; color: white; transition: 0.2s; }
+        .btn-add-header:disabled { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.15); color: rgba(255,255,255,0.4); cursor: not-allowed; }
         .btn-add-header:active { transform: scale(0.9); background: rgba(255,255,255,0.4); }
         .btn-add-header svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
 
@@ -53,10 +54,11 @@
 
         /* CARDS DE CONSULTA */
         .consulta-card { background: var(--white); border-radius: 20px; padding: 16px; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid #F0F0F0; position: relative; }
-        .consulta-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
-        .consulta-header img, .consulta-header .avatar-placeholder { width: 40px; height: 40px; border-radius: 12px; object-fit: cover; background: #FFD03B; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 16px; }
-        .consulta-title h4 { font-size: 15px; font-weight: 700; color: var(--text-dark); margin-bottom: 2px; }
-        .consulta-title p { font-size: 12px; color: var(--gray); font-weight: 500; }
+        .consulta-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; padding-right: 36px; }
+        .consulta-header img, .consulta-header .avatar-placeholder { width: 40px; height: 40px; border-radius: 12px; object-fit: cover; background: #FFD03B; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 16px; flex-shrink: 0; }
+        .consulta-title { flex: 1; min-width: 0; }
+        .consulta-title h4 { font-size: 15px; font-weight: 700; color: var(--text-dark); margin-bottom: 2px; word-break: break-word; }
+        .consulta-title p { font-size: 12px; color: var(--gray); font-weight: 500; word-break: break-word; }
         
         .btn-trash { position: absolute; top: 16px; right: 16px; background: #F3F4F6; border: none; width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #8E8E93; transition: 0.2s; }
         .btn-trash:active { background: #FFECEB; color: var(--red); }
@@ -74,13 +76,16 @@
         .status-badge.cancelada { background: var(--red-light); color: var(--red); border-color: var(--red); }
         .status-badge svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
 
-        .btn-acao-card { border: none; background: transparent; color: var(--gray); font-size: 12px; font-weight: 700; cursor: pointer; text-decoration: underline; margin-left: auto; display: block; margin-top: -24px; transition: 0.2s; }
+        .btn-acao-card { border: none; background: transparent; color: var(--gray); font-size: 12px; font-weight: 700; cursor: pointer; text-decoration: underline; white-space: nowrap; }
+        .btn-acao-cancelar { color: var(--red); }
+        .card-footer-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+        .acoes-agendada { display: flex; align-items: center; gap: 14px; }
         .btn-acao-card:active { color: var(--purple); }
 
         /* MODAL NOVA CONSULTA (BOTTOM SHEET) */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.5); z-index: 99999; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        .modal-content { background-color: #FFFFFF; width: 100%; max-width: 390px; height: 90vh; border-radius: 28px 28px 0 0; padding: 24px 20px; overflow-y: auto; overflow-x: hidden; box-sizing: border-box; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1); }
+        .modal-content { background-color: #FFFFFF; width: 100%; max-width: 390px; max-height: 90dvh; border-radius: 28px 28px 0 0; padding: 24px 20px; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; box-sizing: border-box; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1); }
         .modal-content::-webkit-scrollbar { display: none; }
         .modal-overlay.active .modal-content { transform: translateY(0); }
         
@@ -115,7 +120,7 @@
 <div class="app-container">
     
     <header class="header-purple">
-        <button class="btn-add-header" onclick="abrirModalAddConsulta()">
+        <button class="btn-add-header" id="btnAddConsultaHeader" onclick="abrirModalAddConsulta()" disabled>
             <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         </button>
         <h2 data-i18n="cons_titulo">Consultas</h2>
@@ -234,11 +239,14 @@
         const container = document.getElementById('petsModalContainer');
         container.innerHTML = "";
         petsCadastrados = [];
+        const btnAdd = document.getElementById('btnAddConsultaHeader');
 
         if (!dadosString || dadosString === "") {
             container.innerHTML = `<span style="font-size:12px; color:var(--red);">${t('cons_nenhum_pet')}</span>`;
+            if (btnAdd) btnAdd.disabled = true;
             return;
         }
+        if (btnAdd) btnAdd.disabled = false;
 
         const petsRaw = dadosString.split("|");
         petsRaw.forEach((petInfo, index) => {
@@ -350,7 +358,10 @@
             let statusTexto = c.status;
             if (c.status === "Agendada") {
                 statusIcon = `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`;
-                btnAcao = `<button class="btn-acao-card" onclick="marcarComoConcluida('${c.id}')">${t('cons_marcar_concluida')}</button>`;
+                btnAcao = `<div class="acoes-agendada">
+                    <button class="btn-acao-card btn-acao-cancelar" onclick="cancelarConsulta('${c.id}')">${t('cons_cancelar')}</button>
+                    <button class="btn-acao-card" onclick="marcarComoConcluida('${c.id}')">${t('cons_marcar_concluida')}</button>
+                </div>`;
                 statusTexto = t('cons_status_agendada');
             } else if (c.status === "Concluída") {
                 statusIcon = `<svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`;
@@ -391,10 +402,12 @@
 
                 ${c.obs ? `<p class="consulta-obs">${c.obs}</p>` : ''}
 
-                <div class="status-badge ${c.status.toLowerCase().replace('í', 'i')}">
-                    ${statusIcon} ${statusTexto}
+                <div class="card-footer-row">
+                    <div class="status-badge ${c.status.toLowerCase().replace('í', 'i')}">
+                        ${statusIcon} ${statusTexto}
+                    </div>
+                    ${btnAcao}
                 </div>
-                ${btnAcao}
             `;
             container.appendChild(card);
         });
@@ -405,7 +418,7 @@
     // ==========================================
     function abrirModalAddConsulta() {
         if(petsCadastrados.length === 0) { 
-            alert(t('cons_erro_precisa_pet')); 
+            if (typeof mostrarAviso === "function") mostrarAviso(t('cons_erro_precisa_pet'), "#FF7A00");
             return; 
         }
         
@@ -486,6 +499,18 @@
     function marcarComoConcluida(idConsulta) {
         let cons = consultasCadastradas.find(c => c.id === idConsulta);
         if(cons) cons.status = "Concluída";
+        petcareSalvarConsultas(consultasCadastradas);
+        renderizarListaConsultas();
+
+        if (window.AppInventor) {
+            enviarComando("SALVAR_CONSULTAS", tagUsuario("consultas"), consultasCadastradas);
+        }
+    }
+
+    function cancelarConsulta(idConsulta) {
+        if (!confirm(t('cons_confirm_cancelar'))) return;
+        let cons = consultasCadastradas.find(c => c.id === idConsulta);
+        if(cons) cons.status = "Cancelada";
         petcareSalvarConsultas(consultasCadastradas);
         renderizarListaConsultas();
 

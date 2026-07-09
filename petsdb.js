@@ -128,9 +128,14 @@ function petcareCalcularIdade(dataNascStr) {
 }
 
 function petcareFormatoHome(lista) {
-    return lista.map(p =>
-        [p.id, p.nome, petcareCalcularIdade(p.nascimento), (p.peso ? p.peso + ' kg' : '-'), (p.raca || '-'), ''].join(',')
-    ).join('|');
+    // OBS: tiramos o prefixo "data:image/jpeg;base64," da foto porque ele
+    // tem uma vírgula dentro — quebraria o split(",") lá na Home. O prefixo
+    // é recolocado na hora de montar a tag <img>. Índice 5 já era reservado
+    // pro campo "alerta" (não usado ainda) — a foto entra no índice 6, novo.
+    return lista.map(p => {
+        const fotoBase64 = p.foto ? p.foto.replace(/^data:image\/\w+;base64,/, '') : '';
+        return [p.id, p.nome, petcareCalcularIdade(p.nascimento), (p.peso ? p.peso + ' kg' : '-'), (p.raca || '-'), '', fotoBase64].join(',');
+    }).join('|');
 }
 function petcareFormatoSaude(lista) {
     return lista.map(p => [p.id, p.nome, (p.tipo || 'Pet')].join(',')).join('|');
@@ -422,10 +427,40 @@ function receberDadosBanco(tag, valorRecebido) {
         petcareSalvarPreferencias(prefs);
         if (typeof carregarPreferencias === "function") {
             const p = (chave) => (prefs[chave] ? chave + "_ON" : chave + "_OFF");
-            carregarPreferencias([p("PERDIDO"), p("MURAL"), p("LEMBRETES"), (prefs.idioma || "pt-BR")].join("|"));
+            carregarPreferencias([p("PERDIDO"), p("MURAL"), p("LEMBRETES"), p("LOCALIZACAO"), (prefs.idioma || "pt-BR")].join("|"));
         }
 
     } else {
         console.warn("Nenhum roteamento definido ainda para a tag:", tag, "(base:", base, ")");
     }
+}
+
+/* ==========================================================
+   7. FOTO DO PET (câmera ou galeria)
+   Recebe o File vindo de um <input type="file" accept="image/*">
+   (que no celular já abre a escolha nativa entre Câmera/Galeria),
+   redimensiona num <canvas> pra não pesar no banco, e devolve um
+   base64 JPEG pequeno via callback(dataUrl).
+   ========================================================== */
+function petcareComprimirImagem(file, callback, tamanhoMax = 240, qualidade = 0.7) {
+    if (!file || !file.type || !file.type.startsWith('image/')) { callback(null); return; }
+
+    const leitor = new FileReader();
+    leitor.onload = function (e) {
+        const img = new Image();
+        img.onload = function () {
+            let w = img.width, h = img.height;
+            if (w > h && w > tamanhoMax) { h = Math.round(h * (tamanhoMax / w)); w = tamanhoMax; }
+            else if (h > tamanhoMax) { w = Math.round(w * (tamanhoMax / h)); h = tamanhoMax; }
+
+            const canvas = document.createElement('canvas');
+            canvas.width = w; canvas.height = h;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+            callback(canvas.toDataURL('image/jpeg', qualidade));
+        };
+        img.onerror = function () { callback(null); };
+        img.src = e.target.result;
+    };
+    leitor.onerror = function () { callback(null); };
+    leitor.readAsDataURL(file);
 }

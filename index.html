@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>PetCare</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -260,134 +260,134 @@
         <div class="card">
             
             <div id="stepLogin" class="form-step active">
-                <h2>Entrar!</h2>
-                <p class="subtitle">Bem-vindo à PetCare</p>
+                <h2 data-i18n="idx_entrar">Entrar!</h2>
+                <p class="subtitle" data-i18n="idx_bemvindo">Bem-vindo à PetCare</p>
                 
                 <div class="input-group">
-                    <label>E-mail</label>
+                    <label data-i18n="idx_email">E-mail</label>
                     <input type="email" id="loginEmail" placeholder="usepetcare@gmail.com">
-                    <div class="error-text" id="errLoginEmail">Por favor, insira um e-mail válido.</div>
+                    <div class="error-text" id="errLoginEmail" data-i18n="idx_err_email_invalido">Por favor, insira um e-mail válido.</div>
                 </div>
                 
                 <div class="input-group">
-                    <label>Senha</label>
+                    <label data-i18n="idx_senha">Senha</label>
                     <div class="password-wrapper">
                         <input type="password" id="loginPassword" placeholder="**********">
                         <span class="password-toggle" onclick="togglePassword('loginPassword', this)">
                             <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                         </span>
                     </div>
-                    <div class="error-text" id="errLoginPassword">A senha não pode estar vazia.</div>
+                    <div class="error-text" id="errLoginPassword" data-i18n="idx_err_senha_vazia">A senha não pode estar vazia.</div>
                 </div>
                 
-                <button type="button" id="btnLogin" class="btn-primary" onclick="fazerLogin()">Continuar</button>
+                <button type="button" id="btnLogin" class="btn-primary" data-i18n="idx_continuar" onclick="fazerLogin()">Continuar</button>
 
                 <div class="extra-options">
                     <label class="checkbox-label">
-                        <input type="checkbox" id="remember"> Lembrar de mim
+                        <input type="checkbox" id="remember"> <span data-i18n="idx_lembrar">Lembrar de mim</span>
                     </label>
-                    <span class="forgot-password" onclick="mudarEtapa('stepForgot')">Esqueceu sua Senha?</span>
+                    <span class="forgot-password" data-i18n="idx_esqueceu_senha" onclick="mudarEtapa('stepForgot')">Esqueceu sua Senha?</span>
                 </div>
 
                 <div class="toggle-container">
-                    Não tem uma conta? <span class="toggle-form" onclick="mudarEtapa('stepRegister')">Cadastre-se!</span>
+                    <span data-i18n="idx_nao_tem_conta">Não tem uma conta?</span> <span class="toggle-form" data-i18n="idx_cadastre_se" onclick="mudarEtapa('stepRegister')">Cadastre-se!</span>
                 </div>
             </div>
 
             <div id="stepRegister" class="form-step">
-                <h2>Quase lá!</h2>
-                <p class="subtitle">Precisaremos de mais informações sobre você</p>
+                <h2 data-i18n="idx_quase_la">Quase lá!</h2>
+                <p class="subtitle" data-i18n="idx_mais_info">Precisaremos de mais informações sobre você</p>
 
                 <div class="input-group">
-                    <label>E-mail</label>
+                    <label data-i18n="idx_email">E-mail</label>
                     <input type="email" id="regEmail" placeholder="usepetcare@gmail.com">
-                    <div class="error-text" id="errRegEmail">Por favor, insira um e-mail válido.</div>
+                    <div class="error-text" id="errRegEmail" data-i18n="idx_err_email_invalido">Por favor, insira um e-mail válido.</div>
                 </div>
 
                 <div class="input-group">
-                    <label>Senha</label>
+                    <label data-i18n="idx_senha">Senha</label>
                     <div class="password-wrapper">
                         <input type="password" id="regSenha" placeholder="**********">
                         <span class="password-toggle" onclick="togglePassword('regSenha', this)">
                             <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                         </span>
                     </div>
-                    <div class="error-text" id="errRegSenha">A senha precisa ter pelo menos 6 caracteres.</div>
+                    <div class="error-text" id="errRegSenha" data-i18n="idx_err_senha_min">A senha precisa ter pelo menos 6 caracteres.</div>
                 </div>
                 
                 <div class="input-group">
-                    <label>Nome</label>
+                    <label data-i18n="idx_nome">Nome</label>
                     <input type="text" id="regNome" placeholder="Pedro Santos Borges">
-                    <div class="error-text" id="errRegNome">Por favor, digite seu nome completo.</div>
+                    <div class="error-text" id="errRegNome" data-i18n="idx_err_nome">Por favor, digite seu nome completo.</div>
                 </div>
                 
                 <div class="input-group">
-                    <label>Número de Telefone</label>
+                    <label data-i18n="idx_telefone">Número de Telefone</label>
                     <input type="text" id="regTelefone" placeholder="(11) 98765-4321" inputmode="numeric" maxlength="15">
-                    <div class="error-text" id="errRegTelefone">Insira um telefone válido.</div>
+                    <div class="error-text" id="errRegTelefone" data-i18n="idx_err_telefone">Insira um telefone válido.</div>
                 </div>
 
                 <div class="input-group">
-                    <label>Data de Nascimento</label>
+                    <label data-i18n="idx_nascimento">Data de Nascimento</label>
                     <input type="text" id="regData" placeholder="14/07/2008" inputmode="numeric" maxlength="10">
-                    <div class="error-text" id="errRegData">Insira uma data válida (DD/MM/AAAA).</div>
+                    <div class="error-text" id="errRegData" data-i18n="idx_err_data">Insira uma data válida (DD/MM/AAAA).</div>
                 </div>
                 
-                <button type="button" class="btn-primary" onclick="finalizarCadastro()">Continuar</button>
+                <button type="button" class="btn-primary" data-i18n="idx_continuar" onclick="finalizarCadastro()">Continuar</button>
 
                 <div class="toggle-container">
-                    Já possui conta? <span class="toggle-form" onclick="mudarEtapa('stepLogin')">Faça Login</span>
+                    <span data-i18n="idx_ja_possui_conta">Já possui conta?</span> <span class="toggle-form" data-i18n="idx_fazer_login" onclick="mudarEtapa('stepLogin')">Faça Login</span>
                 </div>
             </div>
 
             <div id="stepForgot" class="form-step">
-                <h2>Esqueceu sua senha?</h2>
-                <p class="subtitle">Vamos mandar um código de verificação pro seu e-mail</p>
+                <h2 data-i18n="idx_esqueceu_titulo">Esqueceu sua senha?</h2>
+                <p class="subtitle" data-i18n="idx_esqueceu_desc">Vamos mandar um código de verificação pro seu e-mail</p>
 
                 <!-- Sub-etapa 1: pedir o e-mail -->
                 <div id="blocoForgotEmail">
                     <div class="input-group">
-                        <label>E-mail cadastrado</label>
+                        <label data-i18n="idx_email_cadastrado">E-mail cadastrado</label>
                         <input type="email" id="forgotEmail" placeholder="usepetcare@gmail.com">
-                        <div class="error-text" id="errForgotEmail">Não encontramos uma conta com esse e-mail.</div>
+                        <div class="error-text" id="errForgotEmail" data-i18n="idx_err_email_naoencontrado">Não encontramos uma conta com esse e-mail.</div>
                     </div>
 
-                    <button type="button" class="btn-primary" id="btnEnviarCodigo" onclick="enviarCodigoRecuperacao()">Enviar Código</button>
+                    <button type="button" class="btn-primary" id="btnEnviarCodigo" data-i18n="idx_enviar_codigo" onclick="enviarCodigoRecuperacao()">Enviar Código</button>
                 </div>
 
                 <!-- Sub-etapa 2: digitar o código recebido -->
                 <div id="blocoForgotCodigo" style="display:none;">
                     <div class="input-group">
-                        <label>Código recebido por e-mail</label>
+                        <label data-i18n="idx_codigo_recebido">Código recebido por e-mail</label>
                         <input type="text" id="forgotCodigo" placeholder="000000" inputmode="numeric" maxlength="6">
-                        <div class="error-text" id="errForgotCodigo">Código incorreto ou expirado.</div>
+                        <div class="error-text" id="errForgotCodigo" data-i18n="idx_err_codigo">Código incorreto ou expirado.</div>
                     </div>
                     <p class="subtitle" style="margin-bottom:16px;">
-                        Enviamos um código de 6 dígitos, válido por 10 minutos.
-                        <span class="toggle-form" onclick="enviarCodigoRecuperacao()">Reenviar código</span>
+                        <span data-i18n="idx_codigo_enviado_desc">Enviamos um código de 6 dígitos, válido por 10 minutos.</span>
+                        <span class="toggle-form" data-i18n="idx_reenviar_codigo" onclick="enviarCodigoRecuperacao()">Reenviar código</span>
                     </p>
 
-                    <button type="button" class="btn-primary" onclick="verificarCodigoRecuperacao()">Verificar Código</button>
+                    <button type="button" class="btn-primary" data-i18n="idx_verificar_codigo" onclick="verificarCodigoRecuperacao()">Verificar Código</button>
                 </div>
 
                 <!-- Sub-etapa 3: nova senha -->
                 <div id="blocoNovaSenha" style="display:none;">
                     <div class="input-group">
-                        <label>Nova Senha</label>
+                        <label data-i18n="idx_nova_senha">Nova Senha</label>
                         <div class="password-wrapper">
                             <input type="password" id="forgotNovaSenha" placeholder="**********">
                             <span class="password-toggle" onclick="togglePassword('forgotNovaSenha', this)">
                                 <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                             </span>
                         </div>
-                        <div class="error-text" id="errForgotSenha">A senha precisa ter pelo menos 6 caracteres.</div>
+                        <div class="error-text" id="errForgotSenha" data-i18n="idx_err_senha_min">A senha precisa ter pelo menos 6 caracteres.</div>
                     </div>
 
-                    <button type="button" class="btn-primary" onclick="salvarNovaSenha()">Salvar Nova Senha</button>
+                    <button type="button" class="btn-primary" data-i18n="idx_salvar_nova_senha" onclick="salvarNovaSenha()">Salvar Nova Senha</button>
                 </div>
 
                 <div class="toggle-container">
-                    Lembrou a senha? <span class="toggle-form" onclick="mudarEtapa('stepLogin')">Voltar pro Login</span>
+                    <span data-i18n="idx_lembrou_senha">Lembrou a senha?</span> <span class="toggle-form" data-i18n="idx_voltar_login" onclick="mudarEtapa('stepLogin')">Voltar pro Login</span>
                 </div>
             </div>
 
@@ -399,10 +399,13 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script src="petsdb.js?v=15"></script>
+    <script src="i18n.js?v=15"></script>
     <script src="validacao.js?v=15"></script>
     <script>
         // Animação de Entrada inicial
         window.addEventListener('DOMContentLoaded', function() {
+            if (typeof aplicarTraducoes === "function") aplicarTraducoes();
+
             // "Lembrar de mim": se já tem uma sessão salva, pula direto pra Home
             const sessao = (typeof petcareObterSessao === "function") ? petcareObterSessao() : null;
             if (sessao && sessao.ativa) {

@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Perfil do Pet - PetCare</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
     <style>
@@ -64,6 +64,7 @@
         .foto-banner .btn-voltar { left: 16px; }
         .foto-banner .btn-excluir { right: 16px; }
         .foto-banner .btn-editar { right: 64px; }
+        .foto-banner .btn-trocar-foto { right: 16px; top: auto; bottom: 76px; background: rgba(0,0,0,0.35); }
         .foto-banner svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round; }
 
         .foto-banner .info-overlay {
@@ -144,7 +145,7 @@
         /* MODAL (bottom sheet) usado para adicionar registro de histórico */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.5); z-index: 99999; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        .modal-content { background: #FFFFFF; width: 100%; max-width: 390px; border-radius: 28px 28px 0 0; padding: 24px 20px; overflow-y: auto; overflow-x: hidden; box-sizing: border-box; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.25,1,0.5,1); }
+        .modal-content { background: #FFFFFF; width: 100%; max-width: 390px; border-radius: 28px 28px 0 0; padding: 24px 20px; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; box-sizing: border-box; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.25,1,0.5,1); }
         .modal-overlay.active .modal-content { transform: translateY(0); }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .modal-header h3 { font-family: 'Poppins', sans-serif; font-size: 18px; font-weight: 700; }
@@ -171,6 +172,10 @@
         <button class="icon-btn btn-excluir" title="Excluir pet" onclick="excluirPetAtual()">
             <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
         </button>
+        <button class="icon-btn btn-trocar-foto" title="Trocar foto" onclick="document.getElementById('perfilFotoInput').click()">
+            <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </button>
+        <input type="file" id="perfilFotoInput" accept="image/*" style="display:none;" onchange="onTrocarFotoPerfil(this)">
         <div class="info-overlay">
             <h1 id="perfilNome">Pet</h1>
             <p id="perfilSubtitulo">-</p>
@@ -270,7 +275,6 @@
             <span class="pill" data-valor="Pássaro" onclick="selecionarPillHistorico(this,'grpTipoEditar')">Pássaro</span>
             <span class="pill" data-valor="Coelho" onclick="selecionarPillHistorico(this,'grpTipoEditar')">Coelho</span>
             <span class="pill" data-valor="Peixe" onclick="selecionarPillHistorico(this,'grpTipoEditar')">Peixe</span>
-            <span class="pill" data-valor="Outro" onclick="selecionarPillHistorico(this,'grpTipoEditar')">Outro</span>
         </div>
 
         <label class="form-label" data-i18n="perf_nome_pet">Nome</label>
@@ -296,7 +300,7 @@
         <div class="form-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:12px; min-width:0;">
             <div style="min-width:0;">
                 <label class="form-label" data-i18n="perf_peso_kg">Peso (kg)</label>
-                <input type="number" id="editPeso" class="form-input" placeholder="0.0" step="0.1" min="0">
+                <input type="number" id="editPeso" class="form-input" placeholder="0.0" step="0.1" min="0" inputmode="decimal" onkeypress="return /[0-9.,]/.test(event.key)" oninput="this.value = this.value.replace(/[^0-9.,]/g, '')">
             </div>
             <div style="min-width:0;">
                 <label class="form-label" data-i18n="perf_pelagem_cor">Pelagem/Cor</label>
@@ -406,6 +410,13 @@
         const p = petAtual;
         document.getElementById('perfilNome').innerText = p.nome || "Pet";
         document.getElementById('perfilSubtitulo').innerText = `${p.tipo || 'Pet'} • ${p.cor || p.raca || '-'}`;
+
+        const banner = document.getElementById('fotoBanner');
+        if (p.foto) {
+            banner.style.backgroundImage = `url('${p.foto}')`;
+        } else {
+            banner.style.backgroundImage = '';
+        }
 
         document.getElementById('statIdade').innerText = (typeof petcareCalcularIdade === "function") ? petcareCalcularIdade(p.nascimento) : (p.idade || '-');
         document.getElementById('statPeso').innerText = p.peso ? p.peso + ' kg' : '-';
@@ -540,6 +551,27 @@
         } else {
             window.location.href = "vacinas.html";
         }
+    }
+
+    // ---------- Trocar foto do pet (direto pelo banner) ----------
+    function onTrocarFotoPerfil(inputEl) {
+        const file = inputEl.files && inputEl.files[0];
+        if (!file || !petAtual) return;
+
+        petcareComprimirImagem(file, (dataUrl) => {
+            if (!dataUrl) { if (typeof mostrarAviso === "function") mostrarAviso("Não foi possível carregar essa imagem.", "#FF3B30"); return; }
+
+            const listaAtualizada = petcareObterPets().map(p =>
+                String(p.id) === String(petAtual.id) ? Object.assign({}, p, { foto: dataUrl }) : p
+            );
+            petcareSalvarPets(listaAtualizada);
+            carregarPerfilPet(JSON.stringify(listaAtualizada.find(p => String(p.id) === String(petAtual.id))));
+
+            if (window.AppInventor) {
+                enviarComando("SALVAR_PETS", tagUsuario("pets"), listaAtualizada);
+            }
+        });
+        inputEl.value = '';
     }
 
     // ---------- Modal de Editar Pet ----------

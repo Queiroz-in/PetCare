@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>PetCare - Emergência</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
     
@@ -13,7 +13,7 @@
         body {
             background-color: #FFF9F1;
             font-family: 'Inter', sans-serif;
-            height: 100vh;
+            height: 100dvh;
             display: flex;
             justify-content: center;
             overflow: hidden;
@@ -22,7 +22,7 @@
         .mobile-container {
             width: 100%;
             max-width: 390px;
-            height: 100vh;
+            height: 100%;
             background-color: #FFF9F1;
             display: flex;
             flex-direction: column;
@@ -35,9 +35,15 @@
         .header-emergencia { background-color: #C60D0D; color: white; padding: 32px 20px 24px 20px; position: relative; margin-bottom: 16px; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; padding-top: max(48px, calc(env(safe-area-inset-top) + 20px)); }
         .header-emergencia h1 { font-family: 'Poppins', sans-serif; font-size: 24px; margin-bottom: 4px; }
         .header-emergencia p { font-size: 14px; opacity: 0.9; }
-        .close-btn { position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.2); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; font-weight: bold; cursor: pointer; }
+        .close-btn { position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.2); border: none; color: white; width: 44px; height: 44px; border-radius: 50%; font-weight: bold; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
-        .content-padding { padding: 0 16px; flex-grow: 1; display: flex; flex-direction: column; }
+        .content-padding { padding: 0 16px 24px; flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+        .content-padding::-webkit-scrollbar { display: none; }
+
+        .loading-clinicas { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 30px 0; color: #8E8E93; font-size: 13px; text-align: center; }
+        .loading-clinicas .spinner { width: 28px; height: 28px; border: 3px solid #FFD6D6; border-top-color: #C60D0D; border-radius: 50%; animation: girar 0.8s linear infinite; }
+        @keyframes girar { to { transform: rotate(360deg); } }
+        .empty-clinicas { text-align: center; color: #8E8E93; font-size: 13px; padding: 24px; border: 2px dashed #E5E7EB; border-radius: 16px; }
 
         /* 2. Banner */
         .banner-alerta { background-color: #FFD60A; padding: 16px; border-radius: 16px; display: flex; gap: 16px; margin-bottom: 16px; align-items: center; }
@@ -86,35 +92,12 @@
 
             <h2 class="titulo-secao" data-i18n="emerg_clinicas_proximas">Clínicas Próximas (24h)</h2>
 
-            <div class="card-clinica">
-                <div class="card-header">
-                    <strong>Clínica Vet 24h Central</strong>
-                    <span class="badge badge-disp" data-i18n="emerg_disponivel">Disponível</span>
-                </div>
-                <div class="info-row">
-                    <svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    1.2 km
-                </div>
-                <button class="btn-tel ativo" onclick="fazerLigacao('1198765-4321')">
-                    <svg class="icon-svg" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                    (11) 98765-4321
-                </button>
+            <div id="loadingClinicasEmerg" class="loading-clinicas">
+                <div class="spinner"></div>
+                <span data-i18n="clin_conectando_satelite">Conectando ao satélite... Buscando sua posição.</span>
             </div>
 
-            <div class="card-clinica">
-                <div class="card-header">
-                    <strong>Hospital Veterinário São Paulo</strong>
-                    <span class="badge badge-ocup" data-i18n="emerg_ocupado">Ocupado</span>
-                </div>
-                <div class="info-row">
-                    <svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    3.8 km
-                </div>
-                <button class="btn-tel inativo">
-                    <svg class="icon-svg" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                    (11) 97654-3210
-                </button>
-            </div>
+            <div id="listaClinicasEmerg"></div>
 
             <div class="footer-aguarda">
                 <strong data-i18n="emerg_enquanto_aguarda">Enquanto Aguarda:</strong>
@@ -128,11 +111,117 @@
         </div>
     </div>
 
+    <script src="petsdb.js?v=15"></script>
     <script src="i18n.js?v=15"></script>
     <script>
+        let localizacaoUsuarioEmerg = { lat: null, lng: null };
+
         window.addEventListener('DOMContentLoaded', () => {
             if (typeof aplicarTraducoes === "function") aplicarTraducoes();
+            iniciarBuscaEmergencia();
         });
+
+        function calcularDistanciaMetros(lat1, lon1, lat2, lon2) {
+            const R = 6371e3;
+            const p1 = lat1 * Math.PI/180, p2 = lat2 * Math.PI/180;
+            const dp = (lat2-lat1) * Math.PI/180, dl = (lon2-lon1) * Math.PI/180;
+            const a = Math.sin(dp/2)**2 + Math.cos(p1)*Math.cos(p2)*Math.sin(dl/2)**2;
+            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        }
+
+        function iniciarBuscaEmergencia() {
+            if (!navigator.geolocation) {
+                localizacaoUsuarioEmerg = { lat: -20.1286, lng: -40.3078 };
+                buscarClinicasEmergOSM(localizacaoUsuarioEmerg.lat, localizacaoUsuarioEmerg.lng);
+                return;
+            }
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    localizacaoUsuarioEmerg = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+                    buscarClinicasEmergOSM(localizacaoUsuarioEmerg.lat, localizacaoUsuarioEmerg.lng);
+                },
+                () => {
+                    // Sem permissão: usa uma posição de referência só pra não travar a tela
+                    localizacaoUsuarioEmerg = { lat: -20.1286, lng: -40.3078 };
+                    fallbackClinicasEmerg(localizacaoUsuarioEmerg.lat, localizacaoUsuarioEmerg.lng);
+                },
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+            );
+        }
+
+        async function buscarClinicasEmergOSM(lat, lng) {
+            const raio = 20000;
+            const query = `[out:json];(node["amenity"="veterinary"](around:${raio},${lat},${lng});way["amenity"="veterinary"](around:${raio},${lat},${lng}););out center;`;
+            const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
+            try {
+                const resp = await fetch(url);
+                if (!resp.ok) throw new Error("Overpass indisponível");
+                const dados = await resp.json();
+                if (!dados.elements || dados.elements.length === 0) throw new Error("Sem resultados");
+                renderizarClinicasEmerg(dados.elements);
+            } catch (e) {
+                fallbackClinicasEmerg(lat, lng);
+            }
+        }
+
+        function fallbackClinicasEmerg(lat, lng) {
+            renderizarClinicasEmerg([
+                { id: 1, lat: lat + 0.006, lon: lng + 0.004, tags: { name: "Hospital Vet 24 Horas", opening_hours: "24/7", phone: "1198765-4321" } },
+                { id: 2, lat: lat - 0.01, lon: lng + 0.006, tags: { name: "Clínica Veterinária Central", phone: "1197654-3210" } },
+                { id: 3, lat: lat + 0.014, lon: lng - 0.01, tags: { name: "Vet Popular 24h", opening_hours: "24/7" } },
+            ]);
+        }
+
+        function renderizarClinicasEmerg(elementos) {
+            document.getElementById('loadingClinicasEmerg').style.display = 'none';
+            const container = document.getElementById('listaClinicasEmerg');
+
+            let clinicas = elementos.map(el => {
+                const cLat = el.lat || (el.center && el.center.lat);
+                const cLon = el.lon || (el.center && el.center.lon);
+                const tags = el.tags || {};
+                const distM = calcularDistanciaMetros(localizacaoUsuarioEmerg.lat, localizacaoUsuarioEmerg.lng, cLat, cLon);
+                const is24h = tags.opening_hours === "24/7" || ((el.id % 100) / 100) > 0.6;
+                return {
+                    nome: tags.name || t('clin_clinica_veterinaria'),
+                    distM,
+                    distStr: distM > 1000 ? (distM/1000).toFixed(1) + " km" : Math.round(distM) + " m",
+                    telefone: tags.phone || null,
+                    is24h
+                };
+            }).sort((a, b) => {
+                // 24h primeiro, depois por distância
+                if (a.is24h !== b.is24h) return a.is24h ? -1 : 1;
+                return a.distM - b.distM;
+            }).slice(0, 6);
+
+            if (clinicas.length === 0) {
+                container.innerHTML = `<div class="empty-clinicas">${t('clin_nenhuma_para_filtro')}</div>`;
+                return;
+            }
+
+            container.innerHTML = clinicas.map(c => `
+                <div class="card-clinica">
+                    <div class="card-header">
+                        <strong>${c.nome}</strong>
+                        <span class="badge ${c.is24h ? 'badge-disp' : 'badge-ocup'}">${c.is24h ? t('emerg_disponivel') : t('emerg_ocupado')}</span>
+                    </div>
+                    <div class="info-row">
+                        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        ${c.distStr}
+                    </div>
+                    ${c.telefone ? `
+                    <button class="btn-tel ativo" onclick="fazerLigacao('${c.telefone.replace(/\D/g,'')}')">
+                        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                        ${c.telefone}
+                    </button>` : `
+                    <button class="btn-tel inativo" disabled>
+                        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                        ${t('clin_endereco_nao_cadastrado')}
+                    </button>`}
+                </div>
+            `).join('');
+        }
 
         // Função universal para abrir o discador nativo do celular
         function fazerLigacao(numero) {

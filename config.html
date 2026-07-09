@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Configurações - PetCare</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
     <style>
@@ -268,6 +268,13 @@
             </div>
             <div class="panel" id="panel-localizacao">
                 <div class="panel-inner">
+                    <div class="loc-row" style="justify-content: space-between; align-items: center;">
+                        <span class="loc-text" style="font-weight:700;" data-i18n="config_loc_compartilhar">Compartilhar minha localização</span>
+                        <span class="notif-icon off" id="notif-icon-localizacao" onclick="toggleNotif('LOCALIZACAO','notif-icon-localizacao')" style="flex-shrink:0;">
+                            <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                        </span>
+                    </div>
+
                     <div class="loc-intro" data-i18n="config_permitir_local">Permitir uso da localização para:</div>
 
                     <div class="loc-row">
@@ -335,6 +342,7 @@
             aplicarEstadoNotif('notif-icon-perdido', !!prefsCache.PERDIDO);
             aplicarEstadoNotif('notif-icon-mural', !!prefsCache.MURAL);
             aplicarEstadoNotif('notif-icon-lembretes', !!prefsCache.LEMBRETES);
+            aplicarEstadoNotif('notif-icon-localizacao', !!prefsCache.LOCALIZACAO);
             idiomaSelecionado = prefsCache.idioma || 'pt-BR';
             montarListaIdiomas();
         }
@@ -370,15 +378,16 @@
         definirValorCampo('senha', "••••••••••••");
     }
 
-    // Preferências salvas (notificações + idioma), no formato:
-    // "PERDIDO_ON|MURAL_ON|LEMBRETES_OFF|pt-BR"
+    // Preferências salvas (notificações + localização + idioma), no formato:
+    // "PERDIDO_ON|MURAL_ON|LEMBRETES_OFF|LOCALIZACAO_ON|pt-BR"
     function carregarPreferencias(dadosString) {
         if (!dadosString || dadosString.trim() === "") return;
-        const [perdido, mural, lembretes, idioma] = dadosString.split("|");
+        const [perdido, mural, lembretes, localizacao, idioma] = dadosString.split("|");
 
         aplicarEstadoNotif('notif-icon-perdido', perdido === "PERDIDO_ON");
         aplicarEstadoNotif('notif-icon-mural', mural === "MURAL_ON");
         aplicarEstadoNotif('notif-icon-lembretes', lembretes === "LEMBRETES_ON");
+        aplicarEstadoNotif('notif-icon-localizacao', localizacao === "LOCALIZACAO_ON");
 
         if (idioma) {
             idiomaSelecionado = idioma;

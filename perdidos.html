@@ -2,13 +2,13 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Animais Perdidos - PetCare</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
     <style>
         html, body { touch-action: manipulation; overscroll-behavior: none; }
         :root {
-            --blue-header: #16305A;
+            --blue-header: #004D80;
             --blue-action: #0076C4;
             --creme: #FFF9F1;
             --gray: #8E8E93;
@@ -70,7 +70,7 @@
         /* Modal Reportar */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); display: none; align-items: flex-end; justify-content: center; z-index: 100; }
         .modal-overlay.aberto { display: flex; }
-        .modal-box { background: var(--white); width: 100%; max-width: 390px; border-top-left-radius: 28px; border-top-right-radius: 28px; padding: 22px 20px; max-height: 88vh; overflow-y: auto; overflow-x: hidden; box-sizing: border-box; }
+        .modal-box { background: var(--white); width: 100%; max-width: 390px; border-top-left-radius: 28px; border-top-right-radius: 28px; padding: 22px 20px; max-height: 88vh; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; box-sizing: border-box; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
         .modal-header h3 { font-family: 'Poppins', sans-serif; font-size: 17px; color: var(--text-dark); }
         .modal-close { background: var(--gray-light); border: none; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; color: var(--gray); flex-shrink: 0; }
@@ -108,7 +108,6 @@
 <div class="app-container">
     <header class="header-perdidos">
         <h2>
-            <svg viewBox="0 0 24 24"><path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0L12 5.34l-.77-.76a5.4 5.4 0 0 0-7.65 7.65L12 20.5l8.42-8.27a5.4 5.4 0 0 0 0-7.65z"/></svg>
             <span data-i18n="perd_titulo">Animais Perdidos</span>
         </h2>
         <p data-i18n="perd_subtitulo">Mural de animais perdidos e contatos</p>
@@ -130,7 +129,6 @@
             <div class="chip-especie" data-especie="Cachorro" data-i18n="perd_filtro_cachorro" onclick="selecionarFiltro(this)">Cachorro</div>
             <div class="chip-especie" data-especie="Gato" data-i18n="perd_filtro_gato" onclick="selecionarFiltro(this)">Gato</div>
             <div class="chip-especie" data-especie="Pássaro" data-i18n="perd_filtro_passaro" onclick="selecionarFiltro(this)">Pássaro</div>
-            <div class="chip-especie" data-especie="Outro" data-i18n="perd_filtro_outro" onclick="selecionarFiltro(this)">Outro</div>
         </div>
 
         <button class="btn-reportar" onclick="abrirModalReportar()">
@@ -159,7 +157,6 @@
             <div class="pill" data-i18n="perd_filtro_passaro" onclick="selecionarPill(this,'grpTipoPerdido')">Pássaro</div>
             <div class="pill" data-i18n="perd_filtro_hamster" onclick="selecionarPill(this,'grpTipoPerdido')">Hamster</div>
             <div class="pill" data-i18n="perd_filtro_coelho" onclick="selecionarPill(this,'grpTipoPerdido')">Coelho</div>
-            <div class="pill" data-i18n="perd_filtro_outro" onclick="selecionarPill(this,'grpTipoPerdido')">Outro</div>
         </div>
 
         <div class="campo-label" data-i18n="perd_nome">Nome</div>
@@ -171,11 +168,11 @@
         <div class="campo-row">
             <div class="campo-col">
                 <div class="campo-label" data-i18n="perd_data_perda">Data da Perda</div>
-                <input type="date" class="campo-input" id="perdidoData">
+                <input type="text" class="campo-input" id="perdidoData" placeholder="dd/mm/aaaa" data-i18n-placeholder="vac_data_placeholder" inputmode="numeric" maxlength="10">
             </div>
             <div class="campo-col">
                 <div class="campo-label" data-i18n="perd_horario_perda">Horário da Perda</div>
-                <input type="time" class="campo-input" id="perdidoHorario">
+                <input type="text" class="campo-input" id="perdidoHorario" placeholder="--:--" inputmode="numeric" maxlength="5">
             </div>
         </div>
 
@@ -252,6 +249,13 @@
     }
 
     function iniciarGeolocalizacao(aoTerminar) {
+        const prefs = (typeof petcareObterPreferencias === "function") ? petcareObterPreferencias() : null;
+        if (prefs && prefs.LOCALIZACAO === false) {
+            localizacaoUsuario.lat = -20.1286;
+            localizacaoUsuario.lng = -40.3078;
+            if (aoTerminar) aoTerminar();
+            return;
+        }
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
@@ -287,6 +291,19 @@
         if (window.AppInventor) {
             enviarComando("BUSCAR_PERDIDOS", "perdidos", {});
         }
+
+        // Máscara automática: dd/mm/aaaa e --:--
+        document.getElementById('perdidoData').addEventListener('input', function (e) {
+            var v = e.target.value.replace(/\D/g, '');
+            if (v.length >= 5) e.target.value = v.substring(0,2) + '/' + v.substring(2,4) + '/' + v.substring(4,8);
+            else if (v.length >= 3) e.target.value = v.substring(0,2) + '/' + v.substring(2,4);
+            else e.target.value = v;
+        });
+        document.getElementById('perdidoHorario').addEventListener('input', function (e) {
+            var v = e.target.value.replace(/\D/g, '');
+            if (v.length >= 3) e.target.value = v.substring(0,2) + ':' + v.substring(2,4);
+            else e.target.value = v;
+        });
     });
 
     // Chamada pela função mestra (receberDadosBanco) quando os dados voltam do banco

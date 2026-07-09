@@ -6,10 +6,16 @@ function carregarMenuInferior(abaAtiva) {
     const style = document.createElement('style');
     style.id = 'navbar-style';
 
-    // Lógica Inteligente de Cores: 
-    // Laranja na Home, Rosa na aba de Saúde (para combinar com o cabeçalho)
-    const corAtiva = abaAtiva === 'saude' ? '#FF5874' : '#FF7A00';
-    const bgAtivo = abaAtiva === 'saude' ? '#FFF0F2' : '#FFF2E6';
+    // Cada aba tem sua própria cor de destaque, igual à cor do cabeçalho daquela tela
+    const CORES_ABA = {
+        home:      { cor: '#FF7A00', bg: '#FFF2E6' },
+        saude:     { cor: '#FF5874', bg: '#FFF0F2' },
+        vacinas:   { cor: '#00CBB0', bg: '#E2FBF7' },
+        consultas: { cor: '#8C5BFF', bg: '#F4EFFF' },
+        lembretes: { cor: '#FFB300', bg: '#FFF6E0' },
+    };
+    const corAtiva = (CORES_ABA[abaAtiva] || CORES_ABA.home).cor;
+    const bgAtivo = (CORES_ABA[abaAtiva] || CORES_ABA.home).bg;
 
     style.innerHTML = `
         #nav-modular {

@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Carteira de Vacina - PetCare</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
     <style>
@@ -65,19 +65,25 @@
         /* LISTA DE VACINAS */
         .list-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
         .list-header h3 { font-family: 'Poppins', sans-serif; font-size: 18px; color: var(--text-dark); }
-        .btn-add { background: var(--teal); color: white; border: none; padding: 8px 16px; border-radius: 12px; font-weight: 600; font-size: 13px; font-family: 'Inter', sans-serif; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: 0.2s; display: none; }
+        .btn-add { background: var(--teal); color: white; border: none; padding: 8px 16px; border-radius: 12px; font-weight: 600; font-size: 13px; font-family: 'Inter', sans-serif; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: 0.2s; }
+        .btn-add:disabled { background: #E5E7EB; color: #9CA3AF; cursor: not-allowed; }
         .btn-add:active { transform: scale(0.95); }
 
-        .vaccine-card { background: var(--white); border-radius: 20px; padding: 20px; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid #F0F0F0; }
-        .vaccine-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
+        .vaccine-card { background: var(--white); border-radius: 20px; padding: 20px; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid #F0F0F0; position: relative; }
+        .vaccine-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px; padding-right: 36px; }
         .vaccine-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .vaccine-icon.ok { background: var(--green-light); color: var(--green); }
         .vaccine-icon.expired { background: var(--red-light); color: var(--red); }
         .vaccine-icon.warning { background: var(--orange-light); color: var(--orange); }
         .vaccine-icon svg { width: 24px; height: 24px; fill: currentColor; }
         
-        .vaccine-title h4 { font-size: 16px; font-weight: 700; color: var(--text-dark); margin-bottom: 2px; }
-        .vaccine-title p { font-size: 12px; color: var(--gray); font-weight: 500; }
+        .vaccine-title { flex: 1; min-width: 0; }
+        .vaccine-title h4 { font-size: 16px; font-weight: 700; color: var(--text-dark); margin-bottom: 2px; word-break: break-word; }
+        .vaccine-title p { font-size: 12px; color: var(--gray); font-weight: 500; word-break: break-word; }
+
+        .btn-trash { position: absolute; top: 16px; right: 16px; background: #F3F4F6; border: none; width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #8E8E93; transition: 0.2s; }
+        .btn-trash:active { background: #FFECEB; color: var(--red); }
+        .btn-trash svg { width: 14px; height: 14px; fill: currentColor; }
         
         .vaccine-details { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
         .detail-row { display: flex; justify-content: space-between; font-size: 13px; }
@@ -85,6 +91,7 @@
         .detail-value { color: var(--text-dark); font-weight: 600; text-align: right; }
         
         .status-badge { padding: 10px; border-radius: 10px; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+        .status-badge-icon { width: 16px; height: 16px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
         .status-badge.expired { background: var(--red-light); color: var(--red); }
         .status-badge.ok { background: var(--green-light); color: var(--green); }
         .status-badge.warning { background: var(--orange-light); color: var(--orange); }
@@ -92,7 +99,7 @@
         /* MODAL ADICIONAR VACINA (BOTTOM SHEET) */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.5); z-index: 99999; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        .modal-content { background-color: #FFFFFF; width: 100%; max-width: 390px; height: 85vh; border-radius: 28px 28px 0 0; padding: 24px 20px; overflow-y: auto; overflow-x: hidden; box-sizing: border-box; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1); }
+        .modal-content { background-color: #FFFFFF; width: 100%; max-width: 390px; max-height: 85dvh; border-radius: 28px 28px 0 0; padding: 24px 20px; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; box-sizing: border-box; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1); }
         .modal-overlay.active .modal-content { transform: translateY(0); }
         
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; position: sticky; top: 0; background: white; padding-bottom: 10px; z-index: 10; }
@@ -155,7 +162,7 @@
 
         <div class="list-header">
             <h3 data-i18n="vac_registradas_titulo">Vacinas Registradas</h3>
-            <button class="btn-add" id="btnAddVacina" onclick="abrirModalAddVacina()">
+            <button class="btn-add" id="btnAddVacina" onclick="abrirModalAddVacina()" disabled>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
                 <span data-i18n="vac_adicionar">Adicionar</span>
             </button>
@@ -251,13 +258,13 @@
         if (!dadosString || dadosString === "") {
             container.innerHTML = `<div class="empty-msg" style="width: 100%;">${t('vac_nenhum_pet_html')}</div>`;
             document.getElementById('summaryCard').style.display = 'none';
-            document.getElementById('btnAddVacina').style.display = 'none';
+            document.getElementById('btnAddVacina').disabled = true;
             listaVacinas.innerHTML = `<div class="empty-msg">${t('vac_precisa_pet')}</div>`;
             return;
         }
 
         // CARREGA OS PETS: O usuário tem pets!
-        document.getElementById('btnAddVacina').style.display = 'flex';
+        document.getElementById('btnAddVacina').disabled = false;
         const pets = dadosString.split("|");
         
         pets.forEach((petInfo, index) => {
@@ -351,7 +358,7 @@
         }
 
         let emDia = 0, emBreve = 0, vencidas = 0;
-        document.getElementById('resumoTotal').innerText = `${vacinasArray.length} ${t('vac_suffix_registradas')}`;
+        document.getElementById('resumoTotal').innerText = `${vacinasArray.length} ${vacinasArray.length === 1 ? t('vac_suffix_registrada_1') : t('vac_suffix_registradas')}`;
 
         vacinasArray.forEach(vac => {
             const infoStatus = calcularStatusDaVacina(vac.proxima);
@@ -371,6 +378,9 @@
             const card = document.createElement('div');
             card.className = "vaccine-card";
             card.innerHTML = `
+                <button class="btn-trash" onclick="excluirVacina('${vac.id}')">
+                    <svg viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6"/></svg>
+                </button>
                 <div class="vaccine-header">
                     <div class="vaccine-icon ${iconClass}">
                         <svg viewBox="0 0 24 24">${iconSvg}</svg>
@@ -387,7 +397,11 @@
                     ${vac.lote ? `<div class="detail-row"><span class="detail-label">${t('vac_lote_curto')}</span><span class="detail-value">${vac.lote}</span></div>` : ''}
                 </div>
                 <div class="status-badge ${badgeClass}">
-                    ${status === "EXP" ? "⚠️" : (status === "WARN" ? "⏳" : "✅")} ${msgStatus}
+                    <svg class="status-badge-icon" viewBox="0 0 24 24">${
+                        status === "EXP" ? '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>'
+                        : status === "WARN" ? '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>'
+                        : '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>'
+                    }</svg> ${msgStatus}
                 </div>
             `;
             container.appendChild(card);
@@ -402,7 +416,7 @@
     // 3. MODAL DE ADICIONAR E SALVAR NA HORA
     // ==========================================
     function abrirModalAddVacina() { 
-        if(!petAtivoId) { alert("Selecione um pet primeiro!"); return; }
+        if(!petAtivoId) { if (typeof mostrarAviso === "function") mostrarAviso(t('saude_erro_selecione_pet'), "#00CBB0"); return; }
         
         document.getElementById('vacNome').value = "";
         document.getElementById('vacAplicacao').value = "";
@@ -433,6 +447,17 @@
     }
     document.getElementById('vacAplicacao').addEventListener('input', mascaraData);
     document.getElementById('vacProxima').addEventListener('input', mascaraData);
+
+    function excluirVacina(idVacina) {
+        if (!confirm(t('vac_confirm_excluir'))) return;
+        const listaAtualizada = petcareObterVacinas(petAtivoId).filter(v => v.id !== idVacina);
+        petcareSalvarVacinas(petAtivoId, listaAtualizada);
+        carregarListaVacinasJSON(JSON.stringify(listaAtualizada));
+
+        if (window.AppInventor) {
+            enviarComando("SALVAR_VACINAS", tagUsuario("vacinas_" + petAtivoId), listaAtualizada);
+        }
+    }
 
     function salvarNovaVacina() {
         const nome = document.getElementById('vacNome').value.trim();
