@@ -341,16 +341,35 @@
 
             <div id="stepForgot" class="form-step">
                 <h2>Esqueceu sua senha?</h2>
-                <p class="subtitle">Confirme seu e-mail cadastrado pra criar uma senha nova</p>
+                <p class="subtitle">Vamos mandar um código de verificação pro seu e-mail</p>
 
-                <div class="input-group">
-                    <label>E-mail cadastrado</label>
-                    <input type="email" id="forgotEmail" placeholder="usepetcare@gmail.com">
-                    <div class="error-text" id="errForgotEmail">Não encontramos uma conta com esse e-mail.</div>
+                <!-- Sub-etapa 1: pedir o e-mail -->
+                <div id="blocoForgotEmail">
+                    <div class="input-group">
+                        <label>E-mail cadastrado</label>
+                        <input type="email" id="forgotEmail" placeholder="usepetcare@gmail.com">
+                        <div class="error-text" id="errForgotEmail">Não encontramos uma conta com esse e-mail.</div>
+                    </div>
+
+                    <button type="button" class="btn-primary" id="btnEnviarCodigo" onclick="enviarCodigoRecuperacao()">Enviar Código</button>
                 </div>
 
-                <button type="button" class="btn-primary" id="btnVerificarEmail" onclick="verificarEmailRecuperacao()">Verificar E-mail</button>
+                <!-- Sub-etapa 2: digitar o código recebido -->
+                <div id="blocoForgotCodigo" style="display:none;">
+                    <div class="input-group">
+                        <label>Código recebido por e-mail</label>
+                        <input type="text" id="forgotCodigo" placeholder="000000" inputmode="numeric" maxlength="6">
+                        <div class="error-text" id="errForgotCodigo">Código incorreto ou expirado.</div>
+                    </div>
+                    <p class="subtitle" style="margin-bottom:16px;">
+                        Enviamos um código de 6 dígitos, válido por 10 minutos.
+                        <span class="toggle-form" onclick="enviarCodigoRecuperacao()">Reenviar código</span>
+                    </p>
 
+                    <button type="button" class="btn-primary" onclick="verificarCodigoRecuperacao()">Verificar Código</button>
+                </div>
+
+                <!-- Sub-etapa 3: nova senha -->
                 <div id="blocoNovaSenha" style="display:none;">
                     <div class="input-group">
                         <label>Nova Senha</label>
@@ -377,7 +396,8 @@
 
     </div>
 
-    <script src="petsdb.js?v=11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script src="petsdb.js?v=14"></script>
     <script>
         // Animação de Entrada inicial
         window.addEventListener('DOMContentLoaded', function() {
@@ -509,9 +529,9 @@
         // de senha, ou checagem de e-mail já existente no cadastro).
         function aoReceberContaLogin(conta) {
             if (window._recuperacaoTentativa) {
-                const email = window._recuperacaoTentativa;
+                const tentativa = window._recuperacaoTentativa;
                 window._recuperacaoTentativa = null;
-                processarVerificacaoEmail(conta, email);
+                processarVerificacaoEmail(conta, tentativa.email);
                 return;
             }
             if (window._cadastroTentativa) {
@@ -538,16 +558,42 @@
             window._loginTentativa = null;
         }
 
-        // ---------- Esqueceu sua Senha ----------
-        function verificarEmailRecuperacao() {
+        // ---------- Esqueceu sua Senha (código real enviado por e-mail via EmailJS) ----------
+
+        // PREENCHA com os dados da sua conta EmailJS (emailjs.com):
+        const EMAILJS_SERVICE_ID = "service_cgybc4k";
+        const EMAILJS_TEMPLATE_ID = "template_jcgn1sd";
+        const EMAILJS_PUBLIC_KEY = "QL4h9iamtaqG6N38Q";
+
+        if (typeof emailjs !== "undefined") {
+            emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+        }
+
+        let recuperacaoTimeoutId = null;
+
+        function enviarCodigoRecuperacao() {
             limparErros();
             const email = document.getElementById('forgotEmail').value.trim();
             var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) { aplicarErro('forgotEmail', 'errForgotEmail'); return; }
 
+            const btn = document.getElementById('btnEnviarCodigo');
+            btn.disabled = true;
+            btn.innerText = "Verificando...";
+
             if (window.AppInventor) {
-                window._recuperacaoTentativa = email;
+                window._recuperacaoTentativa = { email: email };
                 enviarComando("BUSCAR_CONTA", tagContaPorEmail(email), {});
+
+                clearTimeout(recuperacaoTimeoutId);
+                recuperacaoTimeoutId = setTimeout(() => {
+                    if (window._recuperacaoTentativa) {
+                        window._recuperacaoTentativa = null;
+                        btn.disabled = false;
+                        btn.innerText = "Enviar Código";
+                        mostrarAviso("Não conseguimos verificar agora. Verifique sua conexão e tente de novo.", "#FF3B30");
+                    }
+                }, 6000);
             } else {
                 const conta = petcareBuscarContaNoDiretorio(email);
                 processarVerificacaoEmail(conta, email);
@@ -555,13 +601,61 @@
         }
 
         function processarVerificacaoEmail(conta, email) {
-            if (conta && conta.email === email) {
-                document.getElementById('blocoNovaSenha').style.display = 'block';
-                document.getElementById('btnVerificarEmail').style.display = 'none';
-                document.getElementById('forgotEmail').disabled = true;
-            } else {
+            const btn = document.getElementById('btnEnviarCodigo');
+            if (btn) { btn.disabled = false; btn.innerText = "Enviar Código"; }
+
+            if (!conta || conta.email !== email) {
                 aplicarErro('forgotEmail', 'errForgotEmail');
+                mostrarAviso("Não encontramos uma conta com esse e-mail.", "#FF3B30");
+                return;
             }
+
+            // Guarda a conta encontrada, pra reaproveitar depois de confirmado o código
+            window._contaRecuperada = conta;
+
+            // Gera um código de 6 dígitos, válido por 10 minutos
+            const codigo = String(Math.floor(100000 + Math.random() * 900000));
+            window._codigoRecuperacao = { codigo: codigo, email: email, expiraEm: Date.now() + 10 * 60 * 1000 };
+
+            if (typeof emailjs !== "undefined") {
+                emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, { to_email: email, codigo: codigo })
+                    .then(() => {
+                        mostrarAviso("Código enviado! Confira seu e-mail (e a caixa de spam).", "#34C759");
+                    })
+                    .catch((erro) => {
+                        console.error("Erro ao enviar e-mail:", erro);
+                        mostrarAviso("Não conseguimos enviar o e-mail agora. Tente de novo em instantes.", "#FF3B30");
+                    });
+            } else {
+                console.warn("EmailJS não carregado - código gerado (modo teste):", codigo);
+                mostrarAviso("[Modo teste, sem EmailJS] Código gerado: " + codigo, "#0076C4");
+            }
+
+            document.getElementById('blocoForgotEmail').style.display = 'none';
+            document.getElementById('blocoForgotCodigo').style.display = 'block';
+        }
+
+        function verificarCodigoRecuperacao() {
+            limparErros();
+            const digitado = document.getElementById('forgotCodigo').value.trim();
+            const info = window._codigoRecuperacao;
+
+            if (!info) {
+                mostrarAviso("Peça um novo código primeiro.", "#FF3B30");
+                return;
+            }
+            if (Date.now() > info.expiraEm) {
+                aplicarErro('forgotCodigo', 'errForgotCodigo');
+                mostrarAviso("Esse código expirou. Toque em \"Reenviar código\".", "#FF3B30");
+                return;
+            }
+            if (digitado !== info.codigo) {
+                aplicarErro('forgotCodigo', 'errForgotCodigo');
+                return;
+            }
+
+            document.getElementById('blocoForgotCodigo').style.display = 'none';
+            document.getElementById('blocoNovaSenha').style.display = 'block';
         }
 
         function salvarNovaSenha() {
@@ -570,7 +664,7 @@
             if (!novaSenha || novaSenha.length < 6) { aplicarErro('forgotNovaSenha', 'errForgotSenha'); return; }
 
             const email = document.getElementById('forgotEmail').value.trim();
-            const conta = petcareBuscarContaNoDiretorio(email) || {};
+            const conta = window._contaRecuperada || {};
             conta.senha = novaSenha;
             petcareRegistrarContaNoDiretorio(email, conta);
 
@@ -578,13 +672,17 @@
                 enviarComando("SALVAR_CONTA", tagContaPorEmail(email), conta);
             }
 
-            alert("Senha atualizada! Faça login com sua nova senha.");
+            window._contaRecuperada = null;
+            window._codigoRecuperacao = null;
 
-            // Reseta a etapa de recuperação e volta pro login
+            mostrarAviso("Senha atualizada! Faça login com sua nova senha.", "#34C759");
+
+            // Reseta tudo e volta pro login
+            document.getElementById('blocoForgotEmail').style.display = 'block';
+            document.getElementById('blocoForgotCodigo').style.display = 'none';
             document.getElementById('blocoNovaSenha').style.display = 'none';
-            document.getElementById('btnVerificarEmail').style.display = 'block';
-            document.getElementById('forgotEmail').disabled = false;
             document.getElementById('forgotEmail').value = '';
+            document.getElementById('forgotCodigo').value = '';
             document.getElementById('forgotNovaSenha').value = '';
             mudarEtapa('stepLogin');
         }
