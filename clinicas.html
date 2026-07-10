@@ -49,6 +49,9 @@
         
         .error-msg { background: #FFECEB; color: #FF3B30; padding: 16px; border-radius: 16px; text-align: center; font-size: 13px; font-weight: 600; display: none; margin-bottom: 16px;}
 
+        /* AVISO DE DADOS APROXIMADOS (quando a busca real falha e o app usa sugestões de exemplo) */
+        .aviso-offline { background: #FFFBEB; border: 1px solid #FDE047; color: #92400E; padding: 14px 16px; border-radius: 16px; font-size: 12.5px; font-weight: 500; line-height: 1.5; display: none; margin-bottom: 16px; }
+
         /* CARDS DAS CLÍNICAS */
         .clinic-card { background: var(--white); border-radius: 24px; padding: 20px; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid #E5E7EB; }
         
@@ -101,6 +104,7 @@
 
     <main class="view-content">
         <div id="errorLocation" class="error-msg"></div>
+        <div id="avisoOffline" class="aviso-offline"></div>
         
         <div class="loading-location" id="loadingLocation">
             <div class="spinner"></div>
@@ -115,7 +119,7 @@
 </div>
 
 <script src="navbar.js?v=15"></script>
-<script src="petsdb.js?v=20"></script>
+<script src="petsdb.js?v=24"></script>
 <script src="i18n.js?v=15"></script>
 <script>
     window.addEventListener('DOMContentLoaded', () => {
@@ -214,13 +218,21 @@
     // 3. PLANO B AUTOMÁTICO (FALLBACK INTELIGENTE)
     // ==========================================
     function acionarFallbackInteligente(userLat, userLng) {
+        // Mostra um aviso claro: essas sugestões são aproximadas, não vieram de uma
+        // busca real (a API pode estar fora do ar, sem internet, etc). Por isso os
+        // números de telefone NÃO são inventados aqui — nunca queremos que a pessoa
+        // ligue para um número fictício pensando que é uma clínica de verdade.
+        const avisoEl = document.getElementById('avisoOffline');
+        if (avisoEl) { avisoEl.innerText = t('clin_aviso_offline'); avisoEl.style.display = 'block'; }
+
         // Gera clínicas espalhadas em torno da coordenada REAL do usuário,
-        // para que a matemática calcule distâncias perfeitas.
+        // para que a matemática calcule distâncias perfeitas. Sem telefone
+        // de propósito (ver aviso acima).
         const mockElements = [
-            { id: 101, lat: userLat + 0.005, lon: userLng + 0.003, tags: { name: "Clínica Veterinária PetCare", 'addr:street': "Av. Central", phone: "11999999999" } },
-            { id: 102, lat: userLat - 0.012, lon: userLng + 0.008, tags: { name: "Hospital Vet 24 Horas", 'addr:street': "Rua das Flores", opening_hours: "24/7", phone: "11888888888" } },
+            { id: 101, lat: userLat + 0.005, lon: userLng + 0.003, tags: { name: "Clínica Veterinária PetCare", 'addr:street': "Av. Central" } },
+            { id: 102, lat: userLat - 0.012, lon: userLng + 0.008, tags: { name: "Hospital Vet 24 Horas", 'addr:street': "Rua das Flores", opening_hours: "24/7" } },
             { id: 103, lat: userLat + 0.018, lon: userLng - 0.015, tags: { name: "Vet Popular", 'addr:street': "Av. Brasil" } },
-            { id: 104, lat: userLat - 0.005, lon: userLng - 0.006, tags: { name: "Centro de Saúde Animal", 'addr:street': "Rua do Comércio", phone: "11777777777" } }
+            { id: 104, lat: userLat - 0.005, lon: userLng - 0.006, tags: { name: "Centro de Saúde Animal", 'addr:street': "Rua do Comércio" } }
         ];
         processarResultadosOSM(mockElements);
     }

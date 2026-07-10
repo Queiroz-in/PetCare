@@ -45,6 +45,9 @@
         @keyframes girar { to { transform: rotate(360deg); } }
         .empty-clinicas { text-align: center; color: #8E8E93; font-size: 13px; padding: 24px; border: 2px dashed #E5E7EB; border-radius: 16px; }
 
+        /* AVISO DE DADOS APROXIMADOS (quando a busca real falha e o app usa sugestões de exemplo) */
+        .aviso-offline { background: #FFFBEB; border: 1px solid #FDE047; color: #92400E; padding: 14px 16px; border-radius: 16px; font-size: 12.5px; font-weight: 500; line-height: 1.5; display: none; margin-bottom: 16px; }
+
         /* 2. Banner */
         .banner-alerta { background-color: #FFD60A; padding: 16px; border-radius: 16px; display: flex; gap: 16px; margin-bottom: 16px; align-items: center; }
         .banner-alerta strong { display: block; font-size: 14px; margin-bottom: 2px; }
@@ -97,6 +100,8 @@
                 <span data-i18n="clin_conectando_satelite">Conectando ao satélite... Buscando sua posição.</span>
             </div>
 
+            <div id="avisoOfflineEmerg" class="aviso-offline"></div>
+
             <div id="listaClinicasEmerg"></div>
 
             <div class="footer-aguarda">
@@ -111,7 +116,7 @@
         </div>
     </div>
 
-    <script src="petsdb.js?v=21"></script>
+    <script src="petsdb.js?v=24"></script>
     <script src="i18n.js?v=15"></script>
     <script>
         let localizacaoUsuarioEmerg = { lat: null, lng: null };
@@ -165,9 +170,16 @@
         }
 
         function fallbackClinicasEmerg(lat, lng) {
+            // Aviso claro: essas são sugestões aproximadas, não uma busca real (API
+            // fora do ar, sem internet, etc). Por isso NÃO inventamos telefone aqui —
+            // numa tela de EMERGÊNCIA, jamais devemos deixar a pessoa ligar para um
+            // número fictício pensando que é uma clínica de verdade.
+            const avisoEl = document.getElementById('avisoOfflineEmerg');
+            if (avisoEl) { avisoEl.innerText = t('clin_aviso_offline'); avisoEl.style.display = 'block'; }
+
             renderizarClinicasEmerg([
-                { id: 1, lat: lat + 0.006, lon: lng + 0.004, tags: { name: "Hospital Vet 24 Horas", opening_hours: "24/7", phone: "1198765-4321" } },
-                { id: 2, lat: lat - 0.01, lon: lng + 0.006, tags: { name: "Clínica Veterinária Central", phone: "1197654-3210" } },
+                { id: 1, lat: lat + 0.006, lon: lng + 0.004, tags: { name: "Hospital Vet 24 Horas", opening_hours: "24/7" } },
+                { id: 2, lat: lat - 0.01, lon: lng + 0.006, tags: { name: "Clínica Veterinária Central" } },
                 { id: 3, lat: lat + 0.014, lon: lng - 0.01, tags: { name: "Vet Popular 24h", opening_hours: "24/7" } },
             ]);
         }

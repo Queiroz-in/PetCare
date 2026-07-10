@@ -63,15 +63,12 @@
         .pencil-btn svg { width: 15px; height: 15px; stroke: var(--orange); fill: none; stroke-width: 2; }
 
         /* --- Notificações --- */
-        .notif-title { font-size: 12px; color: var(--gray); font-weight: 600; margin: 4px 0 8px; }
-        .notif-row { display: flex; align-items: center; gap: 10px; padding: 9px 0; }
         .notif-icon { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .notif-icon.on { background: #E4F8EA; }
         .notif-icon.off { background: #FDEBEA; }
         .notif-icon svg { width: 12px; height: 12px; stroke-width: 3; fill: none; }
         .notif-icon.on svg { stroke: var(--green); }
         .notif-icon.off svg { stroke: var(--red); }
-        .notif-text { font-size: 12.5px; color: var(--text-dark); font-weight: 500; line-height: 1.35; }
 
         /* --- Idioma --- */
         .lang-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 8px; border-radius: 10px; font-size: 13px; font-weight: 500; color: var(--text-dark); cursor: pointer; }
@@ -172,41 +169,6 @@
                         </div>
                     </div>
 
-                </div>
-            </div>
-
-            <!-- NOTIFICAÇÕES -->
-            <div class="config-item" data-section="notif" onclick="toggleSection('notif')">
-                <div class="item-label">
-                    <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-                    <span data-i18n="config_notificacoes">Notificações</span>
-                </div>
-                <svg class="chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
-            </div>
-            <div class="panel" id="panel-notif">
-                <div class="panel-inner">
-                    <div class="notif-title" data-i18n="config_receber_notif">Receber notificações:</div>
-
-                    <div class="notif-row">
-                        <span class="notif-icon off" id="notif-icon-perdido" onclick="toggleNotif('PERDIDO','notif-icon-perdido')">
-                            <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
-                        </span>
-                        <span class="notif-text" data-i18n="config_notif_perdido">Quando se aproximar de um animal perdido</span>
-                    </div>
-
-                    <div class="notif-row">
-                        <span class="notif-icon off" id="notif-icon-mural" onclick="toggleNotif('MURAL','notif-icon-mural')">
-                            <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
-                        </span>
-                        <span class="notif-text" data-i18n="config_notif_mural">Quando receber mensagens do mural</span>
-                    </div>
-
-                    <div class="notif-row">
-                        <span class="notif-icon off" id="notif-icon-lembretes" onclick="toggleNotif('LEMBRETES','notif-icon-lembretes')">
-                            <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
-                        </span>
-                        <span class="notif-text" data-i18n="config_notif_lembretes">Em datas de lembretes, consultas e vencimento de vacinas</span>
-                    </div>
                 </div>
             </div>
 
@@ -314,7 +276,7 @@
 </div>
 
 <script src="navbar.js?v=15"></script>
-<script src="petsdb.js?v=20"></script>
+<script src="petsdb.js?v=24"></script>
 <script src="i18n.js?v=15"></script>
 <script src="validacao.js?v=15"></script>
 <script>
@@ -339,9 +301,6 @@
 
         const prefsCache = petcareObterPreferencias();
         if (prefsCache) {
-            aplicarEstadoNotif('notif-icon-perdido', !!prefsCache.PERDIDO);
-            aplicarEstadoNotif('notif-icon-mural', !!prefsCache.MURAL);
-            aplicarEstadoNotif('notif-icon-lembretes', !!prefsCache.LEMBRETES);
             aplicarEstadoNotif('notif-icon-localizacao', !!prefsCache.LOCALIZACAO);
             idiomaSelecionado = prefsCache.idioma || 'pt-BR';
             montarListaIdiomas();
@@ -378,15 +337,15 @@
         definirValorCampo('senha', "••••••••••••");
     }
 
-    // Preferências salvas (notificações + localização + idioma), no formato:
-    // "PERDIDO_ON|MURAL_ON|LEMBRETES_OFF|LOCALIZACAO_ON|pt-BR"
+    // Preferências salvas (localização + idioma), no formato:
+    // "LEMBRETES_OFF|LOCALIZACAO_ON|pt-BR"
+    // OBS: o 1º campo (lembretes) é ignorado — segue vindo do petsdb.js por
+    // compatibilidade de formato, mas o toggle de notificação de Lembretes foi
+    // removido da tela (a extensão que fazia a notificação real não existe mais).
     function carregarPreferencias(dadosString) {
         if (!dadosString || dadosString.trim() === "") return;
-        const [perdido, mural, lembretes, localizacao, idioma] = dadosString.split("|");
+        const [, localizacao, idioma] = dadosString.split("|");
 
-        aplicarEstadoNotif('notif-icon-perdido', perdido === "PERDIDO_ON");
-        aplicarEstadoNotif('notif-icon-mural', mural === "MURAL_ON");
-        aplicarEstadoNotif('notif-icon-lembretes', lembretes === "LEMBRETES_ON");
         aplicarEstadoNotif('notif-icon-localizacao', localizacao === "LOCALIZACAO_ON");
 
         if (idioma) {

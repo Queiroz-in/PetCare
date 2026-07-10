@@ -511,7 +511,7 @@ function receberDadosBanco(tag, valorRecebido) {
         petcareSalvarPreferencias(prefs);
         if (typeof carregarPreferencias === "function") {
             const p = (chave) => (prefs[chave] ? chave + "_ON" : chave + "_OFF");
-            carregarPreferencias([p("PERDIDO"), p("MURAL"), p("LEMBRETES"), p("LOCALIZACAO"), (prefs.idioma || "pt-BR")].join("|"));
+            carregarPreferencias([p("LEMBRETES"), p("LOCALIZACAO"), (prefs.idioma || "pt-BR")].join("|"));
         }
 
     } else {

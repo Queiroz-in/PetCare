@@ -102,7 +102,7 @@
 </div>
 
 <script src="navbar.js?v=15"></script>
-<script src="petsdb.js?v=21"></script>
+<script src="petsdb.js?v=24"></script>
 <script src="i18n.js?v=15"></script>
 <script>
     window.addEventListener('DOMContentLoaded', () => {
@@ -118,37 +118,37 @@
     // ==========================================
     const racasDB = [
         // --- CÃES ---
-        { categoria: "Cães", nome: "Pastor Alemão", porte: "Grande", temperamento: "Corajoso, leal, protetor", cuidados: "Treinamento, exercícios intensos", doencas: "Displasia, torção gástrica" },
-        { categoria: "Cães", nome: "Golden Retriever", porte: "Grande", temperamento: "Dócil, inteligente, leal", cuidados: "Escovação, exercícios diários", doencas: "Displasia, problemas cardíacos, câncer" },
-        { categoria: "Cães", nome: "Bulldog Francês", porte: "Pequeno", temperamento: "Afetuoso, brincalhão", cuidados: "Limpeza das dobrinhas, evitar calor", doencas: "Problemas respiratórios, alergias" },
-        { categoria: "Cães", nome: "Border Collie", porte: "Médio", temperamento: "Energético, muito inteligente", cuidados: "Estimulação mental, exercício intenso", doencas: "Displasia, sensibilidade a medicamentos" },
-        { categoria: "Cães", nome: "Pug", porte: "Pequeno", temperamento: "Afetuoso, dócil, preguiçoso", cuidados: "Limpeza facial, evitar esforço no calor", doencas: "Problemas respiratórios, oculares" },
-        { categoria: "Cães", nome: "Shih Tzu", porte: "Pequeno", temperamento: "Afetuoso, calmo", cuidados: "Escovação diária, limpeza ocular", doencas: "Problemas respiratórios, oculares, dentários" },
-        { categoria: "Cães", nome: "Beagle", porte: "Médio", temperamento: "Curioso, sociável", cuidados: "Controle de alimentação, passeios", doencas: "Obesidade, otites, epilepsia" },
-        { categoria: "Cães", nome: "Husky Siberiano", porte: "Médio", temperamento: "Ativo, amigável, teimoso", cuidados: "Exercícios intensos, escovação na troca de pelo", doencas: "Problemas oculares, displasia" },
+        { categoria: "Cães", nome: "Pastor Alemão", porte: "Grande", temperamento: "Corajoso, leal, protetor", cuidados: "Treinamento, exercícios intensos", doencas: "Displasia, torção gástrica", foto: "" },
+        { categoria: "Cães", nome: "Golden Retriever", porte: "Grande", temperamento: "Dócil, inteligente, leal", cuidados: "Escovação, exercícios diários", doencas: "Displasia, problemas cardíacos, câncer", foto: "" },
+        { categoria: "Cães", nome: "Bulldog Francês", porte: "Pequeno", temperamento: "Afetuoso, brincalhão", cuidados: "Limpeza das dobrinhas, evitar calor", doencas: "Problemas respiratórios, alergias", foto: "" },
+        { categoria: "Cães", nome: "Border Collie", porte: "Médio", temperamento: "Energético, muito inteligente", cuidados: "Estimulação mental, exercício intenso", doencas: "Displasia, sensibilidade a medicamentos", foto: "" },
+        { categoria: "Cães", nome: "Pug", porte: "Pequeno", temperamento: "Afetuoso, dócil, preguiçoso", cuidados: "Limpeza facial, evitar esforço no calor", doencas: "Problemas respiratórios, oculares", foto: "" },
+        { categoria: "Cães", nome: "Shih Tzu", porte: "Pequeno", temperamento: "Afetuoso, calmo", cuidados: "Escovação diária, limpeza ocular", doencas: "Problemas respiratórios, oculares, dentários", foto: "" },
+        { categoria: "Cães", nome: "Beagle", porte: "Médio", temperamento: "Curioso, sociável", cuidados: "Controle de alimentação, passeios", doencas: "Obesidade, otites, epilepsia", foto: "" },
+        { categoria: "Cães", nome: "Husky Siberiano", porte: "Médio", temperamento: "Ativo, amigável, teimoso", cuidados: "Exercícios intensos, escovação na troca de pelo", doencas: "Problemas oculares, displasia", foto: "" },
 
         // --- GATOS ---
-        { categoria: "Gatos", nome: "Persa", porte: "Médio", temperamento: "Calmo, carinhoso, tranquilo", cuidados: "Escovação diária, limpeza ocular", doencas: "Problemas respiratórios, doença renal policística" },
-        { categoria: "Gatos", nome: "Siamês", porte: "Médio", temperamento: "Comunicativo, ativo, leal", cuidados: "Brinquedos de inteligência, interação social", doencas: "Problemas dentários, amiloidose hepática" },
-        { categoria: "Gatos", nome: "Maine Coon", porte: "Grande", temperamento: "Gentil, inteligente, sociável", cuidados: "Escovação regular, espaço amplo", doencas: "Cardiomiopatia hipertrófica, displasia" },
-        { categoria: "Gatos", nome: "Ragdoll", porte: "Grande", temperamento: "Dócil, relaxado, afetuoso", cuidados: "Escovação semanal, ambiente interno", doencas: "Cardiomiopatia hipertrófica" },
-        { categoria: "Gatos", nome: "Bengal", porte: "Médio/Grande", temperamento: "Energético, curioso, brincalhão", cuidados: "Atividade física, escaladores", doencas: "Atrofia progressiva da retina" },
-        { categoria: "Gatos", nome: "Sphynx", porte: "Médio", temperamento: "Extrovertido, carinhoso, carente", cuidados: "Banhos frequentes, proteção contra frio", doencas: "Cardiomiopatia hipertrófica, problemas de pele" },
-        { categoria: "Gatos", nome: "Abissínio", porte: "Médio", temperamento: "Ativo, curioso, inteligente", cuidados: "Muitos brinquedos, interação ativa", doencas: "Gengivite, luxação de patela" },
+        { categoria: "Gatos", nome: "Persa", porte: "Médio", temperamento: "Calmo, carinhoso, tranquilo", cuidados: "Escovação diária, limpeza ocular", doencas: "Problemas respiratórios, doença renal policística", foto: "" },
+        { categoria: "Gatos", nome: "Siamês", porte: "Médio", temperamento: "Comunicativo, ativo, leal", cuidados: "Brinquedos de inteligência, interação social", doencas: "Problemas dentários, amiloidose hepática", foto: "" },
+        { categoria: "Gatos", nome: "Maine Coon", porte: "Grande", temperamento: "Gentil, inteligente, sociável", cuidados: "Escovação regular, espaço amplo", doencas: "Cardiomiopatia hipertrófica, displasia", foto: "" },
+        { categoria: "Gatos", nome: "Ragdoll", porte: "Grande", temperamento: "Dócil, relaxado, afetuoso", cuidados: "Escovação semanal, ambiente interno", doencas: "Cardiomiopatia hipertrófica", foto: "" },
+        { categoria: "Gatos", nome: "Bengal", porte: "Médio/Grande", temperamento: "Energético, curioso, brincalhão", cuidados: "Atividade física, escaladores", doencas: "Atrofia progressiva da retina", foto: "" },
+        { categoria: "Gatos", nome: "Sphynx", porte: "Médio", temperamento: "Extrovertido, carinhoso, carente", cuidados: "Banhos frequentes, proteção contra frio", doencas: "Cardiomiopatia hipertrófica, problemas de pele", foto: "" },
+        { categoria: "Gatos", nome: "Abissínio", porte: "Médio", temperamento: "Ativo, curioso, inteligente", cuidados: "Muitos brinquedos, interação ativa", doencas: "Gengivite, luxação de patela", foto: "" },
 
         // --- PÁSSAROS ---
-        { categoria: "Pássaros", nome: "Calopsita", porte: "Pequeno", temperamento: "Dócil, sociável, inteligente", cuidados: "Brinquedos, interação diária, gaiola ampla", doencas: "Doença de Newcastle, problemas respiratórios" },
-        { categoria: "Pássaros", nome: "Periquito Australiano", porte: "Pequeno", temperamento: "Ativo, brincalhão, curioso", cuidados: "Espaço para voar, interação social", doencas: "Ácaros, problemas nutricionais" },
-        { categoria: "Pássaros", nome: "Canário", porte: "Pequeno", temperamento: "Independente, cantor", cuidados: "Viveiro espaçoso, higiene constante", doencas: "Varíola aviária, ácaros" },
-        { categoria: "Pássaros", nome: "Papagaio-verdadeiro", porte: "Grande", temperamento: "Inteligente, falante, carinhoso", cuidados: "Estimulação mental, dieta balanceada", doencas: "Psitacose, automutilação" },
-        { categoria: "Pássaros", nome: "Agapornis", porte: "Pequeno", temperamento: "Ativo, territorial, apegado ao parceiro", cuidados: "Vivem melhor em pares, gaiola grande", doencas: "Infecções bacterianas, obesidade" },
+        { categoria: "Pássaros", nome: "Calopsita", porte: "Pequeno", temperamento: "Dócil, sociável, inteligente", cuidados: "Brinquedos, interação diária, gaiola ampla", doencas: "Doença de Newcastle, problemas respiratórios", foto: "" },
+        { categoria: "Pássaros", nome: "Periquito Australiano", porte: "Pequeno", temperamento: "Ativo, brincalhão, curioso", cuidados: "Espaço para voar, interação social", doencas: "Ácaros, problemas nutricionais", foto: "" },
+        { categoria: "Pássaros", nome: "Canário", porte: "Pequeno", temperamento: "Independente, cantor", cuidados: "Viveiro espaçoso, higiene constante", doencas: "Varíola aviária, ácaros", foto: "" },
+        { categoria: "Pássaros", nome: "Papagaio-verdadeiro", porte: "Grande", temperamento: "Inteligente, falante, carinhoso", cuidados: "Estimulação mental, dieta balanceada", doencas: "Psitacose, automutilação", foto: "" },
+        { categoria: "Pássaros", nome: "Agapornis", porte: "Pequeno", temperamento: "Ativo, territorial, apegado ao parceiro", cuidados: "Vivem melhor em pares, gaiola grande", doencas: "Infecções bacterianas, obesidade", foto: "" },
 
-        // --- PEIXES ---[cite: 13]
-        { categoria: "Peixes", nome: "Betta", porte: "Pequeno", temperamento: "Territorial, solitário", cuidados: "Aquário com tampa, água filtrada e aquecida", doencas: "Podridão das nadadeiras, fungos" },
-        { categoria: "Peixes", nome: "Peixinho Dourado", porte: "Pequeno/Médio", temperamento: "Calmo", cuidados: "Aquário grande, filtragem forte", doencas: "Doença da bexiga natatória, fungos" },
-        { categoria: "Peixes", nome: "Neon Tetra", porte: "Pequeno", temperamento: "Pacífico, cardume", cuidados: "Água macia, grupo de 6 ou mais", doencas: "Doença dos neons (pleistoforose)" },
-        { categoria: "Peixes", nome: "Oscar", porte: "Grande", temperamento: "Agressivo, inteligente", cuidados: "Aquário muito grande, filtragem potente", doencas: "Buracos na cabeça (Hexamita)" },
-        { categoria: "Peixes", nome: "Cascudo (Pleco)", porte: "Grande", temperamento: "Pacífico", cuidados: "Aquário grande, troncos", doencas: "Infecções intestinais" }
+        // --- PEIXES ---
+        { categoria: "Peixes", nome: "Betta", porte: "Pequeno", temperamento: "Territorial, solitário", cuidados: "Aquário com tampa, água filtrada e aquecida", doencas: "Podridão das nadadeiras, fungos", foto: "" },
+        { categoria: "Peixes", nome: "Peixinho Dourado", porte: "Pequeno/Médio", temperamento: "Calmo", cuidados: "Aquário grande, filtragem forte", doencas: "Doença da bexiga natatória, fungos", foto: "" },
+        { categoria: "Peixes", nome: "Neon Tetra", porte: "Pequeno", temperamento: "Pacífico, cardume", cuidados: "Água macia, grupo de 6 ou mais", doencas: "Doença dos neons (pleistoforose)", foto: "" },
+        { categoria: "Peixes", nome: "Oscar", porte: "Grande", temperamento: "Agressivo, inteligente", cuidados: "Aquário muito grande, filtragem potente", doencas: "Buracos na cabeça (Hexamita)", foto: "" },
+        { categoria: "Peixes", nome: "Cascudo (Pleco)", porte: "Grande", temperamento: "Pacífico", cuidados: "Aquário grande, troncos", doencas: "Infecções intestinais", foto: "" }
     ];
 
     let categoriaAtual = 'Cães';
@@ -177,38 +177,25 @@
     // ==========================================
     // 3. RENDERIZAÇÃO
     // ==========================================
-    // Mapa de raça -> slug da Dog CEO API (fotos reais, gratuita e sem chave).
-    // Só cobre "Cães" por enquanto — outras categorias continuam com o avatar de letra.
-    const MAPA_FOTO_RACA = {
-        "Pastor Alemão": "germanshepherd",
-        "Golden Retriever": "retriever/golden",
-        "Bulldog Francês": "bulldog/french",
-        "Border Collie": "collie/border",
-        "Pug": "pug",
-        "Shih Tzu": "shihtzu",
-        "Beagle": "beagle",
-        "Husky Siberiano": "husky"
-    };
-    const cacheFotoRaca = {};
-
-    function carregarFotoRaca(nomeRaca, avatarEl) {
-        const slug = MAPA_FOTO_RACA[nomeRaca];
-        if (!slug) return; // categoria sem foto mapeada, mantém o avatar de letra
-
-        if (cacheFotoRaca[slug]) {
-            avatarEl.innerHTML = `<img src="${cacheFotoRaca[slug]}" alt="${nomeRaca}">`;
-            return;
-        }
-        fetch(`https://dog.ceo/api/breed/${slug}/images/random`)
-            .then(r => r.json())
-            .then(dados => {
-                if (dados && dados.status === "success" && dados.message) {
-                    cacheFotoRaca[slug] = dados.message;
-                    avatarEl.innerHTML = `<img src="${dados.message}" alt="${nomeRaca}">`;
-                }
-            })
-            .catch(() => { /* sem internet ou API fora: mantém o avatar de letra, sem quebrar nada */ });
-    }
+    // ==========================================
+    // COMO ADICIONAR AS FOTOS DAS RAÇAS (MANUAL)
+    // ==========================================
+    // Cada raça no racasDB (lá em cima) tem um campo "foto": "" vazio.
+    // Pra colocar uma foto, é só preencher esse campo com:
+    //
+    //   OPÇÃO A) Um arquivo de imagem que você subiu no mesmo repositório do
+    //            GitHub Pages (ex: dentro de uma pasta "fotos-racas/"):
+    //            foto: "fotos-racas/pastor-alemao.jpg"
+    //
+    //   OPÇÃO B) Um link direto de imagem na internet (precisa terminar em
+    //            .jpg, .png, .webp etc, e ser um link direto pra imagem,
+    //            não pra uma página):
+    //            foto: "https://exemplo.com/imagens/pastor-alemao.jpg"
+    //
+    // Se o campo "foto" ficar vazio (""), o card mostra a letra inicial do
+    // nome da raça (comportamento atual, sem quebrar nada visualmente).
+    // Não precisa mexer em mais nada além do campo "foto" de cada raça.
+    // ==========================================
 
     function renderizarRacas() {
         const container = document.getElementById('listaRacasContainer');
@@ -235,14 +222,20 @@
                 return `<li>${texto.charAt(0).toUpperCase() + texto.slice(1)}</li>`;
             }).join('');
 
-            // Pega a primeira letra pro avatar
+            // Pega a primeira letra pro avatar (usado como fallback quando não há foto)
             const letra = raca.nome.charAt(0).toUpperCase();
+
+            // Se o campo "foto" dessa raça estiver preenchido, mostra a imagem.
+            // Se estiver vazio, mostra a letra inicial (comportamento atual).
+            const conteudoAvatar = raca.foto
+                ? `<img src="${raca.foto}" alt="${raca.nome}">`
+                : letra;
 
             const card = document.createElement('div');
             card.className = "breed-card";
             card.innerHTML = `
                 <div class="breed-header">
-                    <div class="breed-avatar" data-raca="${raca.nome}">${letra}</div>
+                    <div class="breed-avatar" data-raca="${raca.nome}">${conteudoAvatar}</div>
                     <h4>${raca.nome}</h4>
                 </div>
 
@@ -269,7 +262,6 @@
                 </div>
             `;
             container.appendChild(card);
-            carregarFotoRaca(raca.nome, card.querySelector('.breed-avatar'));
         });
     }
 </script>

@@ -239,7 +239,7 @@
 </div>
 
 <script src="navbar.js?v=15"></script>
-<script src="petsdb.js?v=21"></script>
+<script src="petsdb.js?v=24"></script>
 <script src="i18n.js?v=15"></script>
 <script src="validacao.js?v=15"></script>
 <script>
@@ -488,7 +488,7 @@
         if (!vData.valido) { alert(vData.mensagem); return; }
 
         const novoLembrete = {
-            id: Math.random().toString(36).substr(2, 9),
+            id: Date.now() % 2000000000, // numérico e dentro da faixa seguro de inteiro - vai dobrar como id do alarme real
             idPet: petModalSelecionado,
             tipo: tipoModalSelecionado,
             classeIcone: classeIconeModal,
