@@ -515,6 +515,8 @@
                 enviarComando("BUSCAR_CONTA", tagContaPorEmail(email), {});
 
                 // Prazo de segurança: se o banco não responder em alguns segundos, avisa em vez de ficar em silêncio
+                // OBS: 20s (em vez de 6s) porque a primeira conexão com o CloudDB/Redis pode
+                // demorar mais que isso pra fechar (handshake + 3 conexões abertas pelo componente)
                 clearTimeout(loginTimeoutId);
                 loginTimeoutId = setTimeout(() => {
                     if (window._loginTentativa) {
@@ -523,7 +525,7 @@
                         btn.innerText = "Continuar";
                         alert("Não conseguimos verificar sua conta agora. Verifique sua conexão com a internet e tente novamente.");
                     }
-                }, 6000);
+                }, 20000);
             } else {
                 // Fora do app (navegador): compara com o diretório local de contas
                 const conta = petcareBuscarContaNoDiretorio(email);
@@ -600,7 +602,7 @@
                         btn.innerText = "Enviar Código";
                         mostrarAviso("Não conseguimos verificar agora. Verifique sua conexão e tente de novo.", "#FF3B30");
                     }
-                }, 6000);
+                }, 20000);
             } else {
                 const conta = petcareBuscarContaNoDiretorio(email);
                 processarVerificacaoEmail(conta, email);
@@ -781,7 +783,7 @@
                         btn.innerText = "Continuar";
                         alert("Não conseguimos verificar sua conta agora. Verifique sua conexão com a internet e tente novamente.");
                     }
-                }, 6000);
+                }, 20000);
             } else {
                 // Fora do app (navegador): checa o diretório local de contas
                 const existente = petcareBuscarContaNoDiretorio(email);
