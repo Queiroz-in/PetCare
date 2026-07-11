@@ -261,6 +261,21 @@
         ]
     };
 
+    // Calcula, pra cada doença, em quantos sintomas DIFERENTES (de toda a base) ela
+    // aparece. Isso serve pra dar mais peso a doenças raras/específicas e menos peso
+    // a doenças "coringa" (ex: "Alergia", "Intoxicação") que aparecem em dezenas de
+    // sintomas diferentes - sem isso, essas doenças genéricas sempre dominavam o
+    // resultado, não importa quais sintomas específicos a pessoa marcasse.
+    const freqGlobalDoenca = {};
+    for (let cat in dbSintomas) {
+        dbSintomas[cat].forEach(s => {
+            s.diag.split(', ').forEach(d => {
+                const dLimpo = d.trim();
+                freqGlobalDoenca[dLimpo] = (freqGlobalDoenca[dLimpo] || 0) + 1;
+            });
+        });
+    }
+
     // 3. RENDERIZAÇÃO DA INTERFACE (SINTOMAS)
     const area = document.getElementById('sintomasArea');
     let mapSintomas = {}; 
@@ -294,7 +309,12 @@
             let doencasArr = info.diag.split(', ');
             doencasArr.forEach(d => {
                 let dLimpo = d.trim();
-                freqDoencas[dLimpo] = (freqDoencas[dLimpo] || 0) + 1;
+                // Peso = 1 / frequência global: uma doença que só aparece em 1 ou 2
+                // sintomas específicos pesa muito mais que uma que aparece em 20 sintomas
+                // diferentes. Assim, uma combinação específica de sintomas aponta pra
+                // doenças específicas, em vez de sempre cair nas mesmas genéricas.
+                const peso = 1 / (freqGlobalDoenca[dLimpo] || 1);
+                freqDoencas[dLimpo] = (freqDoencas[dLimpo] || 0) + peso;
             });
         });
 

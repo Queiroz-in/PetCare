@@ -34,6 +34,11 @@
         /* FILTROS */
         .filters-container { display: flex; gap: 10px; overflow-x: auto; padding: 16px 20px 14px; flex-shrink: 0; }
         .filters-container::-webkit-scrollbar { display: none; }
+
+        /* SELETOR DE RAIO DE BUSCA */
+        .filtro-raio-container { display: flex; align-items: center; justify-content: space-between; padding: 0 20px 14px; flex-shrink: 0; }
+        .filtro-raio-label { font-size: 12.5px; color: var(--gray); font-weight: 600; }
+        .select-raio { font-size: 12.5px; font-weight: 700; color: var(--pink-alt); background: var(--pink-light); border: 1px solid var(--pink-alt); border-radius: 12px; padding: 6px 12px; font-family: 'Inter', sans-serif; }
         .filter-pill { padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: 0.2s; background: var(--white); color: var(--gray); border: 1px solid #E5E7EB; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
         .filter-pill.active { background: var(--pink-alt); color: var(--white); border-color: var(--pink-alt); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
 
@@ -102,6 +107,16 @@
         <div class="filter-pill" data-i18n="clin_filtro_abertas" onclick="aplicarFiltro('Abertas Agora', this)">Abertas Agora</div>
     </div>
 
+    <div class="filtro-raio-container">
+        <span class="filtro-raio-label" data-i18n="clin_raio_busca">Raio de busca:</span>
+        <select class="select-raio" id="filtroRaioKm" onchange="mudarRaioBusca()">
+            <option value="5">5 km</option>
+            <option value="15" selected>15 km</option>
+            <option value="30">30 km</option>
+            <option value="50">50 km</option>
+        </select>
+    </div>
+
     <main class="view-content">
         <div id="errorLocation" class="error-msg"></div>
         <div id="avisoOffline" class="aviso-offline"></div>
@@ -136,6 +151,8 @@
     let clinicasReais = [];
     let filtroAtual = 'Todas';
     let localizacaoUsuario = { lat: 0, lng: 0 };
+    let raioBuscaMetros = 15000; // ajustável pelo seletor "Raio de busca"
+    let localizacaoRealDisponivel = false; // só true quando o GPS de verdade respondeu
 
     // Fórmula de Haversine: Calcula distância exata em metros usando GPS
     function calcularDistanciaMetros(lat1, lon1, lat2, lon2) {
@@ -171,6 +188,7 @@
                     document.getElementById('loadingText').innerText = t('clin_localizacao_encontrada');
                     localizacaoUsuario.lat = position.coords.latitude;
                     localizacaoUsuario.lng = position.coords.longitude;
+                    localizacaoRealDisponivel = true;
                     buscarNoOpenStreetMap(localizacaoUsuario.lat, localizacaoUsuario.lng);
                 },
                 (error) => {
@@ -188,12 +206,27 @@
         }
     }
 
+    // Chamada quando a pessoa troca o raio no seletor "Raio de busca".
+    // Só refaz a busca de verdade se já tivermos uma localização real do GPS
+    // (se a localização estiver desativada nas Configurações, o app já está
+    // usando dados de exemplo e trocar o raio não muda nada nesse caso).
+    function mudarRaioBusca() {
+        const km = parseInt(document.getElementById('filtroRaioKm').value, 10);
+        raioBuscaMetros = km * 1000;
+
+        if (!localizacaoRealDisponivel) return;
+
+        document.getElementById('listaClinicasContainer').innerHTML = '';
+        document.getElementById('loadingLocation').style.display = 'flex';
+        document.getElementById('loadingText').innerText = t('clin_atualizando_raio');
+        buscarNoOpenStreetMap(localizacaoUsuario.lat, localizacaoUsuario.lng);
+    }
+
     // ==========================================
     // 2. BUSCA NA API DO OPENSTREETMAP (OVERPASS)
     // ==========================================
     async function buscarNoOpenStreetMap(lat, lng) {
-        const raioMetros = 15000; // 15km
-        const query = `[out:json];(node["amenity"="veterinary"](around:${raioMetros},${lat},${lng});way["amenity"="veterinary"](around:${raioMetros},${lat},${lng}););out center;`;
+        const query = `[out:json];(node["amenity"="veterinary"](around:${raioBuscaMetros},${lat},${lng});way["amenity"="veterinary"](around:${raioBuscaMetros},${lat},${lng}););out center;`;
         const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
 
         try {

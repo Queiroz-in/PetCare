@@ -81,6 +81,30 @@
         .campo-row { display: flex; gap: 10px; min-width: 0; }
         .campo-row .campo-col { flex: 1; min-width: 0; }
 
+        /* SELETOR DE FOTO DO ANIMAL PERDIDO */
+        .foto-picker-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 8px; }
+        .foto-picker { width: 88px; height: 88px; border-radius: 50%; background: var(--gray-light); border: 2px dashed #D1D5DB; display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; flex-shrink: 0; }
+        .foto-picker svg { width: 30px; height: 30px; stroke: #9CA3AF; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+        .foto-picker img { width: 100%; height: 100%; object-fit: cover; }
+        .foto-picker.tem-foto { border-style: solid; border-color: var(--blue-header); }
+        .foto-picker-label { font-size: 12px; color: var(--gray); font-weight: 500; }
+
+        /* SELETOR RÁPIDO: "É um dos seus pets?" */
+        .meus-pets-wrap { margin-bottom: 4px; }
+        .meus-pets-row { display: flex; gap: 10px; overflow-x: auto; padding: 2px 0 6px; }
+        .meus-pets-row::-webkit-scrollbar { display: none; }
+        .meu-pet-chip { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; width: 62px; }
+        .meu-pet-avatar { width: 52px; height: 52px; border-radius: 50%; background: var(--gray-light); border: 2px solid transparent; display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--blue-header); font-size: 18px; overflow: hidden; }
+        .meu-pet-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .meu-pet-chip.active .meu-pet-avatar { border-color: var(--blue-header); }
+        .meu-pet-nome { font-size: 10.5px; font-weight: 600; color: var(--text-dark); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+
+        /* Rótulo com atalho de preenchimento rápido (ex: "Hoje", "Agora") */
+        .label-com-atalho { display: flex; align-items: center; justify-content: space-between; margin: 14px 0 6px; }
+        .label-com-atalho .campo-label { margin: 0; }
+        .btn-atalho-campo { background: var(--gray-light); color: var(--blue-header); border: none; border-radius: 8px; font-size: 10.5px; font-weight: 700; padding: 4px 9px; cursor: pointer; }
+        .btn-atalho-campo:active { opacity: 0.8; }
+
         .pills-row { display: flex; gap: 8px; flex-wrap: wrap; }
         .pill { padding: 9px 16px; border-radius: 20px; border: 1px solid #E5E7EB; font-size: 12.5px; font-weight: 600; color: var(--gray); cursor: pointer; }
         .pill.active { background: var(--blue-header); color: white; border-color: var(--blue-header); }
@@ -150,6 +174,19 @@
             <button class="modal-close" onclick="fecharModalReportar()">✕</button>
         </div>
 
+        <div class="meus-pets-wrap" id="meusPetsWrap" style="display:none;">
+            <div class="campo-label" data-i18n="perd_e_um_dos_seus">É um dos seus pets? Toque para preencher rápido:</div>
+            <div class="meus-pets-row" id="meusPetsRow"></div>
+        </div>
+
+        <div class="foto-picker-wrap">
+            <div class="foto-picker" id="perdidoFotoPreview" onclick="document.getElementById('perdidoFotoInput').click()">
+                <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            </div>
+            <span class="foto-picker-label" data-i18n="perd_adicionar_foto">Toque para adicionar uma foto</span>
+            <input type="file" id="perdidoFotoInput" accept="image/*" style="display:none;" onchange="onEscolherFotoPerdido(this)">
+        </div>
+
         <div class="campo-label" data-i18n="perd_tipo_animal">Tipo de Animal</div>
         <div class="pills-row" id="grpTipoPerdido">
             <div class="pill active" data-i18n="perd_filtro_cachorro" onclick="selecionarPill(this,'grpTipoPerdido')">Cachorro</div>
@@ -167,11 +204,17 @@
 
         <div class="campo-row">
             <div class="campo-col">
-                <div class="campo-label" data-i18n="perd_data_perda">Data da Perda</div>
+                <div class="label-com-atalho">
+                    <div class="campo-label" data-i18n="perd_data_perda">Data da Perda</div>
+                    <button type="button" class="btn-atalho-campo" onclick="preencherDataHoje()" data-i18n="perd_atalho_hoje">Hoje</button>
+                </div>
                 <input type="text" class="campo-input" id="perdidoData" placeholder="dd/mm/aaaa" data-i18n-placeholder="vac_data_placeholder" inputmode="numeric" maxlength="10">
             </div>
             <div class="campo-col">
-                <div class="campo-label" data-i18n="perd_horario_perda">Horário da Perda</div>
+                <div class="label-com-atalho">
+                    <div class="campo-label" data-i18n="perd_horario_perda">Horário da Perda</div>
+                    <button type="button" class="btn-atalho-campo" onclick="preencherHorarioAgora()" data-i18n="perd_atalho_agora">Agora</button>
+                </div>
                 <input type="text" class="campo-input" id="perdidoHorario" placeholder="--:--" inputmode="numeric" maxlength="5">
             </div>
         </div>
@@ -306,6 +349,22 @@
         });
     });
 
+    // Atalhos de preenchimento rápido - a maioria dos relatos é feita
+    // "na hora", então evita a pessoa ter que digitar tudo na mão
+    function preencherDataHoje() {
+        const agora = new Date();
+        const dd = String(agora.getDate()).padStart(2, '0');
+        const mm = String(agora.getMonth() + 1).padStart(2, '0');
+        const aaaa = agora.getFullYear();
+        document.getElementById('perdidoData').value = `${dd}/${mm}/${aaaa}`;
+    }
+    function preencherHorarioAgora() {
+        const agora = new Date();
+        const hh = String(agora.getHours()).padStart(2, '0');
+        const min = String(agora.getMinutes()).padStart(2, '0');
+        document.getElementById('perdidoHorario').value = `${hh}:${min}`;
+    }
+
     // Chamada pela função mestra (receberDadosBanco) quando os dados voltam do banco
     function carregarPerdidosJSON(dadosJsonString) {
         try { listaPerdidosAtual = JSON.parse(dadosJsonString) || []; }
@@ -354,7 +413,10 @@
             <div class="card-perdido" onclick="abrirContato(${i})">
                 <div class="card-top">
                     <div class="card-foto">
-                        <svg viewBox="0 0 24 24"><path d="M4.5 9.5c1 1 2.5 1 3.5 0M16 9.5c1 1 2.5 1 3.5 0M12 3c-4 0-7 3-7 7 0 4 3 8 7 8s7-4 7-8c0-4-3-7-7-7z"/></svg>
+                        ${p.foto
+                            ? `<img src="${p.foto}" alt="${p.nome}" style="width:100%; height:100%; object-fit:cover;">`
+                            : `<svg viewBox="0 0 24 24"><path d="M4.5 9.5c1 1 2.5 1 3.5 0M16 9.5c1 1 2.5 1 3.5 0M12 3c-4 0-7 3-7 7 0 4 3 8 7 8s7-4 7-8c0-4-3-7-7-7z"/></svg>`
+                        }
                     </div>
                     <div class="card-info">
                         <div class="card-nome">${p.nome}</div>
@@ -383,9 +445,91 @@
         `).join('');
     }
 
+    // ---------- Seleção rápida: "É um dos seus pets?" ----------
+    function renderizarMeusPetsNoModal() {
+        const wrap = document.getElementById('meusPetsWrap');
+        const row = document.getElementById('meusPetsRow');
+        const meusPets = (typeof petcareObterPets === "function") ? petcareObterPets() : [];
+
+        if (!meusPets || meusPets.length === 0) {
+            wrap.style.display = 'none';
+            return;
+        }
+
+        wrap.style.display = 'block';
+        row.innerHTML = meusPets.map(p => `
+            <div class="meu-pet-chip" data-pet-id="${p.id}" onclick="selecionarMeuPetNoModal('${p.id}')">
+                <div class="meu-pet-avatar">
+                    ${p.foto ? `<img src="${p.foto}" alt="${p.nome}">` : (p.nome ? p.nome.charAt(0).toUpperCase() : '?')}
+                </div>
+                <div class="meu-pet-nome">${p.nome}</div>
+            </div>
+        `).join('');
+    }
+
+    function selecionarMeuPetNoModal(petId) {
+        const meusPets = (typeof petcareObterPets === "function") ? petcareObterPets() : [];
+        const pet = meusPets.find(p => String(p.id) === String(petId));
+        if (!pet) return;
+
+        // Marca visualmente qual chip está selecionado
+        document.querySelectorAll('#meusPetsRow .meu-pet-chip').forEach(chip => {
+            chip.classList.toggle('active', chip.dataset.petId === String(petId));
+        });
+
+        // Preenche nome e raça
+        document.getElementById('perdidoNome').value = pet.nome || '';
+        document.getElementById('perdidoRaca').value = pet.raca || '';
+
+        // Tenta selecionar a pill de tipo correspondente (só troca se achar uma igual)
+        const pills = document.querySelectorAll('#grpTipoPerdido .pill');
+        pills.forEach(pill => {
+            if (pill.innerText.trim().toLowerCase() === (pet.tipo || '').trim().toLowerCase()) {
+                pills.forEach(p2 => p2.classList.remove('active'));
+                pill.classList.add('active');
+            }
+        });
+
+        // Se o pet já tem foto salva, usa ela também (a pessoa pode trocar depois se quiser)
+        if (pet.foto) {
+            fotoSelecionadaPerdido = pet.foto;
+            const preview = document.getElementById('perdidoFotoPreview');
+            preview.classList.add('tem-foto');
+            preview.innerHTML = `<img src="${pet.foto}" alt="Foto do pet">`;
+        }
+    }
+
     // ---------- Modal Reportar ----------
-    function abrirModalReportar() { document.getElementById('modalReportar').classList.add('aberto'); }
-    function fecharModalReportar() { document.getElementById('modalReportar').classList.remove('aberto'); }
+    let fotoSelecionadaPerdido = null;
+
+    function onEscolherFotoPerdido(inputEl) {
+        const file = inputEl.files && inputEl.files[0];
+        if (!file) return;
+        petcareComprimirImagem(file, (dataUrl) => {
+            if (!dataUrl) { if (typeof mostrarAviso === "function") mostrarAviso("Não foi possível carregar essa imagem.", "#FF3B30"); return; }
+            fotoSelecionadaPerdido = dataUrl;
+            const preview = document.getElementById('perdidoFotoPreview');
+            preview.classList.add('tem-foto');
+            preview.innerHTML = `<img src="${dataUrl}" alt="Foto do animal perdido">`;
+        });
+    }
+
+    function abrirModalReportar() {
+        renderizarMeusPetsNoModal();
+        document.getElementById('modalReportar').classList.add('aberto');
+    }
+    function fecharModalReportar() {
+        document.getElementById('modalReportar').classList.remove('aberto');
+        // Reseta o seletor de foto pra próxima vez que abrir o modal
+        fotoSelecionadaPerdido = null;
+        const preview = document.getElementById('perdidoFotoPreview');
+        if (preview) {
+            preview.classList.remove('tem-foto');
+            preview.innerHTML = `<svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>`;
+        }
+        const input = document.getElementById('perdidoFotoInput');
+        if (input) input.value = '';
+    }
 
     function selecionarPill(el, grupoId) {
         document.querySelectorAll(`#${grupoId} .pill`).forEach(p => p.classList.remove('active'));
@@ -432,6 +576,7 @@
         const novoRegistro = {
             id: 'perdido_' + Date.now(),
             tipo, nome, raca, data, horario, descricao, local, seuNome, seuTelefone,
+            foto: fotoSelecionadaPerdido,
             lat: localizacaoUsuario.lat || null,
             lng: localizacaoUsuario.lng || null
         };

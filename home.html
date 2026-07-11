@@ -683,7 +683,7 @@
             </div>
 
             <div class="foto-picker-wrap">
-                <div class="foto-picker" id="addFotoPreview" onclick="document.getElementById('addFotoInput').click()">
+                <div class="foto-picker" id="addFotoPreview" onclick="abrirSeletorDeFotoPet()">
                     <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
                 </div>
                 <input type="file" id="addFotoInput" accept="image/*" style="display:none;" onchange="onEscolherFotoPet(this, 'addFotoPreview')">
@@ -740,6 +740,9 @@
                     <span class="slider"></span>
                 </label>
             </div>
+
+            <label class="form-label" data-i18n="perf_tipo_sanguineo">Tipo Sanguíneo</label>
+            <input type="text" id="addTipoSanguineo" class="form-input" placeholder="Opcional">
 
             <label class="form-label" data-i18n="home_microchip">Nº do Microchip</label>
             <input type="text" id="addMicrochip" class="form-input" placeholder="Opcional">
@@ -910,6 +913,34 @@
 
         let fotoSelecionadaAddPet = null;
 
+        // Dentro do app: pede pros blocks abrirem Câmera/Galeria nativa (mais confiável
+        // que o <input type="file"> comum, que pode não funcionar dentro do WebViewer
+        // dependendo da versão/configuração do componente). Fora do app (navegador de
+        // teste), continua usando o input de arquivo normal, que já funciona bem ali.
+        function abrirSeletorDeFotoPet() {
+            if (window.AppInventor) {
+                enviarComando("ABRIR_FOTO_PET", "addPet", {});
+            } else {
+                document.getElementById('addFotoInput').click();
+            }
+        }
+
+        // Chamada pelos BLOCKS (via WebViewer1.RunJavaScript) depois que a pessoa tira
+        // uma foto ou escolhe uma da galeria pelo seletor nativo do Android.
+        // Aceita tanto uma data URL pronta ("data:image/...") quanto um caminho de
+        // arquivo local do celular (nesse caso, vira um "file://" pra WebView conseguir exibir).
+        function receberFotoAppNativa(caminhoOuDataUrl) {
+            if (!caminhoOuDataUrl) return;
+            const src = caminhoOuDataUrl.startsWith('data:') || caminhoOuDataUrl.startsWith('file:')
+                ? caminhoOuDataUrl
+                : 'file://' + caminhoOuDataUrl;
+
+            fotoSelecionadaAddPet = src;
+            const preview = document.getElementById('addFotoPreview');
+            preview.classList.add('tem-foto');
+            preview.innerHTML = `<img src="${src}" alt="Foto do pet">`;
+        }
+
         function onEscolherFotoPet(inputEl, previewId) {
             const file = inputEl.files && inputEl.files[0];
             if (!file) return;
@@ -965,6 +996,7 @@
             const peso = document.getElementById('addPeso').value.trim();
             const cor = document.getElementById('addCor').value.trim();
             const castrado = document.getElementById('addCastrado').checked ? "Sim" : "Não";
+            const tipoSanguineo = document.getElementById('addTipoSanguineo').value.trim();
             const microchip = document.getElementById('addMicrochip').value.trim();
             const alergias = document.getElementById('addAlergias').value.trim();
 
@@ -988,7 +1020,7 @@
             if (!vPeso.valido) { alert(vPeso.mensagem); return; }
 
             // Atualiza local (cache otimista) e mostra na hora
-            petcareAdicionarPet({ tipo, nome, sexo, raca, nascimento: nasc, peso, cor, castrado, microchip, alergias, foto: fotoSelecionadaAddPet });
+            petcareAdicionarPet({ tipo, nome, sexo, raca, nascimento: nasc, peso, cor, castrado, tipoSanguineo, microchip, alergias, foto: fotoSelecionadaAddPet });
             const pets = petcareObterPets();
             atualizarDadosDosPets(petcareFormatoHome([...pets].reverse()));
 
@@ -1017,6 +1049,7 @@
             document.getElementById('addPeso').value = "";
             document.getElementById('addCor').value = "";
             document.getElementById('addCastrado').checked = true;
+            document.getElementById('addTipoSanguineo').value = "";
             document.getElementById('addMicrochip').value = "";
             document.getElementById('addAlergias').value = "";
             document.querySelectorAll('#grpTipo .pill').forEach((el, i) => el.classList.toggle('active', i === 0));

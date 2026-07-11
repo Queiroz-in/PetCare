@@ -49,9 +49,12 @@
         .aviso-offline { background: #FFFBEB; border: 1px solid #FDE047; color: #92400E; padding: 14px 16px; border-radius: 16px; font-size: 12.5px; font-weight: 500; line-height: 1.5; display: none; margin-bottom: 16px; }
 
         /* 2. Banner */
-        .banner-alerta { background-color: #FFD60A; padding: 16px; border-radius: 16px; display: flex; gap: 16px; margin-bottom: 16px; align-items: center; }
+        .banner-alerta { background-color: #FFD60A; padding: 16px; border-radius: 16px; display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+        .banner-alerta-topo { display: flex; gap: 16px; align-items: center; }
         .banner-alerta strong { display: block; font-size: 14px; margin-bottom: 2px; }
         .banner-alerta p { font-size: 12px; line-height: 1.4; color: #333; }
+        .btn-ver-clinicas { align-self: stretch; background-color: #1F2937; color: white; border: none; padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-ver-clinicas:active { opacity: 0.85; }
 
         /* 3. Listas */
         .titulo-secao { font-family: 'Poppins', sans-serif; font-size: 18px; margin-bottom: 12px; }
@@ -86,11 +89,17 @@
 
         <div class="content-padding">
             <div class="banner-alerta">
-                <svg class="icon-svg icon-lg" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                <div>
-                    <strong data-i18n="emerg_situacao_grave">Situação Grave?</strong>
-                    <p data-i18n="emerg_situacao_desc">Se o animal estiver inconsciente, sangrando muito ou com dificuldade para respirar, ligue IMEDIATAMENTE.</p>
+                <div class="banner-alerta-topo">
+                    <svg class="icon-svg icon-lg" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    <div>
+                        <strong data-i18n="emerg_situacao_grave">Situação Grave?</strong>
+                        <p data-i18n="emerg_situacao_desc">Se o animal estiver inconsciente, sangrando muito ou com dificuldade para respirar, ligue AGORA para uma das clínicas veterinárias 24h logo abaixo.</p>
+                    </div>
                 </div>
+                <button class="btn-ver-clinicas" onclick="irParaListaClinicas()">
+                    <svg class="icon-svg" viewBox="0 0 24 24"><polyline points="19 12 12 19 5 12"/><line x1="12" y1="5" x2="12" y2="19"/></svg>
+                    <span data-i18n="emerg_ver_clinicas_btn">Ver Clínicas 24h Agora</span>
+                </button>
             </div>
 
             <h2 class="titulo-secao" data-i18n="emerg_clinicas_proximas">Clínicas Próximas (24h)</h2>
@@ -236,6 +245,12 @@
         }
 
         // Função universal para abrir o discador nativo do celular
+        // Rola suavemente até a lista de clínicas quando a pessoa toca no botão do alerta
+        function irParaListaClinicas() {
+            const alvo = document.getElementById('listaClinicasEmerg');
+            if (alvo) alvo.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
         function fazerLigacao(numero) {
             if (window.AppInventor) {
                 window.AppInventor.setWebViewString("CALL|" + numero);

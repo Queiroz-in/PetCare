@@ -97,20 +97,31 @@
     </header>
 
     <main class="view-content">
-        
+
+        <!-- Alerta de Segurança (agora é a PRIMEIRA coisa que a pessoa vê) -->
+        <div class="alert-card">
+            <div class="alert-header">
+                <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                <h3 data-i18n="resg_atencao_titulo">Nunca se Aproxime de um Animal Desconhecido</h3>
+            </div>
+            <p data-i18n="resg_atencao_item1">Animais desconhecidos podem transmitir raiva e outras doenças graves por mordida, arranhão ou contato com saliva</p>
+            <p data-i18n="resg_atencao_item2">Nunca toque, alimente com a mão ou tente pegar um animal que você não conhece</p>
+            <p data-i18n="resg_atencao_item3">Em caso de mordida ou arranhão, procure atendimento médico imediatamente — é sobre a sua saúde também</p>
+        </div>
+
         <!-- Passo 1 -->
         <div class="guide-card">
             <div class="guide-header">
                 <div class="guide-icon" style="background: var(--bg-orange); color: var(--icon-orange);">
                     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                 </div>
-                <h3 data-i18n="resg_passo1_titulo">1. Avalie a Situação</h3>
+                <h3 data-i18n="resg_passo1_titulo">1. Observe à Distância</h3>
             </div>
             <div class="guide-list">
-                <p data-i18n="resg_passo1_item1">Observe de longe primeiro - o animal pode estar assustado</p>
-                <p data-i18n="resg_passo1_item2">Verifique se há ferimentos visíveis</p>
-                <p data-i18n="resg_passo1_item3">Tenha cuidado, animais feridos podem se tornar agressivos</p>
-                <p data-i18n="resg_passo1_item4">Se houver tráfego, sinalize para proteger o animal</p>
+                <p data-i18n="resg_passo1_item1">Mantenha distância segura o tempo todo — não se aproxime, mesmo que o animal pareça calmo</p>
+                <p data-i18n="resg_passo1_item2">Observe de longe: porte, cor, se tem coleira ou alguma marca visível</p>
+                <p data-i18n="resg_passo1_item3">Se houver ferimentos, não tente examinar de perto — descreva o que viu para quem for ajudar</p>
+                <p data-i18n="resg_passo1_item4">Se houver risco de trânsito, sinalize o local de longe para os motoristas, sem se aproximar do animal</p>
             </div>
         </div>
 
@@ -118,16 +129,15 @@
         <div class="guide-card">
             <div class="guide-header">
                 <div class="guide-icon" style="background: var(--bg-blue); color: var(--icon-blue);">
-                    <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                    <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                 </div>
-                <h3 data-i18n="resg_passo2_titulo">2. Aproximação Segura</h3>
+                <h3 data-i18n="resg_passo2_titulo">2. Acione Ajuda Especializada Agora</h3>
             </div>
             <div class="guide-list">
-                <p data-i18n="resg_passo2_item1">Fale com voz calma e suave</p>
-                <p data-i18n="resg_passo2_item2">Agache-se para parecer menos ameaçador</p>
-                <p data-i18n="resg_passo2_item3">Não faça movimentos bruscos</p>
-                <p data-i18n="resg_passo2_item4">Ofereça água e comida, mas mantenha distância</p>
-                <p data-i18n="resg_passo2_item5">Use luvas se possível ao manusear</p>
+                <p data-i18n="resg_passo2_item1">Ligue para um dos contatos abaixo — são as pessoas treinadas pra capturar o animal com segurança</p>
+                <p data-i18n="resg_passo2_item2">Se for um animal silvestre ou muito agressivo, ligue direto para a Polícia Ambiental (190)</p>
+                <p data-i18n="resg_passo2_item3">Contate também ONGs de resgate da sua região, se conhecer alguma</p>
+                <p data-i18n="resg_passo2_item4">Publique no Mural de Animais Perdidos deste app, caso o animal pareça ser um pet perdido</p>
             </div>
         </div>
 
@@ -137,40 +147,13 @@
                 <div class="guide-icon" style="background: var(--bg-green); color: var(--icon-green);">
                     <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
                 </div>
-                <h3 data-i18n="resg_passo3_titulo">3. Verificação Básica</h3>
+                <h3 data-i18n="resg_passo3_titulo">3. Enquanto a Ajuda Não Chega</h3>
             </div>
             <div class="guide-list">
-                <p data-i18n="resg_passo3_item1">Procure por coleira ou plaquinha de identificação</p>
-                <p data-i18n="resg_passo3_item2">Verifique se há microchip (passa pelo veterinário)</p>
-                <p data-i18n="resg_passo3_item3">Tire fotos do animal para divulgação</p>
+                <p data-i18n="resg_passo3_item1">Continue mantendo distância — não toque, não alimente com a mão, não tente prender o animal sozinho</p>
+                <p data-i18n="resg_passo3_item2">Se possível, tire fotos de longe (sem se aproximar) para ajudar na identificação</p>
+                <p data-i18n="resg_passo3_item3">Espere a equipe especializada chegar antes de qualquer contato direto</p>
             </div>
-        </div>
-
-        <!-- Passo 4 -->
-        <div class="guide-card">
-            <div class="guide-header">
-                <div class="guide-icon" style="background: var(--bg-purple); color: var(--icon-purple);">
-                    <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                </div>
-                <h3 data-i18n="resg_passo4_titulo">4. Busque Ajuda Profissional</h3>
-            </div>
-            <div class="guide-list">
-                <p data-i18n="resg_passo4_item1">Leve a uma clínica veterinária para avaliação</p>
-                <p data-i18n="resg_passo4_item2">Entre em contato com ONGs de resgate local</p>
-                <p data-i18n="resg_passo4_item3">Publique no mural de animais perdidos</p>
-                <p data-i18n="resg_passo4_item4">Registre em grupos locais de pets perdidos</p>
-            </div>
-        </div>
-
-        <!-- Alerta Amarelo -->
-        <div class="alert-card">
-            <div class="alert-header">
-                <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                <h3 data-i18n="resg_atencao_titulo">Atenção!</h3>
-            </div>
-            <p data-i18n="resg_atencao_item1">Nunca se coloque em risco</p>
-            <p data-i18n="resg_atencao_item2">Animais silvestres exigem ajuda especializada</p>
-            <p data-i18n="resg_atencao_item3">Em caso de mordida, procure atendimento médico</p>
         </div>
 
         <!-- Contatos Importantes -->
