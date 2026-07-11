@@ -48,7 +48,7 @@ const TRADUCOES = {
     home_acesso_rapido:    { pt: "Acesso Rápido",          en: "Quick Access" },
     home_lembretes_ativos: { pt: "Lembretes Ativos",     en: "Active Reminders" },
     home_ver_todos:        { pt: "Ver todos",              en: "See all" },
-    home_adicionar:        { pt: "Adicionar",              en: "Add" },
+    home_adicionar:        { pt: "Cadastrar",              en: "Add" },
     home_nenhum_lembrete:  { pt: "Nenhum lembrete para hoje.", en: "No reminders for today." },
     home_precisa_cadastrar_pet: { pt: "Cadastre um pet primeiro, tocando no + ao lado.", en: "Register a pet first by tapping the + next to it." },
     home_idade:            { pt: "Idade", en: "Age" },
@@ -67,7 +67,7 @@ const TRADUCOES = {
     home_card_somos_desc:      { pt: "Origem do PetCare", en: "PetCare's origin" },
     home_card_config_desc:     { pt: "Personalize e modifique", en: "Customize and edit" },
     home_tudo_em_dia:      { pt: "Tudo em dia!", en: "All up to date!" },
-    home_modal_add_pet:    { pt: "Adicionar Pet", en: "Add Pet" },
+    home_modal_add_pet:    { pt: "Cadastrar Pet", en: "Register Pet" },
     home_foto_toque:       { pt: "Toque pra adicionar uma foto", en: "Tap to add a photo" },
     home_tipo_animal:      { pt: "Tipo de animal", en: "Animal type" },
     home_pill_cachorro:    { pt: "Cachorro", en: "Dog" },
@@ -83,7 +83,7 @@ const TRADUCOES = {
     home_castrado_desc:    { pt: "O pet é castrado?", en: "Is the pet neutered?" },
     home_microchip:        { pt: "Nº do Microchip", en: "Microchip No." },
     home_alergias:         { pt: "Alergias conhecidas", en: "Known allergies" },
-    home_adicionar_btn:    { pt: "Adicionar", en: "Add" },
+    home_adicionar_btn:    { pt: "Cadastrar", en: "Register" },
     home_cadastre_pet:     { pt: "Cadastre um Pet", en: "Register a Pet" },
 
     // ---------- Vacinas ----------

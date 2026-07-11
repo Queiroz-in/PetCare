@@ -460,20 +460,20 @@
         const clinica = document.getElementById('consClinica').value;
         const obs = document.getElementById('consObs').value;
 
-        if(!data || !hora) { alert(t('cons_erro_data_hora')); return; }
+        if(!data || !hora) { mostrarAviso(t('cons_erro_data_hora'), "#FF3B30"); return; }
 
         // ---------- Validação ----------
         const vData = validarDataFutura(data, { maxAnosNoFuturo: 3 });
-        if (!vData.valido) { alert(vData.mensagem); return; }
+        if (!vData.valido) { mostrarAviso(vData.mensagem, "#FF3B30"); return; }
 
         const vVet = validarTextoLivre(vet, { max: 60 });
-        if (!vVet.valido) { alert(vVet.mensagem); return; }
+        if (!vVet.valido) { mostrarAviso(vVet.mensagem, "#FF3B30"); return; }
 
         const vClinica = validarTextoLivre(clinica, { max: 60 });
-        if (!vClinica.valido) { alert(vClinica.mensagem); return; }
+        if (!vClinica.valido) { mostrarAviso(vClinica.mensagem, "#FF3B30"); return; }
 
         const vObs = validarTextoLivre(obs, { max: 300 });
-        if (!vObs.valido) { alert(vObs.mensagem); return; }
+        if (!vObs.valido) { mostrarAviso(vObs.mensagem, "#FF3B30"); return; }
 
         const novaConsulta = {
             id: Math.random().toString(36).substr(2, 9),

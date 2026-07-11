@@ -931,7 +931,12 @@
         // arquivo local do celular (nesse caso, vira um "file://" pra WebView conseguir exibir).
         function receberFotoAppNativa(caminhoOuDataUrl) {
             if (!caminhoOuDataUrl) return;
-            const src = caminhoOuDataUrl.startsWith('data:') || caminhoOuDataUrl.startsWith('file:')
+            // O caminho devolvido pelo ImagePicker pode vir em formatos diferentes
+            // dependendo da versão do Android/fabricante: um caminho de arquivo puro,
+            // ou uma URI "content://" (comum em Android mais novo, com storage
+            // "escopado"). Só prefixamos "file://" quando realmente for um caminho
+            // puro - "content://" já é uma URI válida por si só.
+            const src = caminhoOuDataUrl.startsWith('data:') || caminhoOuDataUrl.startsWith('file:') || caminhoOuDataUrl.startsWith('content:')
                 ? caminhoOuDataUrl
                 : 'file://' + caminhoOuDataUrl;
 

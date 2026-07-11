@@ -468,25 +468,25 @@
         const lote = document.getElementById('vacLote').value.trim();
 
         if(!nome || !aplicacao || !proxima) {
-            alert("Atenção: Nome, Data de Aplicação e Próxima Dose são obrigatórios.");
+            mostrarAviso("Atenção: Nome, Data de Aplicação e Próxima Dose são obrigatórios.", "#FF3B30");
             return;
         }
         if (!petAtivoId) {
-            alert("Selecione um pet primeiro!");
+            mostrarAviso("Selecione um pet primeiro!", "#FF3B30");
             return;
         }
 
         // ---------- Validação ----------
         const vNome = validarTextoLivre(nome, { max: 60, obrigatorio: true });
-        if (!vNome.valido) { alert(vNome.mensagem); return; }
+        if (!vNome.valido) { mostrarAviso(vNome.mensagem, "#FF3B30"); return; }
 
         // Aplicação: precisa ter acontecido (não pode ser no futuro), e não pode ser antiga demais
         const vAplicacao = validarDataPassadaRecente(aplicacao, { maxAnosNoPassado: 25 });
-        if (!vAplicacao.valido) { alert("Data de Aplicação: " + vAplicacao.mensagem); return; }
+        if (!vAplicacao.valido) { mostrarAviso("Data de Aplicação: " + vAplicacao.mensagem, "#FF3B30"); return; }
 
         // Próxima dose: precisa ser uma data futura plausível
         const vProxima = validarDataFutura(proxima, { maxAnosNoFuturo: 10 });
-        if (!vProxima.valido) { alert("Próxima Dose: " + vProxima.mensagem); return; }
+        if (!vProxima.valido) { mostrarAviso("Próxima Dose: " + vProxima.mensagem, "#FF3B30"); return; }
 
         // Atualiza local (cache otimista) e mostra na hora
         petcareAdicionarVacina(petAtivoId, { nome, aplicacao, proxima, vet, clinica, lote });

@@ -475,17 +475,17 @@
         const hora = document.getElementById('lemHora').value.trim();
         const data = document.getElementById('lemData').value.trim();
 
-        if(!titulo || !hora || !data) { alert(t('lemb_erro_obrigatorios')); return; }
+        if(!titulo || !hora || !data) { mostrarAviso(t('lemb_erro_obrigatorios'), "#FF3B30"); return; }
 
         // ---------- Validação ----------
         const vTitulo = validarTextoLivre(titulo, { max: 60, obrigatorio: true });
-        if (!vTitulo.valido) { alert(vTitulo.mensagem); return; }
+        if (!vTitulo.valido) { mostrarAviso(vTitulo.mensagem, "#FF3B30"); return; }
 
         const vDesc = validarTextoLivre(desc, { max: 200 });
-        if (!vDesc.valido) { alert(vDesc.mensagem); return; }
+        if (!vDesc.valido) { mostrarAviso(vDesc.mensagem, "#FF3B30"); return; }
 
         const vData = validarDataFutura(data, { maxAnosNoFuturo: 5 });
-        if (!vData.valido) { alert(vData.mensagem); return; }
+        if (!vData.valido) { mostrarAviso(vData.mensagem, "#FF3B30"); return; }
 
         const novoLembrete = {
             id: Date.now() % 2000000000, // numérico e dentro da faixa seguro de inteiro - vai dobrar como id do alarme real
