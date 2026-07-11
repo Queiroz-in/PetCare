@@ -180,7 +180,7 @@
         </div>
 
         <div class="foto-picker-wrap">
-            <div class="foto-picker" id="perdidoFotoPreview" onclick="document.getElementById('perdidoFotoInput').click()">
+            <div class="foto-picker" id="perdidoFotoPreview" onclick="abrirSeletorDeFotoPerdido()">
                 <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
             </div>
             <span class="foto-picker-label" data-i18n="perd_adicionar_foto">Toque para adicionar uma foto</span>
@@ -501,6 +501,34 @@
 
     // ---------- Modal Reportar ----------
     let fotoSelecionadaPerdido = null;
+
+    // Dentro do app: pede pros blocks abrirem a Galeria nativa (o mesmo ImagePicker1
+    // já usado em "Adicionar Pet" - reaproveitando o comando ABRIR_FOTO_PET, sem
+    // precisar de nenhum bloco novo). Fora do app (navegador de teste), usa o input
+    // de arquivo comum, que já funciona bem ali.
+    function abrirSeletorDeFotoPerdido() {
+        if (window.AppInventor) {
+            enviarComando("ABRIR_FOTO_PET", "perdido", {});
+        } else {
+            document.getElementById('perdidoFotoInput').click();
+        }
+    }
+
+    // Chamada pelos BLOCKS (via WebViewer1.RunJavaScript) depois que a pessoa escolhe
+    // uma foto pelo seletor nativo do Android. Tem o MESMO NOME da função usada em
+    // home.html - isso não dá conflito porque cada página carrega isolada (só uma
+    // delas existe na WebView por vez), então cada uma define a sua própria versão.
+    function receberFotoAppNativa(caminhoOuDataUrl) {
+        if (!caminhoOuDataUrl) return;
+        const src = caminhoOuDataUrl.startsWith('data:') || caminhoOuDataUrl.startsWith('file:')
+            ? caminhoOuDataUrl
+            : 'file://' + caminhoOuDataUrl;
+
+        fotoSelecionadaPerdido = src;
+        const preview = document.getElementById('perdidoFotoPreview');
+        preview.classList.add('tem-foto');
+        preview.innerHTML = `<img src="${src}" alt="Foto do animal perdido">`;
+    }
 
     function onEscolherFotoPerdido(inputEl) {
         const file = inputEl.files && inputEl.files[0];

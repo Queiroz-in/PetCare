@@ -102,7 +102,7 @@
             overflow-y: hidden;
             -webkit-overflow-scrolling: touch;
             scroll-behavior: smooth;
-            touch-action: pan-x;
+            touch-action: pan-x pan-y;
         }
         .pets-select-row::-webkit-scrollbar { display: none; }
 
@@ -240,7 +240,7 @@
             overflow-x: auto;
             padding: 4px 20px 24px 20px;
             -webkit-overflow-scrolling: touch;
-            touch-action: pan-x;
+            touch-action: pan-x pan-y;
             cursor: grab;
         }
         .scroll-outer-wrapper::-webkit-scrollbar { display: none; }
@@ -1085,10 +1085,13 @@
             });
 
             // ---------- Toque (celular de verdade) ----------
-            // Com "touch-action: pan-x" no CSS, o próprio navegador já cuida do
+            // Com "touch-action: pan-x pan-y" no CSS, o próprio navegador já cuida do
             // arrasto horizontal (suave, com o "momentum" nativo) e já sabe
             // deixar o scroll vertical da página passar quando o gesto for
             // vertical - não precisamos mais simular isso na mão em JS.
+            // (Antes estava só "pan-x", que travava o scroll vertical quando
+            // o toque começava em cima dessa fileira - por isso o "pan-y" foi
+            // adicionado também.)
             // Aqui só medimos a distância percorrida, pra diferenciar um
             // toque (clique) de um arrasto de verdade.
             elemento.addEventListener('touchstart', (e) => {

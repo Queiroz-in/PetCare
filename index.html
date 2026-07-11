@@ -512,7 +512,7 @@
                 temErro = true;
             }
             if(pass === "") {
-                aplicarErro('loginPassword', 'errLoginPassword');
+                aplicarErro('loginPassword', 'errLoginPassword', "A senha não pode estar vazia.");
                 temErro = true;
             }
 
@@ -735,7 +735,7 @@
                 aplicarErro('loginEmail', 'errLoginEmail');
                 mostrarAviso("Não encontramos uma conta com esse e-mail.", "#FF3B30");
             } else {
-                aplicarErro('loginPassword', 'errLoginPassword');
+                aplicarErro('loginPassword', 'errLoginPassword', "Senha incorreta.");
                 mostrarAviso("Senha incorreta. Tente novamente ou toque em \"Esqueceu sua Senha?\".", "#FF3B30");
             }
         }
