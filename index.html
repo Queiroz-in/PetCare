@@ -482,6 +482,20 @@
             }
         }
 
+        // ==========================================
+        // SEGURANÇA: hash de senha (nunca salvar senha em texto puro no banco)
+        // ==========================================
+        // Usa a Web Crypto API (nativa do navegador/WebView, sem biblioteca externa)
+        // pra transformar a senha digitada num hash SHA-256 antes de qualquer
+        // gravação ou comparação. Assim, mesmo quem tiver acesso direto ao banco
+        // (Redis) nunca vê a senha real de ninguém, só o hash.
+        async function hashSenha(textoPlano) {
+            const dados = new TextEncoder().encode(textoPlano);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', dados);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
         // Validação e Envio de LOGIN
         let loginTimeoutId = null;
         let cadastroTimeoutId = null;
@@ -667,7 +681,7 @@
             document.getElementById('blocoNovaSenha').style.display = 'block';
         }
 
-        function salvarNovaSenha() {
+        async function salvarNovaSenha() {
             limparErros();
             const novaSenha = document.getElementById('forgotNovaSenha').value;
             const vNovaSenha = validarSenha(novaSenha, { min: 6 });
@@ -675,7 +689,7 @@
 
             const email = document.getElementById('forgotEmail').value.trim();
             const conta = window._contaRecuperada || {};
-            conta.senha = novaSenha;
+            conta.senha = await hashSenha(novaSenha);
             petcareRegistrarContaNoDiretorio(email, conta);
 
             if (window.AppInventor) {
@@ -697,8 +711,9 @@
             mudarEtapa('stepLogin');
         }
 
-        function validarLogin(conta, email, pass) {
-            if (conta && conta.email === email && conta.senha === pass) {
+        async function validarLogin(conta, email, pass) {
+            const passHash = await hashSenha(pass);
+            if (conta && conta.email === email && conta.senha === passHash) {
                 // Define esta conta como "usuário atual" - a partir daqui, toda tela
                 // (pets, vacinas, consultas...) passa a puxar os dados dela.
                 petcareDefinirUsuarioAtual(email);
@@ -726,7 +741,7 @@
         }
 
         // Validação e Envio de CADASTRO
-        function finalizarCadastro() {
+        async function finalizarCadastro() {
             limparErros();
             var email = document.getElementById('regEmail').value.trim();
             var senha = document.getElementById('regSenha').value;
@@ -764,7 +779,10 @@
 
             if(temErro) return;
 
-            const conta = { nome: nome, telefone: tel, nascimento: dataNasc, email: email, senha: senha };
+            // A senha nunca é guardada em texto puro - vira hash SHA-256 aqui, antes
+            // de qualquer gravação no banco.
+            const senhaHash = await hashSenha(senha);
+            const conta = { nome: nome, telefone: tel, nascimento: dataNasc, email: email, senha: senhaHash };
 
             if (window.AppInventor) {
                 const btn = document.querySelector('#stepRegister .btn-primary');
